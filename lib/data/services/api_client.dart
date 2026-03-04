@@ -167,7 +167,8 @@ class ApiClientImpl implements ApiClient {
   }
 
   Uri _buildUri(String endpoint, {Map<String, dynamic>? queryParameters}) {
-    final uri = Uri.parse('$baseUrl/$endpoint');
+    final baseUri = Uri.parse(baseUrl);
+    final uri = baseUri.resolve(endpoint);
     if (queryParameters == null || queryParameters.isEmpty) {
       return uri;
     }

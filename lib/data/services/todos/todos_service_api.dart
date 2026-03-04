@@ -20,7 +20,7 @@ class TodoServiceAPI implements TodosService {
   final ApiClient apiClient;
 
   /// エンドポイント
-  static const endpoint = '/todos';
+  static const endpoint = 'todos';
 
   @override
   Future<Result<TodosModel>> fetch() async {
