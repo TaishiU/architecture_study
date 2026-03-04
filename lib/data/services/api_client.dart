@@ -5,43 +5,81 @@ import 'package:architecture_study/data/services/api_exception.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 
+/// APIクライアントのインスタンスを提供するプロバイダー。
+///
+/// このプロバイダーを使用すると、アプリケーションのどこからでもAPIクライアントにアクセスできます。
 final apiClientProvider = Provider<ApiClient>(
   (ref) => ApiClientImpl(
     http.Client(),
   ),
 );
 
+/// API操作のための抽象クライアントインターフェース。
+///
+/// このインターフェースは、GET、POST、PUT、DELETEなどのHTTPメソッドを定義します。
 abstract class ApiClient {
+  /// 指定されたエンドポイントからリソースを取得します。
+  ///
+  /// [endpoint] : リソースのパス。
+  /// [headers] : リクエストに含めるヘッダー。
+  /// [queryParameters] : クエリパラメータ。
+  /// 戻り値: レスポンスボディを表すマップ。
   Future<Map<String, dynamic>> get({
     required String endpoint,
     Map<String, String>? headers,
     Map<String, dynamic>? queryParameters,
   });
 
+  /// 指定されたエンドポイントにリソースを新規作成または送信します。
+  ///
+  /// [endpoint] : リソースのパス。
+  /// [body] : リクエストボディ。
+  /// [headers] : リクエストに含めるヘッダー。
+  /// 戻り値: レスポンスボディを表すマップ。
   Future<Map<String, dynamic>> post({
     required String endpoint,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
   });
 
+  /// 指定されたエンドポイントのリソースを更新します。
+  ///
+  /// [endpoint] : リソースのパス。
+  /// [body] : リクエストボディ。
+  /// [headers] : リクエストに含めるヘッダー。
+  /// 戻り値: レスポンスボディを表すマップ。
   Future<Map<String, dynamic>> put({
     required String endpoint,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
   });
 
+  /// 指定されたエンドポイントのリソースを削除します。
+  ///
+  /// [endpoint] : リソースのパス。
+  /// 戻り値: レスポンスボディを表すマップ。
   Future<Map<String, dynamic>> delete({
     required String endpoint,
   });
 }
 
+/// [ApiClient] の実装クラス。
+///
+/// HTTPリクエストを送信し、レスポンスを処理するための具体的なロジックを提供します。
 class ApiClientImpl implements ApiClient {
+  /// [ApiClientImpl] のコンストラクタ。
+  ///
+  /// [client] : HTTPリクエストの送信に使用する [http.Client] インスタンス。
+  /// [baseUrl] : APIのベースURL。デフォルトは `'https://dummyjson.com'`。
   ApiClientImpl(
     this._client, {
     this.baseUrl = 'https://dummyjson.com',
   });
 
+  /// HTTPリクエストの送信に使用されるHTTPクライアント。
   final http.Client _client;
+
+  /// APIのベースURL。
   final String baseUrl;
 
   @override
