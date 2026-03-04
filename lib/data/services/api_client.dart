@@ -1,144 +1,181 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:architecture_study/data/services/api_exception.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-typedef JsonMap = Map<String, dynamic>;
-typedef JsonList = List<dynamic>;
-
-JsonMap parseJsonMap(String input) => json.decode(input) as JsonMap;
-
-JsonList parseJsonList(String input) => json.decode(input) as JsonList;
-
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClientImpl());
+final apiClientProvider = Provider<ApiClient>(
+  (ref) => ApiClientImpl(
+    http.Client(),
+  ),
+);
 
 abstract class ApiClient {
-  Future<String> get({
+  Future<Map<String, dynamic>> get({
     required String endpoint,
     Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
   });
 
-  Future<String> post({
-    required String endpoint,
-    required Map<String, dynamic> body,
-    Map<String, String>? headers,
-  });
-
-  Future<String> put({
+  Future<Map<String, dynamic>> post({
     required String endpoint,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
   });
 
-  Future<String> delete({
+  Future<Map<String, dynamic>> put({
+    required String endpoint,
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
+  });
+
+  Future<Map<String, dynamic>> delete({
     required String endpoint,
   });
 }
 
 class ApiClientImpl implements ApiClient {
-  factory ApiClientImpl({
-    String baseUrl = 'https://dummyjson.com',
-  }) {
-    return _instance ??= ApiClientImpl._internal(baseUrl);
-  }
+  ApiClientImpl(
+    this._client, {
+    this.baseUrl = 'https://dummyjson.com',
+  });
 
-  ApiClientImpl._internal(this.baseUrl);
-
+  final http.Client _client;
   final String baseUrl;
-  static ApiClientImpl? _instance;
 
   @override
-  Future<String> get({
+  Future<Map<String, dynamic>> get({
     required String endpoint,
     Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
   }) {
     return _safeApiCall(
-      () async => http.get(
-        Uri.parse('$baseUrl/$endpoint'),
+      () async => _client.get(
+        _buildUri(endpoint, queryParameters: queryParameters),
         headers: headers,
       ),
     );
   }
 
   @override
-  Future<String> post({
-    required String endpoint,
-    required Map<String, dynamic> body,
-    Map<String, String>? headers,
-  }) {
-    return _safeApiCall(
-      () async => http.post(
-        Uri.parse('$baseUrl/$endpoint'),
-        headers: headers,
-        body: body,
-      ),
-    );
-  }
-
-  @override
-  Future<String> put({
+  Future<Map<String, dynamic>> post({
     required String endpoint,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
   }) {
     return _safeApiCall(
-      () async => http.put(
-        Uri.parse('$baseUrl/$endpoint'),
+      () async => _client.post(
+        _buildUri(endpoint),
         headers: headers,
-        body: body,
+        body: jsonEncode(body), // Convert body to JSON string
       ),
     );
   }
 
   @override
-  Future<String> delete({required String endpoint}) {
+  Future<Map<String, dynamic>> put({
+    required String endpoint,
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
+  }) {
     return _safeApiCall(
-      () async => http.delete(
-        Uri.parse('$baseUrl/$endpoint'),
+      () async => _client.put(
+        _buildUri(endpoint),
+        headers: headers,
+        body: jsonEncode(body), // Convert body to JSON string
       ),
     );
   }
 
-  Future<String> _safeApiCall(Function callback) async {
+  @override
+  Future<Map<String, dynamic>> delete({required String endpoint}) {
+    return _safeApiCall(
+      () async => _client.delete(
+        _buildUri(endpoint),
+      ),
+    );
+  }
+
+  Uri _buildUri(String endpoint, {Map<String, dynamic>? queryParameters}) {
+    final uri = Uri.parse('$baseUrl/$endpoint');
+    if (queryParameters == null || queryParameters.isEmpty) {
+      return uri;
+    }
+    return uri.replace(
+      queryParameters: queryParameters.map(
+        (key, value) => MapEntry(key, value.toString()),
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>> _safeApiCall(
+    Future<http.Response> Function() callback,
+  ) async {
     try {
-      // ignore: avoid_dynamic_calls
-      final response = await callback() as http.Response;
-      // logger.d('response.statusCode: ${response.statusCode}');
-      // logger.d('response.body: ${response.body}');
+      final response = await callback();
       return _parseResponse(
         statusCode: response.statusCode,
         responseBody: response.body,
       );
     } on SocketException catch (error) {
-      throw Exception('No Internet Connection: $error');
-    } on HttpException catch (error) {
-      throw Exception('HttpExceptionが発生: $error');
+      throw NoInternetConnectionException(error.message);
+    } on http.ClientException catch (error) {
+      throw ApiClientException('HTTP Client Error: ${error.message}');
+    } on FormatException catch (error) {
+      throw ApiClientException('Bad response format: ${error.message}');
     }
   }
 
-  String _parseResponse({
+  Map<String, dynamic> _parseResponse({
     required int statusCode,
     required String responseBody,
   }) {
+    final decodedBody = json.decode(responseBody);
+    if (decodedBody is! Map<String, dynamic>) {
+      throw FormatException(
+        'Unexpected response format: Expected Map<String, dynamic>, but got ${decodedBody.runtimeType}',
+      );
+    }
     switch (statusCode) {
       case 200:
       case 201:
-        return responseBody;
+        return decodedBody;
       case 400:
-        throw Exception('400 Bad Request');
+        throw BadRequestException(
+          decodedBody.toString(),
+          statusCode: statusCode,
+        );
       case 401:
-        throw Exception('401 Unauthorized');
+        throw UnauthorizedException(
+          decodedBody.toString(),
+          statusCode: statusCode,
+        );
       case 403:
-        throw Exception('403 Forbidden');
+        throw ForbiddenException(
+          decodedBody.toString(),
+          statusCode: statusCode,
+        );
       case 404:
-        throw Exception('404 Not Found');
+        throw NotFoundException(
+          decodedBody.toString(),
+          statusCode: statusCode,
+        );
       case 405:
-        throw Exception('405 Method Not Allowed');
+        throw MethodNotAllowedException(
+          decodedBody.toString(),
+          statusCode: statusCode,
+        );
       case 500:
-        throw Exception('500 Internal Server Error');
+        throw InternalServerErrorException(
+          decodedBody.toString(),
+          statusCode: statusCode,
+        );
       default:
-        throw Exception('Http status $statusCode: unknown error');
+        throw UnknownErrorException(
+          'Http status $statusCode',
+          statusCode: statusCode,
+        );
     }
   }
 }

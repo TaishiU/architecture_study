@@ -1,4 +1,5 @@
 import 'package:architecture_study/data/services/api_client.dart';
+import 'package:architecture_study/data/services/api_exception.dart';
 import 'package:architecture_study/data/services/models/todos/todos_model.dart';
 import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/data/services/todos/todos_service.dart';
@@ -24,14 +25,17 @@ class TodoServiceAPI implements TodosService {
   @override
   Future<Result<TodosModel>> fetch() async {
     try {
-      final responseBody = await apiClient.get(endpoint: endpoint);
-      final json = parseJsonMap(responseBody);
-      final todosModel = TodosModel.fromJson(json);
+      final responseJson = await apiClient.get(endpoint: endpoint);
+      final todosModel = TodosModel.fromJson(responseJson);
       logger.i('[TodoServiceAPI] $todosModel');
       return SuccessResult(todosModel);
+    } on ApiClientException catch (error) {
+      logger.e('[TodoServiceAPI] ApiClientException: $error');
+      // logger.w(error.statusCode);
+      // logger.w(error.message);
+      return Result.failure(error);
     } on Exception catch (error) {
-      logger.e('[TodoServiceAPI] $error');
-      // throw Exception('json.decode error: $error');
+      logger.e('[TodoServiceAPI] Unexpected Error: $error');
       return Result.failure(error);
     }
   }
@@ -39,12 +43,14 @@ class TodoServiceAPI implements TodosService {
   @override
   Future<Result<TodoModel>> fetchById({required int id}) async {
     try {
-      final responseBody = await apiClient.get(endpoint: '$endpoint/$id');
-      final json = parseJsonMap(responseBody);
-      final todoModel = TodoModel.fromJson(json);
+      final responseJson = await apiClient.get(endpoint: '$endpoint/$id');
+      final todoModel = TodoModel.fromJson(responseJson);
       return SuccessResult(todoModel);
+    } on ApiClientException catch (error) {
+      logger.e('[TodoServiceAPI] ApiClientException: $error');
+      return Result.failure(error);
     } on Exception catch (error) {
-      logger.e('[TodoServiceAPI] $error');
+      logger.e('[TodoServiceAPI] Unexpected Error: $error');
       return Result.failure(error);
     }
   }
