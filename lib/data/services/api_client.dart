@@ -11,6 +11,29 @@ import 'package:http/http.dart' as http;
 /// このプロバイダーを使用すると、アプリケーションのどこからでもAPIクライアントにアクセスできます。
 final baseUrlProvider = Provider<String>((ref) => 'https://dummyjson.com');
 
+/// HTTPリクエストメソッドを定義する列挙型。
+///
+/// 各要素はHTTPメソッドの文字列値を持ちます。
+enum Method {
+  /// HTTP GETメソッド。
+  get('GET'),
+
+  /// HTTP POSTメソッド。
+  post('POST'),
+
+  /// HTTP PUTメソッド。
+  put('PUT'),
+
+  /// HTTP DELETEメソッド。
+  delete('DELETE')
+  ;
+
+  const Method(this.value);
+
+  /// メソッド名
+  final String value;
+}
+
 /// APIクライアントのインスタンスを提供するプロバイダー。
 ///
 /// このプロバイダーを使用すると、アプリケーションのどこからでもAPIクライアントにアクセスできます。
@@ -100,7 +123,7 @@ class ApiClientImpl implements ApiClient {
     Map<String, dynamic>? queryParameters,
   }) {
     return _safeApiCall(
-      method: 'GET',
+      method: Method.get,
       endpoint: endpoint,
       headers: headers,
       queryParameters: queryParameters,
@@ -114,7 +137,7 @@ class ApiClientImpl implements ApiClient {
     Map<String, String>? headers,
   }) {
     return _safeApiCall(
-      method: 'POST',
+      method: Method.post,
       endpoint: endpoint,
       headers: headers,
       requestBody: body,
@@ -128,7 +151,7 @@ class ApiClientImpl implements ApiClient {
     Map<String, String>? headers,
   }) {
     return _safeApiCall(
-      method: 'PUT',
+      method: Method.put,
       endpoint: endpoint,
       headers: headers,
       requestBody: body,
@@ -138,7 +161,7 @@ class ApiClientImpl implements ApiClient {
   @override
   Future<Map<String, dynamic>> delete({required String endpoint}) {
     return _safeApiCall(
-      method: 'DELETE',
+      method: Method.delete,
       endpoint: endpoint,
     );
   }
@@ -156,18 +179,18 @@ class ApiClientImpl implements ApiClient {
   }
 
   Future<Map<String, dynamic>> _safeApiCall({
-    required String method,
+    required Method method,
     required String endpoint,
     Map<String, String>? headers,
     Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? requestBody, // Object? から Map<String, dynamic>? へ変更
+    Map<String, dynamic>? requestBody,
     int maxRetries = 3,
     Duration retryDelay = const Duration(seconds: 1),
   }) async {
     final uri = _buildUri(endpoint, queryParameters: queryParameters);
 
     // ロギング
-    logger.d('APIリクエスト: $method $uri');
+    logger.d('APIリクエスト: ${method.value} $uri');
     if (headers != null && headers.isNotEmpty) {
       logger.d('リクエストヘッダー: $headers');
     }
@@ -181,29 +204,27 @@ class ApiClientImpl implements ApiClient {
 
         late final http.Response response;
         switch (method) {
-          case 'GET':
+          case Method.get:
             response = await _client.get(uri, headers: headers);
-          case 'POST':
+          case Method.post:
             response = await _client.post(
               uri,
               headers: headers,
               body: requestBody != null ? jsonEncode(requestBody) : null,
             );
-          case 'PUT':
+          case Method.put:
             response = await _client.put(
               uri,
               headers: headers,
               body: requestBody != null ? jsonEncode(requestBody) : null,
             );
-          case 'DELETE':
+          case Method.delete:
             response = await _client.delete(uri, headers: headers);
-          default:
-            throw ArgumentError('Unsupported HTTP method: $method');
         }
 
         logger
           ..i('APIレスポンス受信: ステータスコード ${response.statusCode}')
-          ..i('レスポンスボディ: ${response.body}'); // レスポンスボディのロギング
+          ..i('レスポンスボディ: ${response.body}');
         return _parseResponse(
           statusCode: response.statusCode,
           responseBody: response.body,
