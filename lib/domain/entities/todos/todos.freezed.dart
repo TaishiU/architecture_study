@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Todos {
 
-/// ID
+/// 単一のTodoアイテムのリスト
  List<Todo> get todos;
 /// Create a copy of Todos
 /// with the given fields replaced by the non-null parameter values.
@@ -213,9 +213,9 @@ class _Todos implements Todos {
   const _Todos({required final  List<Todo> todos}): _todos = todos;
   factory _Todos.fromJson(Map<String, dynamic> json) => _$TodosFromJson(json);
 
-/// ID
+/// 単一のTodoアイテムのリスト
  final  List<Todo> _todos;
-/// ID
+/// 単一のTodoアイテムのリスト
 @override List<Todo> get todos {
   if (_todos is EqualUnmodifiableListView) return _todos;
   // ignore: implicit_dynamic_type

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeScreenState {
 
-/// Todo
+/// 表示するTodoアイテムのリスト
  Todos get todos;
 /// Create a copy of HomeScreenState
 /// with the given fields replaced by the non-null parameter values.
@@ -219,7 +219,7 @@ class _HomeScreenState implements HomeScreenState {
   const _HomeScreenState({required this.todos});
   
 
-/// Todo
+/// 表示するTodoアイテムのリスト
 @override final  Todos todos;
 
 /// Create a copy of HomeScreenState

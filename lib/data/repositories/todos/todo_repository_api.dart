@@ -50,7 +50,13 @@ class TodoRepositoryAPI implements TodoRepository {
       switch (result) {
         case SuccessResult<TodoModel>():
           final todo = _toEntity(result.value);
-          return SuccessResult(todo!);
+          if (todo == null) {
+            // _toEntityがnullを返した場合、エラーとして扱う
+            return FailureResult(
+              Exception('Required fields missing for Todo with ID $id'),
+            );
+          }
+          return SuccessResult(todo);
         case FailureResult<TodoModel>():
           logger.e('[TodoRepositoryAPI] ${result.error}');
           return FailureResult(result.error);

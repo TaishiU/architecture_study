@@ -12,6 +12,41 @@ import 'todos_service_api_test.mocks.dart';
 
 @GenerateMocks([ApiClient])
 void main() {
+  // todoServiceAPIProviderのテスト
+  group('todoServiceAPIProvider', () {
+    late ProviderContainer container;
+    late MockApiClient mockApiClient;
+
+    setUp(() {
+      mockApiClient = MockApiClient();
+      container = ProviderContainer(
+        overrides: [
+          apiClientProvider.overrideWithValue(mockApiClient),
+        ],
+      );
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+
+    test('todoServiceAPIProviderはTodoServiceAPIのインスタンスを返すこと', () {
+      final service = container.read(todoServiceAPIProvider);
+      expect(service, isA<TodoServiceAPI>());
+    });
+
+    test('todoServiceAPIProviderは指定されたApiClientで初期化されること', () async {
+      // todoServiceAPIProviderがmockApiClientで初期化されていることを確認するために、
+      // serviceのfetchメソッドを呼び出し、mockApiClientのgetメソッドが呼ばれることを検証する。
+      final service = container.read(todoServiceAPIProvider);
+      when(mockApiClient.get(endpoint: 'todos')).thenAnswer(
+        (_) async => {'todos': <Map<String, dynamic>>[]},
+      );
+      await service.fetch();
+      verify(mockApiClient.get(endpoint: 'todos')).called(1);
+    });
+  });
+
   late MockApiClient mockApiClient;
   late TodoServiceAPI todoServiceAPI;
 
@@ -94,6 +129,7 @@ void main() {
       expect(result, isA<FailureResult<TodoModel>>());
       expect((result as FailureResult<TodoModel>).error, apiException);
     });
+
     test('その他の例外が発生した場合、FailureResultを返すこと', () async {
       const todoId = 1;
       final exception = Exception('Something went wrong');
@@ -104,16 +140,5 @@ void main() {
       expect(result, isA<FailureResult<TodoModel>>());
       expect((result as FailureResult<TodoModel>).error, exception);
     });
-  });
-
-  // todoServiceAPIProviderのテスト
-  test('todoServiceAPIProviderがTodoServiceAPIのインスタンスを提供すること', () {
-    final container = ProviderContainer(
-      overrides: [
-        apiClientProvider.overrideWithValue(mockApiClient),
-      ],
-    );
-    final service = container.read(todoServiceAPIProvider);
-    expect(service, isA<TodoServiceAPI>());
   });
 }
