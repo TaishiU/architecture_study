@@ -207,6 +207,8 @@ class ApiClientImpl implements ApiClient {
       logger.d('リクエストボディ: $requestBody');
     }
 
+    Exception? lastException;
+
     for (var i = 0; i <= maxRetries; i++) {
       try {
         logger.d('APIリクエスト試行 ${i + 1}/${maxRetries + 1}');
@@ -240,11 +242,11 @@ class ApiClientImpl implements ApiClient {
         );
       } on SocketException catch (error) {
         logger.w('ネットワークエラー: ${error.message}');
-        if (i == maxRetries) {
-          throw NoInternetConnectionException(error.message);
+        lastException = NoInternetConnectionException(error.message);
+        if (i < maxRetries) {
+          logger.w('リトライします... (${retryDelay.inSeconds}秒後)'); // コンストラクタから取得
+          await Future<void>.delayed(retryDelay); // コンストラクタから取得
         }
-        logger.w('リトライします... (${retryDelay.inSeconds}秒後)'); // コンストラクタから取得
-        await Future<void>.delayed(retryDelay); // コンストラクタから取得
       } on http.ClientException catch (error) {
         logger.e('HTTPクライアントエラー: ${error.message}');
         throw ApiClientException('HTTP Client Error: ${error.message}');
@@ -256,7 +258,7 @@ class ApiClientImpl implements ApiClient {
         rethrow;
       }
     }
-    throw Exception('Unknown error during API call after retries.');
+    throw lastException!;
   }
 
   Map<String, dynamic> _parseResponse({
