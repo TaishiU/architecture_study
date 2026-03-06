@@ -1,10 +1,8 @@
-// api_client_test.dart
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:architecture_study/data/services/api_client.dart';
 import 'package:architecture_study/data/services/api_exception.dart';
-import 'package:architecture_study/utils/logger.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -309,6 +307,7 @@ void main() {
         ).called(1);
       },
     );
+
     test(
       'ネットワークエラー時にリトライが行われ、最終的にNoInternetConnectionExceptionがスローされること',
       () async {
@@ -348,6 +347,7 @@ void main() {
         });
       },
     );
+
     test('ネットワークエラー後にリトライして成功すること', () async {
       final responseBody = {'id': 1, 'name': 'Test Item'};
       var callCount = 0; // callCountをthenAnswerのクロージャの外に移動

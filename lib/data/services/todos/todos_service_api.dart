@@ -25,14 +25,12 @@ class TodoServiceAPI implements TodosService {
   @override
   Future<Result<TodosModel>> fetch() async {
     try {
-      final responseJson = await apiClient.get(endpoint: endpoint);
-      final todosModel = TodosModel.fromJson(responseJson);
+      final response = await apiClient.get(endpoint: endpoint);
+      final todosModel = TodosModel.fromJson(response);
       logger.i('[TodoServiceAPI] $todosModel');
       return SuccessResult(todosModel);
     } on ApiClientException catch (error) {
       logger.e('[TodoServiceAPI] ApiClientException: $error');
-      // logger.w(error.statusCode);
-      // logger.w(error.message);
       return Result.failure(error);
     } on Exception catch (error) {
       logger.e('[TodoServiceAPI] Unexpected Error: $error');

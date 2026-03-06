@@ -9,7 +9,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final todoRepositoryLocalProvider = Provider<TodoRepositoryLocal>(
-  (ref) => TodoRepositoryLocal(todoService: ref.read(todosServiceLocalProvider)),
+  (ref) =>
+      TodoRepositoryLocal(todoService: ref.read(todosServiceLocalProvider)),
 );
 
 /// ローカルリポジトリ実装クラス
