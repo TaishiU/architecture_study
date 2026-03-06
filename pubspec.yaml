@@ -16,7 +16,6 @@ dependencies:
   http:
   json_annotation:
   logger:
-  riverpod: # 追加
   very_good_analysis:
 
 dev_dependencies:

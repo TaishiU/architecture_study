@@ -1,30 +1,19 @@
 part of 'home_screen_state.dart';
 
 /// プロバイダ
-final AsyncNotifierProviderFamily<
-  HomeScreenViewModel,
-  HomeScreenState,
-  TodoRepository
->
-homeScreenProvider =
-    AsyncNotifierProvider.family<
-      HomeScreenViewModel,
-      HomeScreenState,
-      TodoRepository
-    >(HomeScreenViewModel.new);
+final homeScreenProvider =
+    AsyncNotifierProvider<HomeScreenViewModel, HomeScreenState>(
+      HomeScreenViewModel.new,
+    );
 
-/// ViewModel
+/// ホーム画面のViewModel
 class HomeScreenViewModel extends AsyncNotifier<HomeScreenState> {
-  /// コンストラクタ
-  HomeScreenViewModel(
-    this.todoRepository,
-  );
-
-  /// TodoRepository
-  final TodoRepository todoRepository;
+  late final TodoRepository _todoRepository;
 
   @override
   Future<HomeScreenState> build() async {
+    _todoRepository = ref.read(todoRepositoryProvider);
+
     try {
       // throw Exception('意図的なエラー');
       final todos = await fetchTodos();
@@ -32,20 +21,20 @@ class HomeScreenViewModel extends AsyncNotifier<HomeScreenState> {
       return HomeScreenState(todos: todos);
     } on Exception catch (error) {
       logger.e('[HomeScreenViewModel] $error');
-      throw UnimplementedError();
+      throw Exception();
     }
   }
 
   /// [Todos] を取得
   Future<Todos> fetchTodos() async {
-    final result = await todoRepository.fetch();
+    final result = await _todoRepository.fetch();
 
     switch (result) {
       case SuccessResult<Todos>():
         return result.value;
       case FailureResult<Todos>():
-        logger.e('[HomeScreenViewModel] ${result.error}');
-        throw UnimplementedError();
+        logger.e('[HomeScreenViewModel] fetchTodos failed: ${result.error}');
+        throw Exception();
     }
   }
 }

@@ -5,8 +5,7 @@ import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/domain/entities/todos/todos.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hooks_riverpod/misc.dart';
-import 'package:riverpod/riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'home_screen_state.freezed.dart';
 part 'home_screen_view_model.dart';

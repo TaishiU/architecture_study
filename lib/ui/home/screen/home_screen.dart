@@ -1,4 +1,3 @@
-import 'package:architecture_study/data/repositories/todos/todo_repository_api.dart';
 import 'package:architecture_study/ui/core/app_bar.dart';
 import 'package:architecture_study/ui/home/view_model/home_screen_state.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +10,7 @@ class HomeScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncValue = ref.watch(
-      homeScreenProvider(ref.read(todoRepositoryAPIProvider)),
-    );
+    final asyncValue = ref.watch(homeScreenProvider);
 
     return Scaffold(
       appBar: const CoreAppBar(

@@ -2,7 +2,13 @@
 
 dart fix --apply .
 dart format .
-flutter analyze
+#flutter analyze
+FLUTTER_ANALYZE_OUTPUT=$(flutter analyze 2>&1)
+echo "$FLUTTER_ANALYZE_OUTPUT"
+if ! echo "$FLUTTER_ANALYZE_OUTPUT" | grep -q "No issues found!"; then
+  echo "エラー: flutter analyze で問題が検出されました。後続の処理を中断します。"
+  exit 1
+fi
 # ユニットテストを実行する
 flutter test --coverage
 # カバレッジをhtml化する
