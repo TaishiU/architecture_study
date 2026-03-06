@@ -3,12 +3,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'todos.freezed.dart';
 part 'todos.g.dart';
 
-/// Todos
+/// 複数のTodoアイテムを格納するリストを表すエンティティ
 @freezed
 abstract class Todos with _$Todos {
   /// コンストラクタ
   const factory Todos({
-    /// ID
+    /// 単一のTodoアイテムのリスト
     required List<Todo> todos,
   }) = _Todos;
 
@@ -16,7 +16,7 @@ abstract class Todos with _$Todos {
   factory Todos.fromJson(Map<String, Object?> json) => _$TodosFromJson(json);
 }
 
-/// Todo
+/// 単一のTodoアイテムを表すエンティティ
 @freezed
 abstract class Todo with _$Todo {
   /// コンストラクタ

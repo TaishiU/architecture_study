@@ -5,7 +5,8 @@ import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/domain/entities/todos/todos.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:riverpod/src/providers/async_notifier.dart';
+import 'package:hooks_riverpod/misc.dart';
+import 'package:riverpod/riverpod.dart';
 
 part 'home_screen_state.freezed.dart';
 part 'home_screen_view_model.dart';
@@ -15,7 +16,7 @@ part 'home_screen_view_model.dart';
 abstract class HomeScreenState with _$HomeScreenState {
   /// コンストラクタ
   const factory HomeScreenState({
-    /// Todo
+    /// 表示するTodoアイテムのリスト
     required Todos todos,
   }) = _HomeScreenState;
 }
