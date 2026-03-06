@@ -105,9 +105,13 @@ class ApiClientImpl implements ApiClient {
   ///
   /// [_client] : HTTPリクエストの送信に使用する [http.Client] インスタンス。
   /// [baseUrl] : APIのベースURL。デフォルトは `'https://dummyjson.com'`。
+  /// [retryDelay] : リクエストが失敗した場合の再試行の間隔。デフォルトは1秒。
+  /// [maxRetries] : リクエストが失敗した場合の最大再試行回数。デフォルトは3回。
   ApiClientImpl(
     this._client, {
     required this.baseUrl,
+    this.retryDelay = const Duration(seconds: 1),
+    this.maxRetries = 3,
   });
 
   /// HTTPリクエストの送信に使用されるHTTPクライアント。
@@ -115,6 +119,12 @@ class ApiClientImpl implements ApiClient {
 
   /// APIのベースURL。
   final String baseUrl;
+
+  /// リクエストが失敗した場合の再試行の間隔。
+  final Duration retryDelay;
+
+  /// リクエストが失敗した場合の最大再試行回数。
+  final int maxRetries;
 
   @override
   Future<Map<String, dynamic>> get({
@@ -185,8 +195,6 @@ class ApiClientImpl implements ApiClient {
     Map<String, String>? headers,
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? requestBody,
-    int maxRetries = 3,
-    Duration retryDelay = const Duration(seconds: 1),
   }) async {
     final uri = _buildUri(endpoint, queryParameters: queryParameters);
 
@@ -235,8 +243,8 @@ class ApiClientImpl implements ApiClient {
         if (i == maxRetries) {
           throw NoInternetConnectionException(error.message);
         }
-        logger.w('リトライします... (${retryDelay.inSeconds}秒後)');
-        await Future<void>.delayed(retryDelay);
+        logger.w('リトライします... (${retryDelay.inSeconds}秒後)'); // コンストラクタから取得
+        await Future<void>.delayed(retryDelay); // コンストラクタから取得
       } on http.ClientException catch (error) {
         logger.e('HTTPクライアントエラー: ${error.message}');
         throw ApiClientException('HTTP Client Error: ${error.message}');

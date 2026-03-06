@@ -1,33 +1,36 @@
 // api_client_test.dart
 import 'dart:convert';
-import 'dart:io'; // dart:ioをインポート
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:http/http.dart' as http;
+import 'dart:io';
+
 import 'package:architecture_study/data/services/api_client.dart';
 import 'package:architecture_study/data/services/api_exception.dart';
+import 'package:architecture_study/utils/logger.dart';
+import 'package:fake_async/fake_async.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:fake_async/fake_async.dart'; // fake_asyncを追加
+import 'package:http/http.dart' as http;
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 // MockClientを生成するためのアノテーション
 @GenerateMocks([http.Client])
 import 'api_client_test.mocks.dart';
 
+const String testBaseUrl = 'http://test.com';
+const Map<String, String> jsonContentTypeHeader = {
+  'Content-Type': 'application/json',
+};
+
 void main() {
-  // MockClientのインスタンス
   late MockClient mockClient;
-  // ApiClientImplのインスタンス
   late ApiClientImpl apiClient;
-  // ProviderContainerのインスタンス
   late ProviderContainer container;
 
   setUp(() {
     mockClient = MockClient();
-    // baseUrlProviderをオーバーライドして、テスト用のbaseUrlを設定
     container = ProviderContainer(
       overrides: [
-        baseUrlProvider.overrideWithValue('http://test.com'),
+        baseUrlProvider.overrideWithValue(testBaseUrl),
       ],
     );
     apiClient = ApiClientImpl(
@@ -50,8 +53,8 @@ void main() {
       final responseBody = {'id': 1, 'name': 'Test Item'};
       when(
         mockClient.get(
-          Uri.parse('http://test.com/endpoint?param1=value1'),
-          headers: {'Content-Type': 'application/json'},
+          Uri.parse('$testBaseUrl/endpoint?param1=value1'),
+          headers: jsonContentTypeHeader,
         ),
       ).thenAnswer(
         (_) async => http.Response(
@@ -64,189 +67,63 @@ void main() {
       final result = await apiClient.get(
         endpoint: 'endpoint',
         queryParameters: {'param1': 'value1'},
-        headers: {'Content-Type': 'application/json'},
+        headers: jsonContentTypeHeader,
       );
 
       expect(result, responseBody);
-      verify(mockClient.get(
-        Uri.parse('http://test.com/endpoint?param1=value1'),
-        headers: {'Content-Type': 'application/json'},
-      )).called(1);
+      verify(
+        mockClient.get(
+          Uri.parse('$testBaseUrl/endpoint?param1=value1'),
+          headers: jsonContentTypeHeader,
+        ),
+      ).called(1);
     });
 
-    test('GETリクエストで400 Bad Requestの場合にBadRequestExceptionがスローされること', () async {
-      final errorBody = {'message': 'Bad Request'};
-      when(
-        mockClient.get(
-          Uri.parse('http://test.com/bad_request'),
-          headers: anyNamed('headers'),
-        ),
-      ).thenAnswer(
-        (_) async => http.Response(
-          json.encode(errorBody),
-          400,
-          headers: {'content-type': 'application/json'},
-        ),
-      );
+    group('GETリクエストのHTTPエラーハンドリング', () {
+      final errorCases = [
+        (statusCode: 400, exceptionType: BadRequestException),
+        (statusCode: 401, exceptionType: UnauthorizedException),
+        (statusCode: 403, exceptionType: ForbiddenException),
+        (statusCode: 404, exceptionType: NotFoundException),
+        (statusCode: 405, exceptionType: MethodNotAllowedException),
+        (statusCode: 500, exceptionType: InternalServerErrorException),
+        (statusCode: 502, exceptionType: UnknownErrorException),
+        // その他のエラーとして502 Bad Gatewayを例に
+      ];
 
-      expect(
-        () => apiClient.get(endpoint: 'bad_request'),
-        throwsA(isA<BadRequestException>()),
-      );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/bad_request'),
-        headers: anyNamed('headers'),
-      )).called(1);
-    });
+      for (final errorCase in errorCases) {
+        test(
+          'HTTP ${errorCase.statusCode} の場合に'
+          '${errorCase.exceptionType}がスローされること',
+          () async {
+            final errorBody = {'message': 'Error ${errorCase.statusCode}'};
+            final endpoint = 'error_${errorCase.statusCode}';
+            when(
+              mockClient.get(
+                Uri.parse('$testBaseUrl/$endpoint'),
+                headers: anyNamed('headers'),
+              ),
+            ).thenAnswer(
+              (_) async => http.Response(
+                json.encode(errorBody),
+                errorCase.statusCode,
+                headers: {'content-type': 'application/json'},
+              ),
+            );
 
-    test('GETリクエストで401 Unauthorizedの場合にUnauthorizedExceptionがスローされること', () async {
-      final errorBody = {'message': 'Unauthorized'};
-      when(
-        mockClient.get(
-          Uri.parse('http://test.com/unauthorized'),
-          headers: anyNamed('headers'),
-        ),
-      ).thenAnswer(
-        (_) async => http.Response(
-          json.encode(errorBody),
-          401,
-          headers: {'content-type': 'application/json'},
-        ),
-      );
-
-      expect(
-        () => apiClient.get(endpoint: 'unauthorized'),
-        throwsA(isA<UnauthorizedException>()),
-      );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/unauthorized'),
-        headers: anyNamed('headers'),
-      )).called(1);
-    });
-
-    test('GETリクエストで403 Forbiddenの場合にForbiddenExceptionがスローされること', () async {
-      final errorBody = {'message': 'Forbidden'};
-      when(
-        mockClient.get(
-          Uri.parse('http://test.com/forbidden'),
-          headers: anyNamed('headers'),
-        ),
-      ).thenAnswer(
-        (_) async => http.Response(
-          json.encode(errorBody),
-          403,
-          headers: {'content-type': 'application/json'},
-        ),
-      );
-
-      expect(
-        () => apiClient.get(endpoint: 'forbidden'),
-        throwsA(isA<ForbiddenException>()),
-      );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/forbidden'),
-        headers: anyNamed('headers'),
-      )).called(1);
-    });
-
-    test('GETリクエストで404 Not Foundの場合にNotFoundExceptionがスローされること', () async {
-      final errorBody = {'message': 'Not Found'};
-      when(
-        mockClient.get(
-          Uri.parse('http://test.com/not_found'),
-          headers: anyNamed('headers'),
-        ),
-      ).thenAnswer(
-        (_) async => http.Response(
-          json.encode(errorBody),
-          404,
-          headers: {'content-type': 'application/json'},
-        ),
-      );
-
-      expect(
-        () => apiClient.get(endpoint: 'not_found'),
-        throwsA(isA<NotFoundException>()),
-      );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/not_found'),
-        headers: anyNamed('headers'),
-      )).called(1);
-    });
-
-    test('GETリクエストで405 Method Not Allowedの場合にMethodNotAllowedExceptionがスローされること', () async {
-      final errorBody = {'message': 'Method Not Allowed'};
-      when(
-        mockClient.get(
-          Uri.parse('http://test.com/method_not_allowed'),
-          headers: anyNamed('headers'),
-        ),
-      ).thenAnswer(
-        (_) async => http.Response(
-          json.encode(errorBody),
-          405,
-          headers: {'content-type': 'application/json'},
-        ),
-      );
-
-      expect(
-        () => apiClient.get(endpoint: 'method_not_allowed'),
-        throwsA(isA<MethodNotAllowedException>()),
-      );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/method_not_allowed'),
-        headers: anyNamed('headers'),
-      )).called(1);
-    });
-
-    test('GETリクエストで500 Internal Server Errorの場合にInternalServerErrorExceptionがスローされること', () async {
-      final errorBody = {'message': 'Internal Server Error'};
-      when(
-        mockClient.get(
-          Uri.parse('http://test.com/internal_server_error'),
-          headers: anyNamed('headers'),
-        ),
-      ).thenAnswer(
-        (_) async => http.Response(
-          json.encode(errorBody),
-          500,
-          headers: {'content-type': 'application/json'},
-        ),
-      );
-
-      expect(
-        () => apiClient.get(endpoint: 'internal_server_error'),
-        throwsA(isA<InternalServerErrorException>()),
-      );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/internal_server_error'),
-        headers: anyNamed('headers'),
-      )).called(1);
-    });
-
-    test('GETリクエストでその他のHTTPステータスコードの場合にUnknownErrorExceptionがスローされること', () async {
-      final errorBody = {'message': 'Bad Gateway'};
-      when(
-        mockClient.get(
-          Uri.parse('http://test.com/unknown_error'),
-          headers: anyNamed('headers'),
-        ),
-      ).thenAnswer(
-        (_) async => http.Response(
-          json.encode(errorBody),
-          502,
-          headers: {'content-type': 'application/json'},
-        ),
-      );
-
-      expect(
-        () => apiClient.get(endpoint: 'unknown_error'),
-        throwsA(isA<UnknownErrorException>()),
-      );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/unknown_error'),
-        headers: anyNamed('headers'),
-      )).called(1);
+            expect(
+              () => apiClient.get(endpoint: endpoint),
+              throwsA(isA<ApiClientException>()),
+            );
+            verify(
+              mockClient.get(
+                Uri.parse('$testBaseUrl/$endpoint'),
+                headers: anyNamed('headers'),
+              ),
+            ).called(1);
+          },
+        );
+      }
     });
 
     test('POSTリクエストが成功し、期待されるMap<String, dynamic>が返されること', () async {
@@ -254,8 +131,8 @@ void main() {
       final responseBody = {'id': 101, ...requestBody};
       when(
         mockClient.post(
-          Uri.parse('http://test.com/posts'),
-          headers: {'Content-Type': 'application/json'},
+          Uri.parse('$testBaseUrl/posts'),
+          headers: jsonContentTypeHeader,
           body: json.encode(requestBody),
         ),
       ).thenAnswer(
@@ -269,15 +146,17 @@ void main() {
       final result = await apiClient.post(
         endpoint: 'posts',
         body: requestBody,
-        headers: {'Content-Type': 'application/json'},
+        headers: jsonContentTypeHeader,
       );
 
       expect(result, responseBody);
-      verify(mockClient.post(
-        Uri.parse('http://test.com/posts'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(requestBody),
-      )).called(1);
+      verify(
+        mockClient.post(
+          Uri.parse('$testBaseUrl/posts'),
+          headers: jsonContentTypeHeader,
+          body: json.encode(requestBody),
+        ),
+      ).called(1);
     });
 
     test('POSTリクエストで400 Bad Requestの場合にBadRequestExceptionがスローされること', () async {
@@ -285,7 +164,7 @@ void main() {
       final errorBody = {'message': 'Bad Request'};
       when(
         mockClient.post(
-          Uri.parse('http://test.com/bad_request'),
+          Uri.parse('$testBaseUrl/bad_request'),
           headers: anyNamed('headers'),
           body: json.encode(requestBody),
         ),
@@ -301,11 +180,13 @@ void main() {
         () => apiClient.post(endpoint: 'bad_request', body: requestBody),
         throwsA(isA<BadRequestException>()),
       );
-      verify(mockClient.post(
-        Uri.parse('http://test.com/bad_request'),
-        headers: anyNamed('headers'),
-        body: json.encode(requestBody),
-      )).called(1);
+      verify(
+        mockClient.post(
+          Uri.parse('$testBaseUrl/bad_request'),
+          headers: anyNamed('headers'),
+          body: json.encode(requestBody),
+        ),
+      ).called(1);
     });
 
     test('PUTリクエストが成功し、期待されるMap<String, dynamic>が返されること', () async {
@@ -313,8 +194,8 @@ void main() {
       final responseBody = {'id': 1, 'title': 'updated title'};
       when(
         mockClient.put(
-          Uri.parse('http://test.com/posts/1'),
-          headers: {'Content-Type': 'application/json'},
+          Uri.parse('$testBaseUrl/posts/1'),
+          headers: jsonContentTypeHeader,
           body: json.encode(requestBody),
         ),
       ).thenAnswer(
@@ -328,15 +209,17 @@ void main() {
       final result = await apiClient.put(
         endpoint: 'posts/1',
         body: requestBody,
-        headers: {'Content-Type': 'application/json'},
+        headers: jsonContentTypeHeader,
       );
 
       expect(result, responseBody);
-      verify(mockClient.put(
-        Uri.parse('http://test.com/posts/1'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(requestBody),
-      )).called(1);
+      verify(
+        mockClient.put(
+          Uri.parse('$testBaseUrl/posts/1'),
+          headers: jsonContentTypeHeader,
+          body: json.encode(requestBody),
+        ),
+      ).called(1);
     });
 
     test('PUTリクエストで400 Bad Requestの場合にBadRequestExceptionがスローされること', () async {
@@ -344,7 +227,7 @@ void main() {
       final errorBody = {'message': 'Bad Request'};
       when(
         mockClient.put(
-          Uri.parse('http://test.com/bad_request/1'),
+          Uri.parse('$testBaseUrl/bad_request/1'),
           headers: anyNamed('headers'),
           body: json.encode(requestBody),
         ),
@@ -360,18 +243,20 @@ void main() {
         () => apiClient.put(endpoint: 'bad_request/1', body: requestBody),
         throwsA(isA<BadRequestException>()),
       );
-      verify(mockClient.put(
-        Uri.parse('http://test.com/bad_request/1'),
-        headers: anyNamed('headers'),
-        body: json.encode(requestBody),
-      )).called(1);
+      verify(
+        mockClient.put(
+          Uri.parse('$testBaseUrl/bad_request/1'),
+          headers: anyNamed('headers'),
+          body: json.encode(requestBody),
+        ),
+      ).called(1);
     });
 
     test('DELETEリクエストが成功し、期待されるMap<String, dynamic>が返されること', () async {
       final responseBody = {'message': 'Item deleted successfully'};
       when(
         mockClient.delete(
-          Uri.parse('http://test.com/posts/1'),
+          Uri.parse('$testBaseUrl/posts/1'),
           headers: anyNamed('headers'),
         ),
       ).thenAnswer(
@@ -387,62 +272,85 @@ void main() {
       );
 
       expect(result, responseBody);
-      verify(mockClient.delete(
-        Uri.parse('http://test.com/posts/1'),
-        headers: anyNamed('headers'),
-      )).called(1);
-    });
-
-    test('DELETEリクエストで400 Bad Requestの場合にBadRequestExceptionがスローされること', () async {
-      final errorBody = {'message': 'Bad Request'};
-      when(
+      verify(
         mockClient.delete(
-          Uri.parse('http://test.com/bad_request/1'),
+          Uri.parse('$testBaseUrl/posts/1'),
           headers: anyNamed('headers'),
         ),
-      ).thenAnswer(
-        (_) async => http.Response(
-          json.encode(errorBody),
-          400,
-          headers: {'content-type': 'application/json'},
-        ),
-      );
-
-      expect(
-        () => apiClient.delete(endpoint: 'bad_request/1'),
-        throwsA(isA<BadRequestException>()),
-      );
-      verify(mockClient.delete(
-        Uri.parse('http://test.com/bad_request/1'),
-        headers: anyNamed('headers'),
-      )).called(1);
+      ).called(1);
     });
-    test('ネットワークエラー時にリトライが行われ、最終的にNoInternetConnectionExceptionがスローされること', () { // async を削除
-      fakeAsync((async) { // fakeAsync ブロックで囲む
+
+    test(
+      'DELETEリクエストで400 Bad Requestの場合にBadRequestExceptionがスローされること',
+      () async {
+        final errorBody = {'message': 'Bad Request'};
         when(
-          mockClient.get(
-            any,
+          mockClient.delete(
+            Uri.parse('$testBaseUrl/bad_request/1'),
             headers: anyNamed('headers'),
           ),
-        ).thenAnswer((_) async => throw const SocketException('No Internet'));
-
-        expect(
-          () => apiClient.get(endpoint: 'retry_fail'),
-          throwsA(isA<NoInternetConnectionException>()),
+        ).thenAnswer(
+          (_) async => http.Response(
+            json.encode(errorBody),
+            400,
+            headers: {'content-type': 'application/json'},
+          ),
         );
 
-        // リトライに必要な時間を進める
-        async.elapse(const Duration(seconds: 1) * 3); // 3回の遅延をシミュレート
-        // 初回呼び出しと3回のリトライで合計4回 get が呼ばれることを期待
-        verify(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).called(4);
-      });
-    });
+        expect(
+          () => apiClient.delete(endpoint: 'bad_request/1'),
+          throwsA(isA<BadRequestException>()),
+        );
+        verify(
+          mockClient.delete(
+            Uri.parse('$testBaseUrl/bad_request/1'),
+            headers: anyNamed('headers'),
+          ),
+        ).called(1);
+      },
+    );
+    test(
+      'ネットワークエラー時にリトライが行われ、最終的にNoInternetConnectionExceptionがスローされること',
+      () async {
+        fakeAsync((async) {
+          when(
+            mockClient.get(
+              any,
+              headers: anyNamed('headers'),
+            ),
+          ).thenAnswer((_) async => throw const SocketException('No Internet'));
+
+          // APIコールをバックグラウンドで開始し、そのFutureを保持
+          final future = apiClient.get(endpoint: 'retry_fail');
+
+          // 期待される例外がスローされることをアサート
+          expect(
+            future,
+            throwsA(isA<NoInternetConnectionException>()),
+          );
+
+          // _safeApiCallはmaxRetries=3なので、初回+3リトライで合計4回試行される。
+          // 3回のリトライそれぞれでretryDelayが挟まるため、3回分の遅延を進める
+          for (var i = 0; i < apiClient.maxRetries; i++) {
+            async.elapse(apiClient.retryDelay); // 各リトライ遅延を進める
+          }
+
+          // microtaskキューをフラッシュして、全ての非同期処理が完了するのを待つ
+          async.flushMicrotasks();
+
+          // 最終的なverify: 初回と3回のリトライで合計4回呼ばれる
+          verify(
+            mockClient.get(
+              Uri.parse('$testBaseUrl/retry_fail'),
+              headers: anyNamed('headers'),
+            ),
+          ).called(apiClient.maxRetries + 1);
+        });
+      },
+    );
     test('ネットワークエラー後にリトライして成功すること', () async {
       final responseBody = {'id': 1, 'name': 'Test Item'};
-      int callCount = 0; // callCountをthenAnswerのクロージャの外に移動
+      var callCount = 0; // callCountをthenAnswerのクロージャの外に移動
       when(
         mockClient.get(
           any, // 位置引数には any を使用
@@ -450,7 +358,8 @@ void main() {
         ),
       ).thenAnswer((_) async {
         callCount++;
-        if (callCount == 1) { // 初回呼び出しの場合
+        if (callCount == 1) {
+          // 初回呼び出しの場合
           throw const SocketException('No Internet');
         }
         return http.Response(
@@ -464,16 +373,18 @@ void main() {
 
       expect(result, responseBody);
       // 初回とリトライ1回で計2回呼ばれる想定
-      verify(mockClient.get(
-        Uri.parse('http://test.com/retry_success'),
-        headers: anyNamed('headers'),
-      )).called(2);
+      verify(
+        mockClient.get(
+          Uri.parse('$testBaseUrl/retry_success'), // 定数を使用
+          headers: anyNamed('headers'),
+        ),
+      ).called(2);
     });
 
     test('http.ClientExceptionが発生した場合にApiClientExceptionがスローされること', () async {
       when(
         mockClient.get(
-          Uri.parse('http://test.com/client_error'),
+          Uri.parse('$testBaseUrl/client_error'),
           headers: anyNamed('headers'),
         ),
       ).thenThrow(http.ClientException('Client Error'));
@@ -482,16 +393,18 @@ void main() {
         () => apiClient.get(endpoint: 'client_error'),
         throwsA(isA<ApiClientException>()),
       );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/client_error'),
-        headers: anyNamed('headers'),
-      )).called(1);
+      verify(
+        mockClient.get(
+          Uri.parse('$testBaseUrl/client_error'),
+          headers: anyNamed('headers'),
+        ),
+      ).called(1);
     });
 
     test('無効なJSONレスポンスが返された場合にApiClientExceptionがスローされること', () async {
       when(
         mockClient.get(
-          Uri.parse('http://test.com/invalid_json'),
+          Uri.parse('$testBaseUrl/invalid_json'),
           headers: anyNamed('headers'),
         ),
       ).thenAnswer(
@@ -506,40 +419,49 @@ void main() {
         () => apiClient.get(endpoint: 'invalid_json'),
         throwsA(isA<ApiClientException>()),
       );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/invalid_json'),
-        headers: anyNamed('headers'),
-      )).called(1);
-    });
-
-    test('レスポンスボディがMap<String, dynamic>ではない場合にFormatExceptionがスローされること', () async {
-      when(
+      verify(
         mockClient.get(
-          Uri.parse('http://test.com/non_map_json'),
+          Uri.parse('$testBaseUrl/invalid_json'),
           headers: anyNamed('headers'),
         ),
-      ).thenAnswer(
-        (_) async => http.Response(
-          json.encode(['item1', 'item2']), // Mapではないリストを返す
-          200,
-          headers: {'content-type': 'application/json'},
-        ),
-      );
-
-      expect(
-        () => apiClient.get(endpoint: 'non_map_json'),
-        throwsA(isA<ApiClientException>()), // FormatException ではなく ApiClientException を期待
-      );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/non_map_json'),
-        headers: anyNamed('headers'),
-      )).called(1);
+      ).called(1);
     });
+
+    test(
+      'レスポンスボディがMap<String, dynamic>ではない場合にApiClientExceptionがスローされること',
+      () async {
+        when(
+          mockClient.get(
+            Uri.parse('$testBaseUrl/non_map_json'),
+            headers: anyNamed('headers'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            json.encode(['item1', 'item2']), // Mapではないリストを返す
+            200,
+            headers: {'content-type': 'application/json'},
+          ),
+        );
+
+        expect(
+          () => apiClient.get(endpoint: 'non_map_json'),
+          throwsA(
+            isA<ApiClientException>(),
+          ), // FormatException ではなく ApiClientException を期待
+        );
+        verify(
+          mockClient.get(
+            Uri.parse('$testBaseUrl/non_map_json'),
+            headers: anyNamed('headers'),
+          ),
+        ).called(1);
+      },
+    );
 
     test('その他の予期せぬエラーが発生した場合にそれが再スローされること', () async {
       when(
         mockClient.get(
-          Uri.parse('http://test.com/unexpected_error'),
+          Uri.parse('$testBaseUrl/unexpected_error'),
           headers: anyNamed('headers'),
         ),
       ).thenAnswer((_) async => throw Exception('Unexpected error occurred'));
@@ -548,10 +470,12 @@ void main() {
         () => apiClient.get(endpoint: 'unexpected_error'),
         throwsA(isA<Exception>()),
       );
-      verify(mockClient.get(
-        Uri.parse('http://test.com/unexpected_error'),
-        headers: anyNamed('headers'),
-      )).called(1);
+      verify(
+        mockClient.get(
+          Uri.parse('$testBaseUrl/unexpected_error'),
+          headers: anyNamed('headers'),
+        ),
+      ).called(1);
     });
   }); // ApiClientImpl groupの閉じ括弧
 
