@@ -20,6 +20,9 @@ void main() {
   late MockSharedPreferencesWithCache mockSharedPreferencesWithCache;
   late AuthPreferencesServiceImpl authPreferencesServiceImpl;
 
+  const accessTokenKey = 'access_token';
+  const refreshTokenKey = 'refresh_token';
+
   setUp(() {
     mockSharedPreferencesService = MockSharedPreferencesService();
     mockSharedPreferencesWithCache = MockSharedPreferencesWithCache();
@@ -103,20 +106,20 @@ void main() {
   group('AuthPreferencesServiceImpl', () {
     test('getAccessTokenはgeneralPreferences.getStringを正しいキーで呼び出すこと', () {
       when(
-        mockSharedPreferencesService.getString('access_token'),
+        mockSharedPreferencesService.getString(accessTokenKey),
       ).thenReturn('test_access_token');
       final result = authPreferencesServiceImpl.getAccessToken();
       expect(result, 'test_access_token');
-      verify(mockSharedPreferencesService.getString('access_token')).called(1);
+      verify(mockSharedPreferencesService.getString(accessTokenKey)).called(1);
     });
 
     test('getAccessTokenがnullを返した場合、空文字列を返すこと', () {
       when(
-        mockSharedPreferencesService.getString('access_token'),
+        mockSharedPreferencesService.getString(accessTokenKey),
       ).thenReturn(null);
       final result = authPreferencesServiceImpl.getAccessToken();
       expect(result, '');
-      verify(mockSharedPreferencesService.getString('access_token')).called(1);
+      verify(mockSharedPreferencesService.getString(accessTokenKey)).called(1);
     });
 
     test(
@@ -124,14 +127,14 @@ void main() {
       () async {
         when(
           mockSharedPreferencesService.setString(
-            'access_token',
+            accessTokenKey,
             'new_access_token',
           ),
         ).thenAnswer((_) async => true);
         await authPreferencesServiceImpl.setAccessToken('new_access_token');
         verify(
           mockSharedPreferencesService.setString(
-            'access_token',
+            accessTokenKey,
             'new_access_token',
           ),
         ).called(1);
@@ -140,20 +143,20 @@ void main() {
 
     test('getRefreshTokenはgeneralPreferences.getStringを正しいキーで呼び出すこと', () {
       when(
-        mockSharedPreferencesService.getString('refresh_token'),
+        mockSharedPreferencesService.getString(refreshTokenKey),
       ).thenReturn('test_refresh_token');
       final result = authPreferencesServiceImpl.getRefreshToken();
       expect(result, 'test_refresh_token');
-      verify(mockSharedPreferencesService.getString('refresh_token')).called(1);
+      verify(mockSharedPreferencesService.getString(refreshTokenKey)).called(1);
     });
 
     test('getRefreshTokenがnullを返した場合、空文字列を返すこと', () {
       when(
-        mockSharedPreferencesService.getString('refresh_token'),
+        mockSharedPreferencesService.getString(refreshTokenKey),
       ).thenReturn(null);
       final result = authPreferencesServiceImpl.getRefreshToken();
       expect(result, '');
-      verify(mockSharedPreferencesService.getString('refresh_token')).called(1);
+      verify(mockSharedPreferencesService.getString(refreshTokenKey)).called(1);
     });
 
     test(
@@ -161,14 +164,14 @@ void main() {
       () async {
         when(
           mockSharedPreferencesService.setString(
-            'refresh_token',
+            refreshTokenKey,
             'new_refresh_token',
           ),
         ).thenAnswer((_) async => true);
         await authPreferencesServiceImpl.setRefreshToken('new_refresh_token');
         verify(
           mockSharedPreferencesService.setString(
-            'refresh_token',
+            refreshTokenKey,
             'new_refresh_token',
           ),
         ).called(1);
@@ -177,15 +180,15 @@ void main() {
 
     test('clearAuthDataはgeneralPreferences.removeを両方のキーで呼び出すこと', () async {
       when(
-        mockSharedPreferencesService.remove('access_token'),
+        mockSharedPreferencesService.remove(accessTokenKey),
       ).thenAnswer((_) async => true);
       when(
-        mockSharedPreferencesService.remove('refresh_token'),
+        mockSharedPreferencesService.remove(refreshTokenKey),
       ).thenAnswer((_) async => true);
       final result = await authPreferencesServiceImpl.clearAuthData();
       expect(result, isTrue);
-      verify(mockSharedPreferencesService.remove('access_token')).called(1);
-      verify(mockSharedPreferencesService.remove('refresh_token')).called(1);
+      verify(mockSharedPreferencesService.remove(accessTokenKey)).called(1);
+      verify(mockSharedPreferencesService.remove(refreshTokenKey)).called(1);
     });
   });
 }
