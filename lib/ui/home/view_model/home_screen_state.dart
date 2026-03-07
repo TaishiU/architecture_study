@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:architecture_study/data/repositories/auth/auth_repository.dart';
 import 'package:architecture_study/data/repositories/todos/todo_repository.dart';
 import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/domain/entities/todos/todos.dart';

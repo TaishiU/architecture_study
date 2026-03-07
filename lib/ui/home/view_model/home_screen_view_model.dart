@@ -9,10 +9,12 @@ final homeScreenProvider =
 /// ホーム画面のViewModel
 class HomeScreenViewModel extends AsyncNotifier<HomeScreenState> {
   late final TodoRepository _todoRepository;
+  late final AuthRepository _authRepository;
 
   @override
   Future<HomeScreenState> build() async {
     _todoRepository = ref.read(todoRepositoryProvider);
+    _authRepository = ref.read(authRepositoryProvider);
 
     try {
       // throw Exception('意図的なエラー');
@@ -22,6 +24,19 @@ class HomeScreenViewModel extends AsyncNotifier<HomeScreenState> {
     } on Exception catch (error) {
       logger.e('[HomeScreenViewModel] $error');
       throw Exception();
+    }
+  }
+
+  /// ログイン
+  Future<void> login() async {
+    final result = await _authRepository.login();
+
+    switch (result) {
+      case SuccessResult<void>():
+        return result.value;
+      case FailureResult<void>():
+        logger.e('[HomeScreenViewModel] login failed: ${result.error}');
+        throw Exception();
     }
   }
 

@@ -220,13 +220,19 @@ class ApiClientImpl implements ApiClient {
           case Method.post:
             response = await _client.post(
               uri,
-              headers: headers,
+              headers: {
+                ...?headers,
+                'Content-Type': 'application/json',
+              },
               body: requestBody != null ? jsonEncode(requestBody) : null,
             );
           case Method.put:
             response = await _client.put(
               uri,
-              headers: headers,
+              headers: {
+                ...?headers,
+                'Content-Type': 'application/json',
+              },
               body: requestBody != null ? jsonEncode(requestBody) : null,
             );
           case Method.delete:

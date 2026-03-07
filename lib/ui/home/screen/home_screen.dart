@@ -29,13 +29,22 @@ class HomeScreen extends HookConsumerWidget {
   }
 }
 
-class _Body extends StatelessWidget {
+class _Body extends HookConsumerWidget {
   const _Body({required this.vm});
 
   final HomeScreenState vm;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final notifier = ref.watch(homeScreenProvider.notifier);
+    // return Center(
+    //   child: ElevatedButton(
+    //     onPressed: () async {
+    //       await notifier.login();
+    //     },
+    //     child: const Text('ログイン'),
+    //   ),
+    // );
     return ListView.builder(
       itemCount: vm.todos.todos.length,
       itemBuilder: (context, index) {
