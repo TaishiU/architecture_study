@@ -4,45 +4,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// プロバイダ
 final sharedPreferencesServiceImplProvider =
-    Provider<SharedPreferencesServiceImpl>(
-      (ref) => SharedPreferencesServiceImpl(),
-    );
+    Provider<SharedPreferencesServiceImpl>((ref) {
+      // このProviderは、アプリケーションの起動時に`main.dart`内の`ProviderScope`で
+      // 必ずオーバーライドされることを想定しています。
+      // もしオーバーライドされずにアクセスされた場合、このエラーがスローされ、
+      // プログラムの初期化シーケンスに問題があることを早期に検出できます。
+      throw UnimplementedError(
+        'sharedPreferencesServiceImplProvider must be overridden in main.dart.',
+      );
+    });
 
 /// [SharedPreferencesService] の実装クラスです。
-///
-/// このクラスはシングルトンパターンで設計されており、
-/// アプリケーション全体で`SharedPreferencesWithCache`の単一インスタンスを管理します。
 class SharedPreferencesServiceImpl implements SharedPreferencesService {
-  /// ファクトリコンストラクタ。常に同じインスタンスを返します。
-  factory SharedPreferencesServiceImpl() {
-    return _instance;
-  }
-
-  /// プライベートコンストラクタ。外部からの直接インスタンス化を防ぎます。
-  SharedPreferencesServiceImpl._internal();
+  /// コンストラクタ。
+  /// 外部から`SharedPreferencesWithCache`のインスタンスを受け取ります。
+  SharedPreferencesServiceImpl(this._sharedPreferences);
 
   /// `SharedPreferencesWithCache`のインスタンスを保持します。
-  /// late final修飾子により、初回アクセス時に初期化され、その後は不変となります。
-  late final SharedPreferencesWithCache _sharedPreferences;
-
-  /// シングルトンインスタンスです。
-  static final SharedPreferencesServiceImpl _instance =
-      SharedPreferencesServiceImpl._internal();
-
-  /// `SharedPreferencesWithCache`インスタンスを初期化します。
-  /// アプリケーション起動時に一度だけ呼び出す必要があります。
-  Future<void> init() async {
-    _sharedPreferences = await SharedPreferencesWithCache.create(
-      cacheOptions: const SharedPreferencesWithCacheOptions(
-        // キャッシュするキーを allowList で指定することで、
-        // 不要なデータをキャッシュから除外し、メモリ使用量を最適化できます。
-        allowList: <String>{
-          'access_token',
-          'refresh_token',
-        },
-      ),
-    );
-  }
+  final SharedPreferencesWithCache _sharedPreferences;
 
   @override
   String? getString(String key, {String? defaultValue}) {

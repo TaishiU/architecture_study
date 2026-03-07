@@ -1,11 +1,35 @@
+import 'package:architecture_study/data/services/preferences/shared_preferences_service_impl.dart';
 import 'package:architecture_study/ui/home/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // SharedPreferencesWithCache の初期化
+  final sharedPreferencesWithCache = await SharedPreferencesWithCache.create(
+    cacheOptions: const SharedPreferencesWithCacheOptions(
+      // アプリケーションで利用するキーをallowListに指定してください。
+      allowList: <String>{
+        'access_token',
+        'refresh_token',
+      },
+    ),
+  );
+
+  // SharedPreferencesServiceImpl のインスタンス作成
+  final sharedPreferencesServiceImpl =
+      SharedPreferencesServiceImpl(sharedPreferencesWithCache);
+
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ProviderScope(
+      overrides: [
+        sharedPreferencesServiceImplProvider.overrideWithValue(
+          sharedPreferencesServiceImpl,
+        ),
+      ],
+      child: const MyApp(),
     ),
   );
 }
