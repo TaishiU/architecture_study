@@ -5,9 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
+import 'package:architecture_study/data/models/todos/todos_model.dart' as _i6;
 import 'package:architecture_study/data/services/api_client.dart' as _i2;
-import 'package:architecture_study/data/services/models/todos/todos_model.dart'
-    as _i6;
 import 'package:architecture_study/data/services/result.dart' as _i5;
 import 'package:architecture_study/data/services/todos/todos_service.dart'
     as _i3;

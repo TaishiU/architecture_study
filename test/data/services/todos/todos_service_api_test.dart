@@ -1,6 +1,6 @@
+import 'package:architecture_study/data/models/todos/todos_model.dart';
 import 'package:architecture_study/data/services/api_client.dart';
 import 'package:architecture_study/data/services/api_exception.dart';
-import 'package:architecture_study/data/services/models/todos/todos_model.dart';
 import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/data/services/todos/todos_service_api.dart';
 import 'package:flutter_test/flutter_test.dart';

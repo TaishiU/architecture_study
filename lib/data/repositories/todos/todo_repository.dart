@@ -1,4 +1,4 @@
-import 'package:architecture_study/data/services/models/todos/todos_model.dart';
+import 'package:architecture_study/data/models/todos/todos_model.dart';
 import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/data/services/todos/todos_service.dart';
 import 'package:architecture_study/data/services/todos/todos_service_api.dart';
@@ -16,7 +16,7 @@ class TodoRepository {
   /// コンストラクタ
   TodoRepository({required this.todoService});
 
-  ///　ApiClient
+  ///　Todosサービス
   final TodosService todoService;
 
   /// [Todos] 配列を取得
