@@ -1,4 +1,4 @@
-import 'package:architecture_study/data/repositories/todos/todo_repository_api.dart';
+import 'package:architecture_study/data/repositories/todos/todo_repository.dart';
 import 'package:architecture_study/data/services/models/todos/todos_model.dart';
 import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/data/services/todos/todos_service.dart';
@@ -9,7 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'todo_repository_api_test.mocks.dart';
+import 'todo_repository_test.mocks.dart';
 
 // MissingDummyValueErrorを解決するためにダミー値を提供するヘルパー関数
 void _setupDummyValues() {
@@ -25,8 +25,8 @@ void _setupDummyValues() {
 void main() {
   _setupDummyValues(); // main関数の先頭でダミー値をセットアップ
 
-  // todoRepositoryAPIProviderのテスト
-  group('todoRepositoryAPIProvider', () {
+  // todoRepositoryProviderのテスト
+  group('todoRepositoryProvider', () {
     late ProviderContainer container;
     late MockTodoServiceAPI mockTodoServiceAPI;
 
@@ -41,16 +41,16 @@ void main() {
     });
 
     tearDown(() {
-      container.dispose(); // テスト終了後にcontainerを破棄
+      container.dispose();
     });
 
-    test('todoRepositoryAPIProviderはTodoRepositoryAPIのインスタンスを返すこと', () {
-      final repository = container.read(todoRepositoryAPIProvider);
-      expect(repository, isA<TodoRepositoryAPI>());
+    test('todoRepositoryProviderはTodoRepositoryAPIのインスタンスを返すこと', () {
+      final repository = container.read(todoRepositoryProvider);
+      expect(repository, isA<TodoRepository>());
     });
 
-    test('todoRepositoryAPIProviderは指定されたTodosServiceで初期化されること', () async {
-      final repository = container.read(todoRepositoryAPIProvider);
+    test('todoRepositoryProviderは指定されたTodosServiceで初期化されること', () async {
+      final repository = container.read(todoRepositoryProvider);
 
       // モックされたfetchメソッドを呼び出すことで、
       // 内部で渡されたTodosServiceが使用されていることを確認
@@ -63,11 +63,11 @@ void main() {
   });
 
   late MockTodosService mockTodosService;
-  late TodoRepositoryAPI todoRepositoryAPI;
+  late TodoRepository todoRepository;
 
   setUp(() {
     mockTodosService = MockTodosService();
-    todoRepositoryAPI = TodoRepositoryAPI(todoService: mockTodosService);
+    todoRepository = TodoRepository(todoService: mockTodosService);
   });
 
   // fetchメソッドのテスト
@@ -84,7 +84,7 @@ void main() {
           (_) async => SuccessResult(mockTodosModel),
         );
 
-        final result = await todoRepositoryAPI.fetch();
+        final result = await todoRepository.fetch();
 
         expect(result, isA<SuccessResult<Todos>>());
         expect((result as SuccessResult<Todos>).value.todos.length, 2);
@@ -100,7 +100,7 @@ void main() {
         (_) async => FailureResult(exception),
       );
 
-      final result = await todoRepositoryAPI.fetch();
+      final result = await todoRepository.fetch();
 
       expect(result, isA<FailureResult<Todos>>());
       expect((result as FailureResult<Todos>).error, exception);
@@ -111,7 +111,7 @@ void main() {
       final exception = Exception('Network Error');
       when(mockTodosService.fetch()).thenThrow(exception);
 
-      final result = await todoRepositoryAPI.fetch();
+      final result = await todoRepository.fetch();
 
       expect(result, isA<FailureResult<Todos>>());
       expect((result as FailureResult<Todos>).error, exception);
@@ -130,7 +130,7 @@ void main() {
         (_) async => SuccessResult(mockTodosModel),
       );
 
-      final result = await todoRepositoryAPI.fetch();
+      final result = await todoRepository.fetch();
 
       expect(result, isA<SuccessResult<Todos>>());
       expect((result as SuccessResult<Todos>).value.todos.length, 2);
@@ -148,7 +148,7 @@ void main() {
         (_) async => SuccessResult(mockTodosModel),
       );
 
-      final result = await todoRepositoryAPI.fetch();
+      final result = await todoRepository.fetch();
 
       expect(result, isA<SuccessResult<Todos>>());
       expect((result as SuccessResult<Todos>).value.todos.length, 1);
@@ -173,7 +173,7 @@ void main() {
           (_) async => const SuccessResult(mockTodoModel),
         );
 
-        final result = await todoRepositoryAPI.fetchById(id: 1);
+        final result = await todoRepository.fetchById(id: 1);
 
         expect(result, isA<SuccessResult<Todo>>());
         expect((result as SuccessResult<Todo>).value.id, 1);
@@ -188,7 +188,7 @@ void main() {
         (_) async => FailureResult(exception),
       );
 
-      final result = await todoRepositoryAPI.fetchById(id: 1);
+      final result = await todoRepository.fetchById(id: 1);
 
       expect(result, isA<FailureResult<Todo>>());
       expect((result as FailureResult<Todo>).error, exception);
@@ -199,7 +199,7 @@ void main() {
       final exception = Exception('Network Error');
       when(mockTodosService.fetchById(id: 1)).thenThrow(exception);
 
-      final result = await todoRepositoryAPI.fetchById(id: 1);
+      final result = await todoRepository.fetchById(id: 1);
 
       expect(result, isA<FailureResult<Todo>>());
       expect((result as FailureResult<Todo>).error, exception);
@@ -207,15 +207,16 @@ void main() {
     });
 
     test('TodoModelの必須フィールドが欠損している場合、fetchByIdがFailureResultを返すこと', () async {
+      // userIdとidが欠損
       const mockTodoModel = TodoModel(
         todo: 'Test Todo',
         completed: false,
-      ); // userIdとidが欠損
+      );
       when(mockTodosService.fetchById(id: 1)).thenAnswer(
         (_) async => const SuccessResult(mockTodoModel),
       );
 
-      final result = await todoRepositoryAPI.fetchById(id: 1);
+      final result = await todoRepository.fetchById(id: 1);
 
       expect(result, isA<FailureResult<Todo>>());
       final failure = result as FailureResult<Todo>;
