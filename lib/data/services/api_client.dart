@@ -35,9 +35,7 @@ enum Method {
 }
 
 /// APIクライアントのインスタンスを提供するプロバイダー。
-///
-/// このプロバイダーを使用すると、アプリケーションのどこからでもAPIクライアントにアクセスできます。
-final Provider<ApiClient> apiClientProvider = Provider.autoDispose<ApiClient>(
+final apiClientProvider = Provider<ApiClient>(
   (ref) {
     final client = http.Client();
     final baseUrl = ref.watch(baseUrlProvider);
