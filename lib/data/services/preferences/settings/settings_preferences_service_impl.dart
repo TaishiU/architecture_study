@@ -22,8 +22,8 @@ class SettingsPreferencesServiceImpl implements SettingsPreferencesService {
   }
 
   @override
-  Future<void> setAppTheme(String theme) {
-    return _generalPreferences.setString(_appThemeKey, theme);
+  Future<void> setAppTheme(String theme) async {
+    await _generalPreferences.setString(_appThemeKey, theme);
   }
 
   @override
@@ -32,8 +32,8 @@ class SettingsPreferencesServiceImpl implements SettingsPreferencesService {
   }
 
   @override
-  Future<void> setLanguageCode(String code) {
-    return _generalPreferences.setString(_languageCodeKey, code);
+  Future<void> setLanguageCode(String code) async {
+    await _generalPreferences.setString(_languageCodeKey, code);
   }
 
   @override
@@ -42,8 +42,8 @@ class SettingsPreferencesServiceImpl implements SettingsPreferencesService {
   }
 
   @override
-  Future<void> setAgreedToTerms(bool agreed) {
-    return _generalPreferences.setBool(_agreedToTermsKey, agreed);
+  Future<void> setAgreedToTerms({required bool agreed}) async {
+    await _generalPreferences.setBool(_agreedToTermsKey, value: agreed);
   }
 
   @override
@@ -52,8 +52,8 @@ class SettingsPreferencesServiceImpl implements SettingsPreferencesService {
   }
 
   @override
-  Future<void> setNotificationEnabled(bool enabled) {
-    return _generalPreferences.setBool(_notificationEnabledKey, enabled);
+  Future<void> setNotificationEnabled({required bool enabled}) async {
+    await _generalPreferences.setBool(_notificationEnabledKey, value: enabled);
   }
 
   @override
@@ -62,8 +62,8 @@ class SettingsPreferencesServiceImpl implements SettingsPreferencesService {
   }
 
   @override
-  Future<void> setLastLoginDate(String date) {
-    return _generalPreferences.setString(_lastLoginDateKey, date);
+  Future<void> setLastLoginDate(String date) async {
+    await _generalPreferences.setString(_lastLoginDateKey, date);
   }
 
   @override

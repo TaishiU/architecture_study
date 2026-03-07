@@ -20,7 +20,7 @@ abstract class SharedPreferencesService {
   /// 指定されたキーに真偽値を保存します。
   /// [key]：保存する値のキー。
   /// [value]：保存する真偽値。
-  Future<void> setBool(String key, bool value);
+  Future<void> setBool(String key, {required bool value});
 
   /// 指定されたキーに対応する整数を取得します。
   /// [key]：取得する値のキー。

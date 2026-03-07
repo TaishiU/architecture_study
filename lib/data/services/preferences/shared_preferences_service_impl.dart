@@ -60,7 +60,7 @@ class SharedPreferencesServiceImpl implements SharedPreferencesService {
   }
 
   @override
-  Future<void> setBool(String key, bool value) {
+  Future<void> setBool(String key, {required bool value}) {
     return _sharedPreferences.setBool(key, value);
   }
 

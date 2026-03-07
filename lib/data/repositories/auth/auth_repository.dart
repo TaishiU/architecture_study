@@ -39,7 +39,6 @@ class AuthRepository {
         case SuccessResult<LoginModel>():
           final value = result.value;
           logger.w(value);
-          // await authPreferencesService.setAccessToken(value.accessToken ?? '');
           return const SuccessResult(null);
         case FailureResult<LoginModel>():
           logger.e('[AuthRepository] ${result.error}');

@@ -28,8 +28,8 @@ class AuthPreferencesServiceImpl implements AuthPreferencesService {
   }
 
   @override
-  Future<void> setAccessToken(String token) {
-    return generalPreferences.setString(_accessTokenKey, token);
+  Future<void> setAccessToken(String token) async {
+    await generalPreferences.setString(_accessTokenKey, token);
   }
 
   @override
@@ -38,8 +38,8 @@ class AuthPreferencesServiceImpl implements AuthPreferencesService {
   }
 
   @override
-  Future<void> setRefreshToken(String token) {
-    return generalPreferences.setString(_refreshTokenKey, token);
+  Future<void> setRefreshToken(String token) async {
+    await generalPreferences.setString(_refreshTokenKey, token);
   }
 
   @override

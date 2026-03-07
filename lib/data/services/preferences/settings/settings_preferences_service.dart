@@ -17,13 +17,13 @@ abstract class SettingsPreferencesService {
   bool getAgreedToTerms();
 
   /// 利用規約への同意状況を保存します。
-  Future<void> setAgreedToTerms(bool agreed);
+  Future<void> setAgreedToTerms({required bool agreed});
 
   /// 通知設定を取得します。
   bool getNotificationEnabled();
 
   /// 通知設定を保存します。
-  Future<void> setNotificationEnabled(bool enabled);
+  Future<void> setNotificationEnabled({required bool enabled});
 
   /// 最終ログイン日時を取得します。
   String getLastLoginDate();
