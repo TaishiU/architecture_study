@@ -2,11 +2,18 @@
 
 dart fix --apply .
 dart format .
+#dart analyze
+DART_ANALYZE_OUTPUT=$(dart analyze 2>&1)
+echo "$DART_ANALYZE_OUTPUT"
+if ! echo "$DART_ANALYZE_OUTPUT" | grep -q "No issues found!"; then
+  echo " ❌ エラー: dart analyze で問題が検出されました。後続の処理を中断します。"
+  exit 1
+fi
 #flutter analyze
 FLUTTER_ANALYZE_OUTPUT=$(flutter analyze 2>&1)
 echo "$FLUTTER_ANALYZE_OUTPUT"
 if ! echo "$FLUTTER_ANALYZE_OUTPUT" | grep -q "No issues found!"; then
-  echo "エラー: flutter analyze で問題が検出されました。後続の処理を中断します。"
+  echo " ❌ エラー: flutter analyze で問題が検出されました。後続の処理を中断します。"
   exit 1
 fi
 # ユニットテストを実行する

@@ -2,8 +2,8 @@ import 'package:architecture_study/data/models/login/login_model.dart';
 import 'package:architecture_study/data/services/api_client.dart';
 import 'package:architecture_study/data/services/api_exception.dart';
 import 'package:architecture_study/data/services/auth/auth_service.dart';
-import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/utils/logger.dart';
+import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ

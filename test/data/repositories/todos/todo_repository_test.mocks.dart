@@ -7,11 +7,11 @@ import 'dart:async' as _i4;
 
 import 'package:architecture_study/data/models/todos/todos_model.dart' as _i6;
 import 'package:architecture_study/data/services/api_client.dart' as _i2;
-import 'package:architecture_study/data/services/result.dart' as _i5;
 import 'package:architecture_study/data/services/todos/todos_service.dart'
     as _i3;
 import 'package:architecture_study/data/services/todos/todos_service_api.dart'
     as _i8;
+import 'package:architecture_study/utils/result.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i7;
 

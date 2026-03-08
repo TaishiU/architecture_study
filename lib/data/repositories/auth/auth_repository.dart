@@ -3,9 +3,9 @@ import 'package:architecture_study/data/services/auth/auth_service.dart';
 import 'package:architecture_study/data/services/auth/auth_service_api.dart';
 import 'package:architecture_study/data/services/preferences/auth/auth_preferences_service.dart';
 import 'package:architecture_study/data/services/preferences/auth/auth_preferences_service_impl.dart';
-import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/domain/entities/todos/todos.dart';
 import 'package:architecture_study/utils/logger.dart';
+import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ

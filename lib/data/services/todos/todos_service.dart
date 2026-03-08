@@ -1,5 +1,5 @@
 import 'package:architecture_study/data/models/todos/todos_model.dart';
-import 'package:architecture_study/data/services/result.dart';
+import 'package:architecture_study/utils/result.dart';
 
 /// インターフェース
 abstract class TodosService {

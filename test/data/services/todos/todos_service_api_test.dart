@@ -1,8 +1,8 @@
 import 'package:architecture_study/data/models/todos/todos_model.dart';
 import 'package:architecture_study/data/services/api_client.dart';
 import 'package:architecture_study/data/services/api_exception.dart';
-import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/data/services/todos/todos_service_api.dart';
+import 'package:architecture_study/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mockito/annotations.dart';

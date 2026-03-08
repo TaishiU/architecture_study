@@ -1,5 +1,5 @@
 import 'package:architecture_study/data/services/preferences/shared_preferences_service_impl.dart';
-import 'package:architecture_study/ui/home/screen/home_screen.dart';
+import 'package:architecture_study/ui/home/view/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
   /// コンストラクタ
   const MyApp({super.key});
 
-  // This screen is the root of your application.
+  // This view is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

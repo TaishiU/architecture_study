@@ -1,6 +1,6 @@
 import 'package:architecture_study/data/models/todos/todos_model.dart';
-import 'package:architecture_study/data/services/result.dart';
 import 'package:architecture_study/data/services/todos/todos_service.dart';
+import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
