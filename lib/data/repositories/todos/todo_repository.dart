@@ -1,6 +1,6 @@
-import 'package:architecture_study/data/models/todos/todos_model.dart';
-import 'package:architecture_study/data/services/todos/todos_service.dart';
-import 'package:architecture_study/data/services/todos/todos_service_api.dart';
+import 'package:architecture_study/data/services/remote/api/todos/todos_api_service.dart';
+import 'package:architecture_study/data/services/remote/api/todos/todos_api_service_impl.dart';
+import 'package:architecture_study/data/services/remote/dto/todos/todos_dto.dart';
 import 'package:architecture_study/domain/entities/todos/todos.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
@@ -8,31 +8,31 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final todoRepositoryProvider = Provider<TodoRepository>(
-  (ref) => TodoRepository(todoService: ref.read(todoServiceAPIProvider)),
+  (ref) => TodoRepository(todoApiService: ref.read(todosApiServiceImplProvider)),
 );
 
 /// リポジトリクラス
 class TodoRepository {
   /// コンストラクタ
-  TodoRepository({required this.todoService});
+  TodoRepository({required this.todoApiService});
 
   ///　Todosサービス
-  final TodosService todoService;
+  final TodosApiService todoApiService;
 
   /// [Todos] 配列を取得
   Future<Result<Todos>> fetch() async {
     try {
-      final result = await todoService.fetch();
+      final result = await todoApiService.fetch();
 
       switch (result) {
-        case SuccessResult<TodosModel>():
+        case SuccessResult<TodosDto>():
           final todoList = result.value.todos!
               .map(_toEntity)
               .whereType<Todo>()
               .toList();
           final todos = Todos(todos: todoList);
           return SuccessResult(todos);
-        case FailureResult<TodosModel>():
+        case FailureResult<TodosDto>():
           logger.e('[TodoRepository] ${result.error}');
           return FailureResult(result.error);
       }
@@ -44,10 +44,10 @@ class TodoRepository {
   /// IDを指定して [Todo] を取得
   Future<Result<Todo>> fetchById({required int id}) async {
     try {
-      final result = await todoService.fetchById(id: id);
+      final result = await todoApiService.fetchById(id: id);
 
       switch (result) {
-        case SuccessResult<TodoModel>():
+        case SuccessResult<TodoDto>():
           final todo = _toEntity(result.value);
           if (todo == null) {
             // _toEntityがnullを返した場合、エラーとして扱う
@@ -56,7 +56,7 @@ class TodoRepository {
             );
           }
           return SuccessResult(todo);
-        case FailureResult<TodoModel>():
+        case FailureResult<TodoDto>():
           logger.e('[TodoRepository] ${result.error}');
           return FailureResult(result.error);
       }
@@ -66,7 +66,7 @@ class TodoRepository {
     }
   }
 
-  Todo? _toEntity(TodoModel model) {
+  Todo? _toEntity(TodoDto model) {
     // 必須フィールドが欠損している場合はスキップ
     if (model.userId == null || model.id == null) {
       return null;

@@ -1,5 +1,5 @@
-import 'package:architecture_study/data/services/preferences/settings/settings_preferences_service.dart';
-import 'package:architecture_study/data/services/preferences/shared_preferences_service.dart';
+import 'package:architecture_study/data/services/local/preferences/settings/settings_preferences_service.dart';
+import 'package:architecture_study/data/services/local/preferences/shared_preferences_service.dart';
 
 /// [SettingsPreferencesService] の実装クラス。
 /// [SharedPreferencesService] を利用して、アプリケーション設定（テーマ、言語、通知など）を永続化します。

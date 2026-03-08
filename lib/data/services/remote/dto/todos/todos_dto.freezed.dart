@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'todos_model.dart';
+part of 'todos_dto.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,22 +13,22 @@ part of 'todos_model.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$TodosModel {
+mixin _$TodosDto {
 
- List<TodoModel>? get todos;
-/// Create a copy of TodosModel
+ List<TodoDto>? get todos;
+/// Create a copy of TodosDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$TodosModelCopyWith<TodosModel> get copyWith => _$TodosModelCopyWithImpl<TodosModel>(this as TodosModel, _$identity);
+$TodosDtoCopyWith<TodosDto> get copyWith => _$TodosDtoCopyWithImpl<TodosDto>(this as TodosDto, _$identity);
 
-  /// Serializes this TodosModel to a JSON map.
+  /// Serializes this TodosDto to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodosModel&&const DeepCollectionEquality().equals(other.todos, todos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodosDto&&const DeepCollectionEquality().equals(other.todos, todos));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -37,18 +37,18 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'TodosModel(todos: $todos)';
+  return 'TodosDto(todos: $todos)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $TodosModelCopyWith<$Res>  {
-  factory $TodosModelCopyWith(TodosModel value, $Res Function(TodosModel) _then) = _$TodosModelCopyWithImpl;
+abstract mixin class $TodosDtoCopyWith<$Res>  {
+  factory $TodosDtoCopyWith(TodosDto value, $Res Function(TodosDto) _then) = _$TodosDtoCopyWithImpl;
 @useResult
 $Res call({
- List<TodoModel>? todos
+ List<TodoDto>? todos
 });
 
 
@@ -56,27 +56,27 @@ $Res call({
 
 }
 /// @nodoc
-class _$TodosModelCopyWithImpl<$Res>
-    implements $TodosModelCopyWith<$Res> {
-  _$TodosModelCopyWithImpl(this._self, this._then);
+class _$TodosDtoCopyWithImpl<$Res>
+    implements $TodosDtoCopyWith<$Res> {
+  _$TodosDtoCopyWithImpl(this._self, this._then);
 
-  final TodosModel _self;
-  final $Res Function(TodosModel) _then;
+  final TodosDto _self;
+  final $Res Function(TodosDto) _then;
 
-/// Create a copy of TodosModel
+/// Create a copy of TodosDto
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? todos = freezed,}) {
   return _then(_self.copyWith(
 todos: freezed == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nullable
-as List<TodoModel>?,
+as List<TodoDto>?,
   ));
 }
 
 }
 
 
-/// Adds pattern-matching-related methods to [TodosModel].
-extension TodosModelPatterns on TodosModel {
+/// Adds pattern-matching-related methods to [TodosDto].
+extension TodosDtoPatterns on TodosDto {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -89,10 +89,10 @@ extension TodosModelPatterns on TodosModel {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TodosModel value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TodosDto value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _TodosModel() when $default != null:
+case _TodosDto() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -111,10 +111,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TodosModel value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TodosDto value)  $default,){
 final _that = this;
 switch (_that) {
-case _TodosModel():
+case _TodosDto():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -132,10 +132,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TodosModel value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TodosDto value)?  $default,){
 final _that = this;
 switch (_that) {
-case _TodosModel() when $default != null:
+case _TodosDto() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -153,9 +153,9 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TodoModel>? todos)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TodoDto>? todos)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _TodosModel() when $default != null:
+case _TodosDto() when $default != null:
 return $default(_that.todos);case _:
   return orElse();
 
@@ -174,9 +174,9 @@ return $default(_that.todos);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TodoModel>? todos)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TodoDto>? todos)  $default,) {final _that = this;
 switch (_that) {
-case _TodosModel():
+case _TodosDto():
 return $default(_that.todos);case _:
   throw StateError('Unexpected subclass');
 
@@ -194,9 +194,9 @@ return $default(_that.todos);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TodoModel>? todos)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TodoDto>? todos)?  $default,) {final _that = this;
 switch (_that) {
-case _TodosModel() when $default != null:
+case _TodosDto() when $default != null:
 return $default(_that.todos);case _:
   return null;
 
@@ -208,12 +208,12 @@ return $default(_that.todos);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _TodosModel implements TodosModel {
-  const _TodosModel({final  List<TodoModel>? todos}): _todos = todos;
-  factory _TodosModel.fromJson(Map<String, dynamic> json) => _$TodosModelFromJson(json);
+class _TodosDto implements TodosDto {
+  const _TodosDto({final  List<TodoDto>? todos}): _todos = todos;
+  factory _TodosDto.fromJson(Map<String, dynamic> json) => _$TodosDtoFromJson(json);
 
- final  List<TodoModel>? _todos;
-@override List<TodoModel>? get todos {
+ final  List<TodoDto>? _todos;
+@override List<TodoDto>? get todos {
   final value = _todos;
   if (value == null) return null;
   if (_todos is EqualUnmodifiableListView) return _todos;
@@ -222,20 +222,20 @@ class _TodosModel implements TodosModel {
 }
 
 
-/// Create a copy of TodosModel
+/// Create a copy of TodosDto
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$TodosModelCopyWith<_TodosModel> get copyWith => __$TodosModelCopyWithImpl<_TodosModel>(this, _$identity);
+_$TodosDtoCopyWith<_TodosDto> get copyWith => __$TodosDtoCopyWithImpl<_TodosDto>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$TodosModelToJson(this, );
+  return _$TodosDtoToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodosModel&&const DeepCollectionEquality().equals(other._todos, _todos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodosDto&&const DeepCollectionEquality().equals(other._todos, _todos));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -244,18 +244,18 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'TodosModel(todos: $todos)';
+  return 'TodosDto(todos: $todos)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$TodosModelCopyWith<$Res> implements $TodosModelCopyWith<$Res> {
-  factory _$TodosModelCopyWith(_TodosModel value, $Res Function(_TodosModel) _then) = __$TodosModelCopyWithImpl;
+abstract mixin class _$TodosDtoCopyWith<$Res> implements $TodosDtoCopyWith<$Res> {
+  factory _$TodosDtoCopyWith(_TodosDto value, $Res Function(_TodosDto) _then) = __$TodosDtoCopyWithImpl;
 @override @useResult
 $Res call({
- List<TodoModel>? todos
+ List<TodoDto>? todos
 });
 
 
@@ -263,19 +263,19 @@ $Res call({
 
 }
 /// @nodoc
-class __$TodosModelCopyWithImpl<$Res>
-    implements _$TodosModelCopyWith<$Res> {
-  __$TodosModelCopyWithImpl(this._self, this._then);
+class __$TodosDtoCopyWithImpl<$Res>
+    implements _$TodosDtoCopyWith<$Res> {
+  __$TodosDtoCopyWithImpl(this._self, this._then);
 
-  final _TodosModel _self;
-  final $Res Function(_TodosModel) _then;
+  final _TodosDto _self;
+  final $Res Function(_TodosDto) _then;
 
-/// Create a copy of TodosModel
+/// Create a copy of TodosDto
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? todos = freezed,}) {
-  return _then(_TodosModel(
+  return _then(_TodosDto(
 todos: freezed == todos ? _self._todos : todos // ignore: cast_nullable_to_non_nullable
-as List<TodoModel>?,
+as List<TodoDto>?,
   ));
 }
 
@@ -284,26 +284,26 @@ as List<TodoModel>?,
 
 
 /// @nodoc
-mixin _$TodoModel {
+mixin _$TodoDto {
 
 /// ID
  int? get id;/// ユーザーID
  int? get userId;/// タイトル
 @JsonKey(name: 'todo') String? get todo;/// 完了したかどうか
  bool? get completed;
-/// Create a copy of TodoModel
+/// Create a copy of TodoDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$TodoModelCopyWith<TodoModel> get copyWith => _$TodoModelCopyWithImpl<TodoModel>(this as TodoModel, _$identity);
+$TodoDtoCopyWith<TodoDto> get copyWith => _$TodoDtoCopyWithImpl<TodoDto>(this as TodoDto, _$identity);
 
-  /// Serializes this TodoModel to a JSON map.
+  /// Serializes this TodoDto to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoModel&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.todo, todo) || other.todo == todo)&&(identical(other.completed, completed) || other.completed == completed));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoDto&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.todo, todo) || other.todo == todo)&&(identical(other.completed, completed) || other.completed == completed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -312,15 +312,15 @@ int get hashCode => Object.hash(runtimeType,id,userId,todo,completed);
 
 @override
 String toString() {
-  return 'TodoModel(id: $id, userId: $userId, todo: $todo, completed: $completed)';
+  return 'TodoDto(id: $id, userId: $userId, todo: $todo, completed: $completed)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $TodoModelCopyWith<$Res>  {
-  factory $TodoModelCopyWith(TodoModel value, $Res Function(TodoModel) _then) = _$TodoModelCopyWithImpl;
+abstract mixin class $TodoDtoCopyWith<$Res>  {
+  factory $TodoDtoCopyWith(TodoDto value, $Res Function(TodoDto) _then) = _$TodoDtoCopyWithImpl;
 @useResult
 $Res call({
  int? id, int? userId,@JsonKey(name: 'todo') String? todo, bool? completed
@@ -331,14 +331,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$TodoModelCopyWithImpl<$Res>
-    implements $TodoModelCopyWith<$Res> {
-  _$TodoModelCopyWithImpl(this._self, this._then);
+class _$TodoDtoCopyWithImpl<$Res>
+    implements $TodoDtoCopyWith<$Res> {
+  _$TodoDtoCopyWithImpl(this._self, this._then);
 
-  final TodoModel _self;
-  final $Res Function(TodoModel) _then;
+  final TodoDto _self;
+  final $Res Function(TodoDto) _then;
 
-/// Create a copy of TodoModel
+/// Create a copy of TodoDto
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? userId = freezed,Object? todo = freezed,Object? completed = freezed,}) {
   return _then(_self.copyWith(
@@ -353,8 +353,8 @@ as bool?,
 }
 
 
-/// Adds pattern-matching-related methods to [TodoModel].
-extension TodoModelPatterns on TodoModel {
+/// Adds pattern-matching-related methods to [TodoDto].
+extension TodoDtoPatterns on TodoDto {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -367,10 +367,10 @@ extension TodoModelPatterns on TodoModel {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TodoModel value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TodoDto value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _TodoModel() when $default != null:
+case _TodoDto() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -389,10 +389,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TodoModel value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TodoDto value)  $default,){
 final _that = this;
 switch (_that) {
-case _TodoModel():
+case _TodoDto():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -410,10 +410,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TodoModel value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TodoDto value)?  $default,){
 final _that = this;
 switch (_that) {
-case _TodoModel() when $default != null:
+case _TodoDto() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -433,7 +433,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? id,  int? userId, @JsonKey(name: 'todo')  String? todo,  bool? completed)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _TodoModel() when $default != null:
+case _TodoDto() when $default != null:
 return $default(_that.id,_that.userId,_that.todo,_that.completed);case _:
   return orElse();
 
@@ -454,7 +454,7 @@ return $default(_that.id,_that.userId,_that.todo,_that.completed);case _:
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? id,  int? userId, @JsonKey(name: 'todo')  String? todo,  bool? completed)  $default,) {final _that = this;
 switch (_that) {
-case _TodoModel():
+case _TodoDto():
 return $default(_that.id,_that.userId,_that.todo,_that.completed);case _:
   throw StateError('Unexpected subclass');
 
@@ -474,7 +474,7 @@ return $default(_that.id,_that.userId,_that.todo,_that.completed);case _:
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? id,  int? userId, @JsonKey(name: 'todo')  String? todo,  bool? completed)?  $default,) {final _that = this;
 switch (_that) {
-case _TodoModel() when $default != null:
+case _TodoDto() when $default != null:
 return $default(_that.id,_that.userId,_that.todo,_that.completed);case _:
   return null;
 
@@ -486,9 +486,9 @@ return $default(_that.id,_that.userId,_that.todo,_that.completed);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _TodoModel implements TodoModel {
-  const _TodoModel({this.id, this.userId, @JsonKey(name: 'todo') this.todo, this.completed});
-  factory _TodoModel.fromJson(Map<String, dynamic> json) => _$TodoModelFromJson(json);
+class _TodoDto implements TodoDto {
+  const _TodoDto({this.id, this.userId, @JsonKey(name: 'todo') this.todo, this.completed});
+  factory _TodoDto.fromJson(Map<String, dynamic> json) => _$TodoDtoFromJson(json);
 
 /// ID
 @override final  int? id;
@@ -499,20 +499,20 @@ class _TodoModel implements TodoModel {
 /// 完了したかどうか
 @override final  bool? completed;
 
-/// Create a copy of TodoModel
+/// Create a copy of TodoDto
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$TodoModelCopyWith<_TodoModel> get copyWith => __$TodoModelCopyWithImpl<_TodoModel>(this, _$identity);
+_$TodoDtoCopyWith<_TodoDto> get copyWith => __$TodoDtoCopyWithImpl<_TodoDto>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$TodoModelToJson(this, );
+  return _$TodoDtoToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoModel&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.todo, todo) || other.todo == todo)&&(identical(other.completed, completed) || other.completed == completed));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoDto&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.todo, todo) || other.todo == todo)&&(identical(other.completed, completed) || other.completed == completed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -521,15 +521,15 @@ int get hashCode => Object.hash(runtimeType,id,userId,todo,completed);
 
 @override
 String toString() {
-  return 'TodoModel(id: $id, userId: $userId, todo: $todo, completed: $completed)';
+  return 'TodoDto(id: $id, userId: $userId, todo: $todo, completed: $completed)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$TodoModelCopyWith<$Res> implements $TodoModelCopyWith<$Res> {
-  factory _$TodoModelCopyWith(_TodoModel value, $Res Function(_TodoModel) _then) = __$TodoModelCopyWithImpl;
+abstract mixin class _$TodoDtoCopyWith<$Res> implements $TodoDtoCopyWith<$Res> {
+  factory _$TodoDtoCopyWith(_TodoDto value, $Res Function(_TodoDto) _then) = __$TodoDtoCopyWithImpl;
 @override @useResult
 $Res call({
  int? id, int? userId,@JsonKey(name: 'todo') String? todo, bool? completed
@@ -540,17 +540,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$TodoModelCopyWithImpl<$Res>
-    implements _$TodoModelCopyWith<$Res> {
-  __$TodoModelCopyWithImpl(this._self, this._then);
+class __$TodoDtoCopyWithImpl<$Res>
+    implements _$TodoDtoCopyWith<$Res> {
+  __$TodoDtoCopyWithImpl(this._self, this._then);
 
-  final _TodoModel _self;
-  final $Res Function(_TodoModel) _then;
+  final _TodoDto _self;
+  final $Res Function(_TodoDto) _then;
 
-/// Create a copy of TodoModel
+/// Create a copy of TodoDto
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? userId = freezed,Object? todo = freezed,Object? completed = freezed,}) {
-  return _then(_TodoModel(
+  return _then(_TodoDto(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int?,todo: freezed == todo ? _self.todo : todo // ignore: cast_nullable_to_non_nullable

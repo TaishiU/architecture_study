@@ -19,9 +19,9 @@ fi
 # ユニットテストを実行する
 flutter test --coverage
 # カバレッジをhtml化する
-lcov --extract coverage/lcov.info 'lib/data/services/api_client.dart' \
-  --extract coverage/lcov.info 'lib/data/services/*/*_service_api.dart' \
-  --extract coverage/lcov.info 'lib/data/services/**/*_service_impl.dart' \
+lcov --extract coverage/lcov.info 'lib/data/api/api_client.dart' \
+  --extract coverage/lcov.info 'lib/data/api/*/*_service_api.dart' \
+  --extract coverage/lcov.info 'lib/data/api/**/*_service_impl.dart' \
   --extract coverage/lcov.info 'lib/data/repositories/*/*_repository.dart' \
   --extract coverage/lcov.info 'lib/ui/*/view_model/*_view_model.dart' \
   -o coverage/lcov_extract.info

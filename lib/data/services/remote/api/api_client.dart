@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:architecture_study/data/services/api_exception.dart';
+import 'package:architecture_study/data/services/remote/api/api_exception.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;

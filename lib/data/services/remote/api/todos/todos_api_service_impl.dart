@@ -1,20 +1,20 @@
-import 'package:architecture_study/data/models/todos/todos_model.dart';
-import 'package:architecture_study/data/services/api_client.dart';
-import 'package:architecture_study/data/services/api_exception.dart';
-import 'package:architecture_study/data/services/todos/todos_service.dart';
+import 'package:architecture_study/data/services/remote/api/api_client.dart';
+import 'package:architecture_study/data/services/remote/api/api_exception.dart';
+import 'package:architecture_study/data/services/remote/api/todos/todos_api_service.dart';
+import 'package:architecture_study/data/services/remote/dto/todos/todos_dto.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
-final todoServiceAPIProvider = Provider<TodoServiceAPI>(
-  (ref) => TodoServiceAPI(apiClient: ref.read(apiClientProvider)),
+final todosApiServiceImplProvider = Provider<TodosApiServiceImpl>(
+  (ref) => TodosApiServiceImpl(apiClient: ref.read(apiClientProvider)),
 );
 
 /// APIサービス実装クラス
-class TodoServiceAPI implements TodosService {
+class TodosApiServiceImpl implements TodosApiService {
   /// コンストラクタ
-  TodoServiceAPI({required this.apiClient});
+  TodosApiServiceImpl({required this.apiClient});
 
   ///　ApiClient
   final ApiClient apiClient;
@@ -23,12 +23,12 @@ class TodoServiceAPI implements TodosService {
   static const endpoint = 'todos';
 
   @override
-  Future<Result<TodosModel>> fetch() async {
+  Future<Result<TodosDto>> fetch() async {
     try {
       final response = await apiClient.get(endpoint: endpoint);
-      final todosModel = TodosModel.fromJson(response);
-      logger.i('[TodoServiceAPI] $todosModel');
-      return SuccessResult(todosModel);
+      final todosDto = TodosDto.fromJson(response);
+      logger.i('[TodoServiceAPI] $TodosDto');
+      return SuccessResult(todosDto);
     } on ApiClientException catch (error) {
       logger.e('[TodoServiceAPI] ApiClientException: $error');
       return Result.failure(error);
@@ -39,11 +39,11 @@ class TodoServiceAPI implements TodosService {
   }
 
   @override
-  Future<Result<TodoModel>> fetchById({required int id}) async {
+  Future<Result<TodoDto>> fetchById({required int id}) async {
     try {
-      final responseJson = await apiClient.get(endpoint: '$endpoint/$id');
-      final todoModel = TodoModel.fromJson(responseJson);
-      return SuccessResult(todoModel);
+      final response = await apiClient.get(endpoint: '$endpoint/$id');
+      final todoDto = TodoDto.fromJson(response);
+      return SuccessResult(todoDto);
     } on ApiClientException catch (error) {
       logger.e('[TodoServiceAPI] ApiClientException: $error');
       return Result.failure(error);

@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login_model.dart';
+part of 'login_dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_LoginModel _$LoginModelFromJson(Map<String, dynamic> json) => _LoginModel(
+_LoginDto _$LoginDtoFromJson(Map<String, dynamic> json) => _LoginDto(
   id: (json['id'] as num?)?.toInt(),
   username: json['username'] as String?,
   email: json['email'] as String?,
@@ -18,15 +18,14 @@ _LoginModel _$LoginModelFromJson(Map<String, dynamic> json) => _LoginModel(
   refreshToken: json['refreshToken'] as String?,
 );
 
-Map<String, dynamic> _$LoginModelToJson(_LoginModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'username': instance.username,
-      'email': instance.email,
-      'firstName': instance.firstName,
-      'lastName': instance.lastName,
-      'gender': instance.gender,
-      'image': instance.image,
-      'accessToken': instance.accessToken,
-      'refreshToken': instance.refreshToken,
-    };
+Map<String, dynamic> _$LoginDtoToJson(_LoginDto instance) => <String, dynamic>{
+  'id': instance.id,
+  'username': instance.username,
+  'email': instance.email,
+  'firstName': instance.firstName,
+  'lastName': instance.lastName,
+  'gender': instance.gender,
+  'image': instance.image,
+  'accessToken': instance.accessToken,
+  'refreshToken': instance.refreshToken,
+};

@@ -1,6 +1,6 @@
-import 'package:architecture_study/data/services/preferences/auth/auth_preferences_service.dart';
-import 'package:architecture_study/data/services/preferences/shared_preferences_service.dart';
-import 'package:architecture_study/data/services/preferences/shared_preferences_service_impl.dart';
+import 'package:architecture_study/data/services/local/preferences/auth/auth_preferences_service.dart';
+import 'package:architecture_study/data/services/local/preferences/shared_preferences_service.dart';
+import 'package:architecture_study/data/services/local/preferences/shared_preferences_service_impl.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ

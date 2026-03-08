@@ -7,20 +7,20 @@ import_rules:
   rules:
     - target: lib/ui/*/view/**
       disallow:
-        - lib/data/services/**
+        - lib/data/api/**
         - lib/data/repositories/**
       reason: UI層（View）は、Repository層とService層に依存してはいけません。依存して良いのはUI層（ViewModel）のみです。
     - target: lib/ui/*/view_model/**
       disallow:
         - lib/ui/*/view/**
-        - lib/data/services/**
+        - lib/data/api/**
       reason: UI層（ViewModel）は、UI層（View）とService層に依存してはいけません。依存して良いのはRepository層のみです。
     - target: lib/data/repositories/**
       disallow:
         - lib/ui/*/view/**
         - lib/ui/*/view_model/**
       reason: Repository層は、UI層（View）とUI層（ViewModel）に依存してはいけません。依存して良いのはService層のみです。
-    - target: lib/data/services/**
+    - target: lib/data/api/**
       disallow:
         - lib/ui/*/view/**
         - lib/ui/*/view_model/**

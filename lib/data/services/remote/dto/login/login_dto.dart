@@ -1,13 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'login_model.freezed.dart';
-part 'login_model.g.dart';
+part 'login_dto.freezed.dart';
+part 'login_dto.g.dart';
 
-/// LoginModel
+/// LoginDto
 @freezed
-abstract class LoginModel with _$LoginModel {
+abstract class LoginDto with _$LoginDto {
   /// コンストラクタ
-  const factory LoginModel({
+  const factory LoginDto({
     /// ID
     int? id,
 
@@ -34,9 +34,9 @@ abstract class LoginModel with _$LoginModel {
 
     /// リフレッシュトークン
     String? refreshToken,
-  }) = _LoginModel;
+  }) = _LoginDto;
 
   /// JSONから生成
-  factory LoginModel.fromJson(Map<String, Object?> json) =>
-      _$LoginModelFromJson(json);
+  factory LoginDto.fromJson(Map<String, Object?> json) =>
+      _$LoginDtoFromJson(json);
 }
