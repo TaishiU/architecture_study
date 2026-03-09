@@ -1,19 +1,27 @@
-import 'package:architecture_study/data/models/todos/todos_model.dart';
-import 'package:architecture_study/data/services/api_client.dart';
-import 'package:architecture_study/data/services/api_exception.dart';
-import 'package:architecture_study/data/services/todos/todos_service_api.dart';
+import 'package:architecture_study/data/services/remote/api/api_client.dart';
+import 'package:architecture_study/data/services/remote/api/api_exception.dart';
+import 'package:architecture_study/data/services/remote/api/todos/todos_api_service_impl.dart';
+import 'package:architecture_study/data/services/remote/dto/todos/todos_dto.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'todos_service_api_test.mocks.dart';
+import 'todos_api_service_impl_test.mocks.dart';
 
 @GenerateMocks([ApiClient])
 void main() {
-  // todoServiceAPIProviderのテスト
-  group('todoServiceAPIProvider', () {
+  late MockApiClient mockApiClient;
+  late TodosApiServiceImpl todosApiServiceImpl;
+
+  setUp(() {
+    mockApiClient = MockApiClient();
+    todosApiServiceImpl = TodosApiServiceImpl(apiClient: mockApiClient);
+  });
+
+  // todosApiServiceImplProviderのテスト
+  group('todosApiServiceImplProvider', () {
     late ProviderContainer container;
     late MockApiClient mockApiClient;
 
@@ -30,29 +38,21 @@ void main() {
       container.dispose();
     });
 
-    test('todoServiceAPIProviderはTodoServiceAPIのインスタンスを返すこと', () {
-      final service = container.read(todoServiceAPIProvider);
-      expect(service, isA<TodoServiceAPI>());
+    test('todosApiServiceImplProviderはTodosApiServiceImplのインスタンスを返すこと', () {
+      final service = container.read(todosApiServiceImplProvider);
+      expect(service, isA<TodosApiServiceImpl>());
     });
 
-    test('todoServiceAPIProviderは指定されたApiClientで初期化されること', () async {
-      // todoServiceAPIProviderがmockApiClientで初期化されていることを確認するために、
+    test('todosApiServiceImplProviderは指定されたApiClientで初期化されること', () async {
+      // todosApiServiceImplProviderがmockApiClientで初期化されていることを確認するために、
       // serviceのfetchメソッドを呼び出し、mockApiClientのgetメソッドが呼ばれることを検証する。
-      final service = container.read(todoServiceAPIProvider);
+      final service = container.read(todosApiServiceImplProvider);
       when(mockApiClient.get(endpoint: 'todos')).thenAnswer(
         (_) async => {'todos': <Map<String, dynamic>>[]},
       );
       await service.fetch();
       verify(mockApiClient.get(endpoint: 'todos')).called(1);
     });
-  });
-
-  late MockApiClient mockApiClient;
-  late TodoServiceAPI todoServiceAPI;
-
-  setUp(() {
-    mockApiClient = MockApiClient();
-    todoServiceAPI = TodoServiceAPI(apiClient: mockApiClient);
   });
 
   // fetchメソッドのテスト
@@ -68,10 +68,10 @@ void main() {
         mockApiClient.get(endpoint: 'todos'),
       ).thenAnswer((_) async => mockResponse);
 
-      final result = await todoServiceAPI.fetch();
+      final result = await todosApiServiceImpl.fetch();
 
-      expect(result, isA<SuccessResult<TodosModel>>());
-      expect((result as SuccessResult<TodosModel>).value.todos?.length, 2);
+      expect(result, isA<SuccessResult<TodosDto>>());
+      expect((result as SuccessResult<TodosDto>).value.todos?.length, 2);
       expect(result.value.todos?[0].todo, 'Test Todo 1');
     });
 
@@ -79,20 +79,20 @@ void main() {
       final apiException = ApiClientException('Not Found', statusCode: 404);
       when(mockApiClient.get(endpoint: 'todos')).thenThrow(apiException);
 
-      final result = await todoServiceAPI.fetch();
+      final result = await todosApiServiceImpl.fetch();
 
-      expect(result, isA<FailureResult<TodosModel>>());
-      expect((result as FailureResult<TodosModel>).error, apiException);
+      expect(result, isA<FailureResult<TodosDto>>());
+      expect((result as FailureResult<TodosDto>).error, apiException);
     });
 
     test('その他の例外が発生した場合、FailureResultを返すこと', () async {
       final exception = Exception('Something went wrong');
       when(mockApiClient.get(endpoint: 'todos')).thenThrow(exception);
 
-      final result = await todoServiceAPI.fetch();
+      final result = await todosApiServiceImpl.fetch();
 
-      expect(result, isA<FailureResult<TodosModel>>());
-      expect((result as FailureResult<TodosModel>).error, exception);
+      expect(result, isA<FailureResult<TodosDto>>());
+      expect((result as FailureResult<TodosDto>).error, exception);
     });
   });
 
@@ -110,10 +110,10 @@ void main() {
         mockApiClient.get(endpoint: 'todos/$todoId'),
       ).thenAnswer((_) async => mockResponse);
 
-      final result = await todoServiceAPI.fetchById(id: todoId);
+      final result = await todosApiServiceImpl.fetchById(id: todoId);
 
-      expect(result, isA<SuccessResult<TodoModel>>());
-      expect((result as SuccessResult<TodoModel>).value.id, todoId);
+      expect(result, isA<SuccessResult<TodoDto>>());
+      expect((result as SuccessResult<TodoDto>).value.id, todoId);
       expect(result.value.todo, 'Test Todo 1');
     });
 
@@ -124,10 +124,10 @@ void main() {
         mockApiClient.get(endpoint: 'todos/$todoId'),
       ).thenThrow(apiException);
 
-      final result = await todoServiceAPI.fetchById(id: todoId);
+      final result = await todosApiServiceImpl.fetchById(id: todoId);
 
-      expect(result, isA<FailureResult<TodoModel>>());
-      expect((result as FailureResult<TodoModel>).error, apiException);
+      expect(result, isA<FailureResult<TodoDto>>());
+      expect((result as FailureResult<TodoDto>).error, apiException);
     });
 
     test('その他の例外が発生した場合、FailureResultを返すこと', () async {
@@ -135,10 +135,10 @@ void main() {
       final exception = Exception('Something went wrong');
       when(mockApiClient.get(endpoint: 'todos/$todoId')).thenThrow(exception);
 
-      final result = await todoServiceAPI.fetchById(id: todoId);
+      final result = await todosApiServiceImpl.fetchById(id: todoId);
 
-      expect(result, isA<FailureResult<TodoModel>>());
-      expect((result as FailureResult<TodoModel>).error, exception);
+      expect(result, isA<FailureResult<TodoDto>>());
+      expect((result as FailureResult<TodoDto>).error, exception);
     });
   });
 }

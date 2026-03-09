@@ -1,4 +1,3 @@
-
 import 'package:architecture_study/data/services/remote/api/api_client.dart';
 import 'package:architecture_study/data/services/remote/api/api_exception.dart';
 import 'package:architecture_study/data/services/remote/api/auth/auth_api_service.dart';
