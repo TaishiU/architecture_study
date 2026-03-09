@@ -68,6 +68,14 @@ class TodoRepository {
     }
   }
 
+  /// 加算
+  int add({
+    required int a,
+    required int b,
+  }) {
+    return a + b;
+  }
+
   /// [TodoDto] を [Todo] エンティティに変換します。
   Todo? _toEntity(TodoDto dto) {
     // 必須フィールドが欠損している場合はnullを返す
