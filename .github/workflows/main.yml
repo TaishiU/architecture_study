@@ -1,63 +1,37 @@
-name: Flutter CI
+name: Slack Notification
 
-on:
-  pull_request:
-    branches:
-      - main
+on: [ push ]
+
+env:
+  SLACK_USERNAME: DeployBot
+  SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
 jobs:
-  build:
+  slackNotification:
+    name: Slack-Notification
     runs-on: ubuntu-latest
 
     steps:
-      - name: コードのチェックアウト
-        uses: actions/checkout@v4
+      #-- Gitリポジトリの内容を取得 --#
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Flutterのセットアップ
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.x'
-          channel: 'stable'
+      #-- Slack通知 --#
+      # 成功
+      - name: Slack Notification on Success
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ success() }}
+        env:
+          SLACK_TITLE: Deploy / Success
+          SLACK_COLOR: good
+          SLACK_MESSAGE: 完了しました🚀
 
-      - name: Flutter SDKのパスを環境変数に追加
-        run: echo "$HOME/flutter/bin" >> $GITHUB_PATH
-
-      - name: Pubキャッシュの復元
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.PUB_CACHE }}
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
-      - name: Flutterクリーン
-        run: flutter clean
-
-      - name: Dart/Flutterの依存関係を取得
-        run: flutter pub get
-
-      - name: Dartコードの修正
-        run: dart fix --apply .
-
-      - name: Dartコードのフォーマット
-        run: dart format .
-
-      - name: Dartコードの解析
-        run: dart analyze
-
-      - name: Flutterコードの解析
-        run: flutter analyze
-
-      - name: テストの実行とカバレッジレポートの生成
-        run: flutter test --coverage
-
-      - name: Slack通知
-        if: always()
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
-          payload: |
-            {
-              "text": "GitHub Actionsの結果: ${{ job.status }}\nリポジトリ: ${{ github.repository }}\nPull Request: ${{ github.event.pull_request.title }} (#${{ github.event.pull_request.number }})\nURL: ${{ github.event.pull_request.html_url }}\nブランチ: ${{ github.head_ref }}\nコミット: ${{ github.event.pull_request.head.sha }}\nコミットメッセージ: ${{ github.event.pull_request.head.message }}"
-            }
+      # 失敗
+      - name: Slack Notification on Failure
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ failure() }}
+        env:
+          SLACK_TITLE: Deploy / Failure
+          SLACK_COLOR: danger
+          SLACK_MESSAGE: 失敗しました😢
