@@ -55,7 +55,8 @@ jobs:
         if: always()
         uses: slackapi/slack-github-action@v1.23.0
         with:
-          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
           payload: |
             {
               "text": "GitHub Actionsの結果: ${{ job.status }}\nリポジトリ: ${{ github.repository }}\nPull Request: ${{ github.event.pull_request.title }} (#${{ github.event.pull_request.number }})\nURL: ${{ github.event.pull_request.html_url }}\nブランチ: ${{ github.head_ref }}\nコミット: ${{ github.event.pull_request.head.sha }}\nコミットメッセージ: ${{ github.event.pull_request.head.message }}"
