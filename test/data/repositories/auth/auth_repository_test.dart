@@ -15,10 +15,10 @@ import 'auth_repository_test.mocks.dart';
 // MissingDummyValueErrorを解決するためにダミー値を提供するヘルパー関数
 void _setupDummyValues() {
   provideDummyBuilder<Result<LoginDto>>(
-    (_, __) => const SuccessResult(LoginDto()),
+    (_, _) => const SuccessResult(LoginDto()),
   );
   provideDummyBuilder<Result<void>>(
-    (_, __) => const SuccessResult(null),
+    (_, _) => const SuccessResult(null),
   );
 }
 
@@ -77,7 +77,8 @@ void main() {
     });
 
     test(
-      'authRepositoryProviderは指定されたAuthApiServiceとAuthPreferencesServiceで初期化されること',
+      'authRepositoryProviderは指定された'
+      'AuthApiServiceとAuthPreferencesServiceで初期化されること',
       () async {
         final repository = container.read(authRepositoryProvider);
 

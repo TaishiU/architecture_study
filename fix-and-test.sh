@@ -19,15 +19,13 @@ fi
 # ユニットテストを実行する
 flutter test --coverage
 # カバレッジをhtml化する
-lcov --extract coverage/lcov.info 'lib/data/api/api_client.dart' \
-  --extract coverage/lcov.info 'lib/data/api/*/*_service_api.dart' \
-  --extract coverage/lcov.info 'lib/data/api/**/*_service_impl.dart' \
-  --extract coverage/lcov.info 'lib/data/repositories/*/*_repository.dart' \
-  --extract coverage/lcov.info 'lib/ui/*/view_model/*_view_model.dart' \
+lcov --extract coverage/lcov.info 'lib/data/**/*_repository.dart' \
+  --extract coverage/lcov.info 'lib/data/**/*_service_impl.dart' \
+  --extract coverage/lcov.info 'lib/data/**/api_client.dart' \
+  --extract coverage/lcov.info 'lib/ui/**/*_view_model.dart' \
   -o coverage/lcov_extract.info
-# デバッグ用のクラスおよび自動生成ファイルを対象から除外
-lcov --remove coverage/lcov_extract.info 'lib/**/debug_*.dart' \
-  --remove coverage/lcov_extract.info 'lib/**/*.g.dart' \
+# 自動生成ファイルを対象から除外
+lcov --remove coverage/lcov_extract.info 'lib/**/*.g.dart' \
   --remove coverage/lcov_extract.info 'lib/**/*.freezed.dart' \
   -o coverage/lcov_extract.info
 # HTML生成

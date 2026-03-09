@@ -1,6 +1,6 @@
-import 'package:architecture_study/data/services/preferences/auth/auth_preferences_service_impl.dart';
-import 'package:architecture_study/data/services/preferences/shared_preferences_service.dart';
-import 'package:architecture_study/data/services/preferences/shared_preferences_service_impl.dart';
+import 'package:architecture_study/data/services/local/preferences/auth/auth_preferences_service_impl.dart';
+import 'package:architecture_study/data/services/local/preferences/shared_preferences_service.dart';
+import 'package:architecture_study/data/services/local/preferences/shared_preferences_service_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hooks_riverpod/misc.dart';
@@ -10,7 +10,6 @@ import 'package:shared_preferences/src/shared_preferences_async.dart';
 
 import 'auth_preferences_service_impl_test.mocks.dart';
 
-// SharedPreferencesServiceをモックします。
 @GenerateMocks([
   SharedPreferencesService,
   SharedPreferencesWithCache,
