@@ -1,0 +1,58 @@
+name: Flutter CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: コードのチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Flutterのセットアップ
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Flutter SDKのパスを環境変数に追加
+        run: echo "::add-path::$HOME/flutter/bin"
+
+      - name: Flutterクリーン
+        run: flutter clean
+
+      - name: Dart/Flutterの依存関係を取得
+        run: flutter pub get
+
+      - name: Dartコードの修正
+        run: dart fix --apply .
+
+      - name: Dartコードのフォーマット
+        run: dart format .
+
+      - name: Dartコードの解析
+        run: dart analyze
+
+      - name: Flutterコードの解析
+        run: flutter analyze
+
+      - name: テストの実行とカバレッジレポートの生成
+        run: flutter test --coverage
+
+      - name: Slack通知
+        uses: act10n/slack@v1
+        with:
+          status: ${{ job.status }}
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          message: |
+            GitHub Actionsの結果: ${{ job.status }}
+            リポジトリ: ${{ github.repository }}
+            Pull Request: ${{ github.event.pull_request.title }} (#${{ github.event.pull_request.number }})
+            URL: ${{ github.event.pull_request.html_url }}
+            ブランチ: ${{ github.head_ref }}
+            コミット: ${{ github.event.pull_request.head.sha }}
+            コミットメッセージ: ${{ github.event.pull_request.head.message }}
