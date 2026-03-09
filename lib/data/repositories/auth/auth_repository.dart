@@ -1,4 +1,3 @@
-
 import 'package:architecture_study/data/services/local/preferences/auth/auth_preferences_service.dart';
 import 'package:architecture_study/data/services/local/preferences/auth/auth_preferences_service_impl.dart';
 import 'package:architecture_study/data/services/remote/api/auth/auth_api_service.dart';
@@ -25,10 +24,10 @@ class AuthRepository {
     required this.authPreferencesService,
   });
 
-  /// API通信を行うAuthサービス
+  /// Authに関連するAPI通信を抽象化したサービスインターフェース。
   final AuthApiService authApiService;
 
-  /// ローカルのSharedPreferencesを操作するAuthPreferencesサービス
+  /// Authに関連するデータをローカルに永続化する処理を抽象化したサービスインターフェース。
   final AuthPreferencesService authPreferencesService;
 
   /// [Todos] 配列を取得

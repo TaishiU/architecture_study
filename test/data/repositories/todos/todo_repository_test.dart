@@ -23,7 +23,8 @@ void _setupDummyValues() {
 
 @GenerateMocks([TodosApiService, TodosApiServiceImpl])
 void main() {
-  _setupDummyValues(); // main関数の先頭でダミー値をセットアップ
+  // main関数の先頭でダミー値をセットアップ
+  _setupDummyValues();
 
   late MockTodosApiService mockTodosApiService;
   late TodoRepository todoRepository;
