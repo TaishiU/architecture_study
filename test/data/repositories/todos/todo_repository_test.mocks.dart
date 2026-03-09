@@ -5,12 +5,14 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:architecture_study/data/models/todos/todos_model.dart' as _i6;
-import 'package:architecture_study/data/services/api_client.dart' as _i2;
-import 'package:architecture_study/data/services/todos/todos_service.dart'
+import 'package:architecture_study/data/services/remote/api/api_client.dart'
+    as _i2;
+import 'package:architecture_study/data/services/remote/api/todos/todos_api_service.dart'
     as _i3;
-import 'package:architecture_study/data/services/todos/todos_service_api.dart'
+import 'package:architecture_study/data/services/remote/api/todos/todos_api_service_impl.dart'
     as _i8;
+import 'package:architecture_study/data/services/remote/dto/todos/todos_dto.dart'
+    as _i6;
 import 'package:architecture_study/utils/result.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i7;
@@ -35,46 +37,47 @@ class _FakeApiClient_0 extends _i1.SmartFake implements _i2.ApiClient {
     : super(parent, parentInvocation);
 }
 
-/// A class which mocks [TodosService].
+/// A class which mocks [TodosApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockTodosService extends _i1.Mock implements _i3.TodosService {
-  MockTodosService() {
+class MockTodosApiService extends _i1.Mock implements _i3.TodosApiService {
+  MockTodosApiService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<_i5.Result<_i6.TodosModel>> fetch() =>
+  _i4.Future<_i5.Result<_i6.TodosDto>> fetch() =>
       (super.noSuchMethod(
             Invocation.method(#fetch, []),
-            returnValue: _i4.Future<_i5.Result<_i6.TodosModel>>.value(
-              _i7.dummyValue<_i5.Result<_i6.TodosModel>>(
+            returnValue: _i4.Future<_i5.Result<_i6.TodosDto>>.value(
+              _i7.dummyValue<_i5.Result<_i6.TodosDto>>(
                 this,
                 Invocation.method(#fetch, []),
               ),
             ),
           )
-          as _i4.Future<_i5.Result<_i6.TodosModel>>);
+          as _i4.Future<_i5.Result<_i6.TodosDto>>);
 
   @override
-  _i4.Future<_i5.Result<_i6.TodoModel>> fetchById({required int? id}) =>
+  _i4.Future<_i5.Result<_i6.TodoDto>> fetchById({required int? id}) =>
       (super.noSuchMethod(
             Invocation.method(#fetchById, [], {#id: id}),
-            returnValue: _i4.Future<_i5.Result<_i6.TodoModel>>.value(
-              _i7.dummyValue<_i5.Result<_i6.TodoModel>>(
+            returnValue: _i4.Future<_i5.Result<_i6.TodoDto>>.value(
+              _i7.dummyValue<_i5.Result<_i6.TodoDto>>(
                 this,
                 Invocation.method(#fetchById, [], {#id: id}),
               ),
             ),
           )
-          as _i4.Future<_i5.Result<_i6.TodoModel>>);
+          as _i4.Future<_i5.Result<_i6.TodoDto>>);
 }
 
-/// A class which mocks [TodoServiceAPI].
+/// A class which mocks [TodosApiServiceImpl].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockTodoServiceAPI extends _i1.Mock implements _i8.TodoServiceAPI {
-  MockTodoServiceAPI() {
+class MockTodosApiServiceImpl extends _i1.Mock
+    implements _i8.TodosApiServiceImpl {
+  MockTodosApiServiceImpl() {
     _i1.throwOnMissingStub(this);
   }
 
@@ -87,28 +90,28 @@ class MockTodoServiceAPI extends _i1.Mock implements _i8.TodoServiceAPI {
           as _i2.ApiClient);
 
   @override
-  _i4.Future<_i5.Result<_i6.TodosModel>> fetch() =>
+  _i4.Future<_i5.Result<_i6.TodosDto>> fetch() =>
       (super.noSuchMethod(
             Invocation.method(#fetch, []),
-            returnValue: _i4.Future<_i5.Result<_i6.TodosModel>>.value(
-              _i7.dummyValue<_i5.Result<_i6.TodosModel>>(
+            returnValue: _i4.Future<_i5.Result<_i6.TodosDto>>.value(
+              _i7.dummyValue<_i5.Result<_i6.TodosDto>>(
                 this,
                 Invocation.method(#fetch, []),
               ),
             ),
           )
-          as _i4.Future<_i5.Result<_i6.TodosModel>>);
+          as _i4.Future<_i5.Result<_i6.TodosDto>>);
 
   @override
-  _i4.Future<_i5.Result<_i6.TodoModel>> fetchById({required int? id}) =>
+  _i4.Future<_i5.Result<_i6.TodoDto>> fetchById({required int? id}) =>
       (super.noSuchMethod(
             Invocation.method(#fetchById, [], {#id: id}),
-            returnValue: _i4.Future<_i5.Result<_i6.TodoModel>>.value(
-              _i7.dummyValue<_i5.Result<_i6.TodoModel>>(
+            returnValue: _i4.Future<_i5.Result<_i6.TodoDto>>.value(
+              _i7.dummyValue<_i5.Result<_i6.TodoDto>>(
                 this,
                 Invocation.method(#fetchById, [], {#id: id}),
               ),
             ),
           )
-          as _i4.Future<_i5.Result<_i6.TodoModel>>);
+          as _i4.Future<_i5.Result<_i6.TodoDto>>);
 }

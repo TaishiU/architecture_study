@@ -8,7 +8,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final todoRepositoryProvider = Provider<TodoRepository>(
-  (ref) => TodoRepository(todoApiService: ref.read(todosApiServiceImplProvider)),
+  (ref) => TodoRepository(
+    todoApiService: ref.read(todosApiServiceImplProvider),
+  ),
 );
 
 /// リポジトリクラス
@@ -16,7 +18,7 @@ class TodoRepository {
   /// コンストラクタ
   TodoRepository({required this.todoApiService});
 
-  ///　Todosサービス
+  /// Todosに関連するAPI通信を抽象化したサービスインターフェース。
   final TodosApiService todoApiService;
 
   /// [Todos] 配列を取得
@@ -66,17 +68,18 @@ class TodoRepository {
     }
   }
 
-  Todo? _toEntity(TodoDto model) {
-    // 必須フィールドが欠損している場合はスキップ
-    if (model.userId == null || model.id == null) {
+  /// [TodoDto] を [Todo] エンティティに変換します。
+  Todo? _toEntity(TodoDto dto) {
+    // 必須フィールドが欠損している場合はnullを返す
+    if (dto.userId == null || dto.id == null) {
       return null;
     }
 
     return Todo(
-      userId: model.userId!,
-      id: model.id!,
-      todo: model.todo ?? '',
-      completed: model.completed ?? false,
+      userId: dto.userId!,
+      id: dto.id!,
+      todo: dto.todo ?? '',
+      completed: dto.completed ?? false,
     );
   }
 }
