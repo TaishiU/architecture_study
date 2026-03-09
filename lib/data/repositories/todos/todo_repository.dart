@@ -73,7 +73,6 @@ class TodoRepository {
     required int a,
     required int b,
   }) {
-    print('add');
     return a + b;
   }
 
