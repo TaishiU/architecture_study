@@ -44,15 +44,10 @@ jobs:
         run: flutter test --coverage
 
       - name: Slack通知
-        uses: act10n/slack@v1
+        uses: slackapi/slack-github-action@v1.23.0
         with:
-          status: ${{ job.status }}
-          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          message: |
-            GitHub Actionsの結果: ${{ job.status }}
-            リポジトリ: ${{ github.repository }}
-            Pull Request: ${{ github.event.pull_request.title }} (#${{ github.event.pull_request.number }})
-            URL: ${{ github.event.pull_request.html_url }}
-            ブランチ: ${{ github.head_ref }}
-            コミット: ${{ github.event.pull_request.head.sha }}
-            コミットメッセージ: ${{ github.event.pull_request.head.message }}
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "GitHub Actionsの結果: ${{ job.status }}\nリポジトリ: ${{ github.repository }}\nPull Request: ${{ github.event.pull_request.title }} (#${{ github.event.pull_request.number }})\nURL: ${{ github.event.pull_request.html_url }}\nブランチ: ${{ github.head_ref }}\nコミット: ${{ github.event.pull_request.head.sha }}\nコミットメッセージ: ${{ github.event.pull_request.head.message }}"
+            }
