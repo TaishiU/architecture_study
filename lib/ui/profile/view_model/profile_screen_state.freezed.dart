@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 mixin _$ProfileScreenState {
 
 /// 表示するTodoアイテムのリスト
- Todos get todos;
+ bool get hasProfile;
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $ProfileScreenStateCopyWith<ProfileScreenState> get copyWith => _$ProfileScreenS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileScreenState&&(identical(other.todos, todos) || other.todos == todos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileScreenState&&(identical(other.hasProfile, hasProfile) || other.hasProfile == hasProfile));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,todos);
+int get hashCode => Object.hash(runtimeType,hasProfile);
 
 @override
 String toString() {
-  return 'ProfileScreenState(todos: $todos)';
+  return 'ProfileScreenState(hasProfile: $hasProfile)';
 }
 
 
@@ -46,11 +46,11 @@ abstract mixin class $ProfileScreenStateCopyWith<$Res>  {
   factory $ProfileScreenStateCopyWith(ProfileScreenState value, $Res Function(ProfileScreenState) _then) = _$ProfileScreenStateCopyWithImpl;
 @useResult
 $Res call({
- Todos todos
+ bool hasProfile
 });
 
 
-$TodosCopyWith<$Res> get todos;
+
 
 }
 /// @nodoc
@@ -63,22 +63,13 @@ class _$ProfileScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? todos = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? hasProfile = null,}) {
   return _then(_self.copyWith(
-todos: null == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nullable
-as Todos,
+hasProfile: null == hasProfile ? _self.hasProfile : hasProfile // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
-/// Create a copy of ProfileScreenState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$TodosCopyWith<$Res> get todos {
-  
-  return $TodosCopyWith<$Res>(_self.todos, (value) {
-    return _then(_self.copyWith(todos: value));
-  });
-}
+
 }
 
 
@@ -160,10 +151,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Todos todos)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool hasProfile)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileScreenState() when $default != null:
-return $default(_that.todos);case _:
+return $default(_that.hasProfile);case _:
   return orElse();
 
 }
@@ -181,10 +172,10 @@ return $default(_that.todos);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Todos todos)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool hasProfile)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileScreenState():
-return $default(_that.todos);case _:
+return $default(_that.hasProfile);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +192,10 @@ return $default(_that.todos);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Todos todos)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool hasProfile)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileScreenState() when $default != null:
-return $default(_that.todos);case _:
+return $default(_that.hasProfile);case _:
   return null;
 
 }
@@ -216,11 +207,11 @@ return $default(_that.todos);case _:
 
 
 class _ProfileScreenState implements ProfileScreenState {
-  const _ProfileScreenState({required this.todos});
+  const _ProfileScreenState({required this.hasProfile});
   
 
 /// 表示するTodoアイテムのリスト
-@override final  Todos todos;
+@override final  bool hasProfile;
 
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
@@ -232,16 +223,16 @@ _$ProfileScreenStateCopyWith<_ProfileScreenState> get copyWith => __$ProfileScre
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileScreenState&&(identical(other.todos, todos) || other.todos == todos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileScreenState&&(identical(other.hasProfile, hasProfile) || other.hasProfile == hasProfile));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,todos);
+int get hashCode => Object.hash(runtimeType,hasProfile);
 
 @override
 String toString() {
-  return 'ProfileScreenState(todos: $todos)';
+  return 'ProfileScreenState(hasProfile: $hasProfile)';
 }
 
 
@@ -252,11 +243,11 @@ abstract mixin class _$ProfileScreenStateCopyWith<$Res> implements $ProfileScree
   factory _$ProfileScreenStateCopyWith(_ProfileScreenState value, $Res Function(_ProfileScreenState) _then) = __$ProfileScreenStateCopyWithImpl;
 @override @useResult
 $Res call({
- Todos todos
+ bool hasProfile
 });
 
 
-@override $TodosCopyWith<$Res> get todos;
+
 
 }
 /// @nodoc
@@ -269,23 +260,14 @@ class __$ProfileScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? todos = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? hasProfile = null,}) {
   return _then(_ProfileScreenState(
-todos: null == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nullable
-as Todos,
+hasProfile: null == hasProfile ? _self.hasProfile : hasProfile // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
-/// Create a copy of ProfileScreenState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$TodosCopyWith<$Res> get todos {
-  
-  return $TodosCopyWith<$Res>(_self.todos, (value) {
-    return _then(_self.copyWith(todos: value));
-  });
-}
+
 }
 
 // dart format on

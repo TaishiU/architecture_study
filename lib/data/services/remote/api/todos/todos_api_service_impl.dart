@@ -20,7 +20,7 @@ class TodosApiServiceImpl implements TodosApiService {
   final ApiClient apiClient;
 
   /// エンドポイント
-  static const endpoint = 'todos';
+  static const endpoint = 'todo';
 
   @override
   Future<Result<TodosDto>> fetch() async {

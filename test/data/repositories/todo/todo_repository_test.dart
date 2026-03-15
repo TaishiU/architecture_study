@@ -1,4 +1,4 @@
-import 'package:architecture_study/data/repositories/todos/todo_repository.dart';
+import 'package:architecture_study/data/repositories/todo/todo_repository.dart';
 import 'package:architecture_study/data/services/remote/api/todos/todos_api_service.dart';
 import 'package:architecture_study/data/services/remote/api/todos/todos_api_service_impl.dart';
 import 'package:architecture_study/data/services/remote/dto/todos/todos_dto.dart';
