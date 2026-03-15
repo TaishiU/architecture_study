@@ -24,6 +24,7 @@ class TodoRepository {
   /// [Todos] 配列を取得
   Future<Result<Todos>> fetch() async {
     try {
+      logger.i('[TodoRepository]fetch(): start');
       final result = await todoApiService.fetch();
 
       switch (result) {

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'home_screen_state.dart';
+part of 'todo_list_screen_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -12,21 +12,21 @@ part of 'home_screen_state.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$HomeScreenState {
+mixin _$TodoListScreenState {
 
 /// 表示するTodoアイテムのリスト
  Todos get todos;
-/// Create a copy of HomeScreenState
+/// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$HomeScreenStateCopyWith<HomeScreenState> get copyWith => _$HomeScreenStateCopyWithImpl<HomeScreenState>(this as HomeScreenState, _$identity);
+$TodoListScreenStateCopyWith<TodoListScreenState> get copyWith => _$TodoListScreenStateCopyWithImpl<TodoListScreenState>(this as TodoListScreenState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeScreenState&&(identical(other.todos, todos) || other.todos == todos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoListScreenState&&(identical(other.todos, todos) || other.todos == todos));
 }
 
 
@@ -35,15 +35,15 @@ int get hashCode => Object.hash(runtimeType,todos);
 
 @override
 String toString() {
-  return 'HomeScreenState(todos: $todos)';
+  return 'TodoListScreenState(todos: $todos)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $HomeScreenStateCopyWith<$Res>  {
-  factory $HomeScreenStateCopyWith(HomeScreenState value, $Res Function(HomeScreenState) _then) = _$HomeScreenStateCopyWithImpl;
+abstract mixin class $TodoListScreenStateCopyWith<$Res>  {
+  factory $TodoListScreenStateCopyWith(TodoListScreenState value, $Res Function(TodoListScreenState) _then) = _$TodoListScreenStateCopyWithImpl;
 @useResult
 $Res call({
  Todos todos
@@ -54,14 +54,14 @@ $TodosCopyWith<$Res> get todos;
 
 }
 /// @nodoc
-class _$HomeScreenStateCopyWithImpl<$Res>
-    implements $HomeScreenStateCopyWith<$Res> {
-  _$HomeScreenStateCopyWithImpl(this._self, this._then);
+class _$TodoListScreenStateCopyWithImpl<$Res>
+    implements $TodoListScreenStateCopyWith<$Res> {
+  _$TodoListScreenStateCopyWithImpl(this._self, this._then);
 
-  final HomeScreenState _self;
-  final $Res Function(HomeScreenState) _then;
+  final TodoListScreenState _self;
+  final $Res Function(TodoListScreenState) _then;
 
-/// Create a copy of HomeScreenState
+/// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? todos = null,}) {
   return _then(_self.copyWith(
@@ -69,7 +69,7 @@ todos: null == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nulla
 as Todos,
   ));
 }
-/// Create a copy of HomeScreenState
+/// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -82,8 +82,8 @@ $TodosCopyWith<$Res> get todos {
 }
 
 
-/// Adds pattern-matching-related methods to [HomeScreenState].
-extension HomeScreenStatePatterns on HomeScreenState {
+/// Adds pattern-matching-related methods to [TodoListScreenState].
+extension TodoListScreenStatePatterns on TodoListScreenState {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -96,10 +96,10 @@ extension HomeScreenStatePatterns on HomeScreenState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _HomeScreenState value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TodoListScreenState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _HomeScreenState() when $default != null:
+case _TodoListScreenState() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -118,10 +118,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _HomeScreenState value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TodoListScreenState value)  $default,){
 final _that = this;
 switch (_that) {
-case _HomeScreenState():
+case _TodoListScreenState():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -139,10 +139,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _HomeScreenState value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TodoListScreenState value)?  $default,){
 final _that = this;
 switch (_that) {
-case _HomeScreenState() when $default != null:
+case _TodoListScreenState() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -162,7 +162,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Todos todos)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _HomeScreenState() when $default != null:
+case _TodoListScreenState() when $default != null:
 return $default(_that.todos);case _:
   return orElse();
 
@@ -183,7 +183,7 @@ return $default(_that.todos);case _:
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Todos todos)  $default,) {final _that = this;
 switch (_that) {
-case _HomeScreenState():
+case _TodoListScreenState():
 return $default(_that.todos);case _:
   throw StateError('Unexpected subclass');
 
@@ -203,7 +203,7 @@ return $default(_that.todos);case _:
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Todos todos)?  $default,) {final _that = this;
 switch (_that) {
-case _HomeScreenState() when $default != null:
+case _TodoListScreenState() when $default != null:
 return $default(_that.todos);case _:
   return null;
 
@@ -215,24 +215,24 @@ return $default(_that.todos);case _:
 /// @nodoc
 
 
-class _HomeScreenState implements HomeScreenState {
-  const _HomeScreenState({required this.todos});
+class _TodoListScreenState implements TodoListScreenState {
+  const _TodoListScreenState({required this.todos});
   
 
 /// 表示するTodoアイテムのリスト
 @override final  Todos todos;
 
-/// Create a copy of HomeScreenState
+/// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$HomeScreenStateCopyWith<_HomeScreenState> get copyWith => __$HomeScreenStateCopyWithImpl<_HomeScreenState>(this, _$identity);
+_$TodoListScreenStateCopyWith<_TodoListScreenState> get copyWith => __$TodoListScreenStateCopyWithImpl<_TodoListScreenState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeScreenState&&(identical(other.todos, todos) || other.todos == todos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoListScreenState&&(identical(other.todos, todos) || other.todos == todos));
 }
 
 
@@ -241,15 +241,15 @@ int get hashCode => Object.hash(runtimeType,todos);
 
 @override
 String toString() {
-  return 'HomeScreenState(todos: $todos)';
+  return 'TodoListScreenState(todos: $todos)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$HomeScreenStateCopyWith<$Res> implements $HomeScreenStateCopyWith<$Res> {
-  factory _$HomeScreenStateCopyWith(_HomeScreenState value, $Res Function(_HomeScreenState) _then) = __$HomeScreenStateCopyWithImpl;
+abstract mixin class _$TodoListScreenStateCopyWith<$Res> implements $TodoListScreenStateCopyWith<$Res> {
+  factory _$TodoListScreenStateCopyWith(_TodoListScreenState value, $Res Function(_TodoListScreenState) _then) = __$TodoListScreenStateCopyWithImpl;
 @override @useResult
 $Res call({
  Todos todos
@@ -260,23 +260,23 @@ $Res call({
 
 }
 /// @nodoc
-class __$HomeScreenStateCopyWithImpl<$Res>
-    implements _$HomeScreenStateCopyWith<$Res> {
-  __$HomeScreenStateCopyWithImpl(this._self, this._then);
+class __$TodoListScreenStateCopyWithImpl<$Res>
+    implements _$TodoListScreenStateCopyWith<$Res> {
+  __$TodoListScreenStateCopyWithImpl(this._self, this._then);
 
-  final _HomeScreenState _self;
-  final $Res Function(_HomeScreenState) _then;
+  final _TodoListScreenState _self;
+  final $Res Function(_TodoListScreenState) _then;
 
-/// Create a copy of HomeScreenState
+/// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? todos = null,}) {
-  return _then(_HomeScreenState(
+  return _then(_TodoListScreenState(
 todos: null == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nullable
 as Todos,
   ));
 }
 
-/// Create a copy of HomeScreenState
+/// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')

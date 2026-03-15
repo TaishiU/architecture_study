@@ -27,7 +27,6 @@ class TodosApiServiceImpl implements TodosApiService {
     try {
       final response = await apiClient.get(endpoint: endpoint);
       final todosDto = TodosDto.fromJson(response);
-      logger.i('[TodoServiceAPI] $TodosDto');
       return SuccessResult(todosDto);
     } on ApiClientException catch (error) {
       logger.e('[TodoServiceAPI] ApiClientException: $error');

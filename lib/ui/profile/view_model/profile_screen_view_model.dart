@@ -1,28 +1,28 @@
-part of 'home_screen_state.dart';
+part of 'profile_screen_state.dart';
 
 /// プロバイダ
-final homeScreenProvider =
-    AsyncNotifierProvider<HomeScreenViewModel, HomeScreenState>(
-      HomeScreenViewModel.new,
+final profileScreenProvider =
+    AsyncNotifierProvider<ProfileScreenViewModel, ProfileScreenState>(
+      ProfileScreenViewModel.new,
     );
 
-/// ホーム画面のViewModel
-class HomeScreenViewModel extends AsyncNotifier<HomeScreenState> {
+/// プロフィール画面のViewModel
+class ProfileScreenViewModel extends AsyncNotifier<ProfileScreenState> {
   late final TodoRepository _todoRepository;
   late final AuthRepository _authRepository;
 
   @override
-  Future<HomeScreenState> build() async {
+  Future<ProfileScreenState> build() async {
     _todoRepository = ref.read(todoRepositoryProvider);
     _authRepository = ref.read(authRepositoryProvider);
 
     try {
       // throw Exception('意図的なエラー');
       final todos = await fetchTodos();
-      logger.d('[HomeScreenViewModel] todos: ${todos.todos.length}');
-      return HomeScreenState(todos: todos);
+      logger.d('[ProfileScreenViewModel] todos: ${todos.todos.length}');
+      return ProfileScreenState(todos: todos);
     } on Exception catch (error) {
-      logger.e('[HomeScreenViewModel] $error');
+      logger.e('[ProfileScreenViewModel] $error');
       throw Exception();
     }
   }
@@ -35,7 +35,7 @@ class HomeScreenViewModel extends AsyncNotifier<HomeScreenState> {
       case SuccessResult<void>():
         return result.value;
       case FailureResult<void>():
-        logger.e('[HomeScreenViewModel] login failed: ${result.error}');
+        logger.e('[ProfileScreenViewModel] login failed: ${result.error}');
         throw Exception();
     }
   }
@@ -48,7 +48,7 @@ class HomeScreenViewModel extends AsyncNotifier<HomeScreenState> {
       case SuccessResult<Todos>():
         return result.value;
       case FailureResult<Todos>():
-        logger.e('[HomeScreenViewModel] fetchTodos failed: ${result.error}');
+        logger.e('[ProfileScreenViewModel] fetchTodos failed: ${result.error}');
         throw Exception();
     }
   }

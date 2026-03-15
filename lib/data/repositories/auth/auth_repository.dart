@@ -3,9 +3,9 @@ import 'package:architecture_study/data/services/local/preferences/auth/auth_pre
 import 'package:architecture_study/data/services/remote/api/auth/auth_api_service.dart';
 import 'package:architecture_study/data/services/remote/api/auth/auth_api_service_impl.dart';
 import 'package:architecture_study/data/services/remote/dto/login/login_dto.dart';
-import 'package:architecture_study/domain/entities/todos/todos.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
@@ -17,7 +17,7 @@ final authRepositoryProvider = Provider<AuthRepository>(
 );
 
 /// リポジトリクラス
-class AuthRepository {
+class AuthRepository extends ChangeNotifier {
   /// コンストラクタ
   AuthRepository({
     required this.authApiService,
@@ -30,15 +30,41 @@ class AuthRepository {
   /// Authに関連するデータをローカルに永続化する処理を抽象化したサービスインターフェース。
   final AuthPreferencesService authPreferencesService;
 
-  /// [Todos] 配列を取得
+  /// ログイン済みかどうか
+  bool? _isLoggedIn;
+
+  /// アクセストークン
+  String? _accessToken;
+
+  /// ログイン済みかどうか
+  Future<bool> get isLoggedIn async {
+    // キャッシュがあればそのまま返す
+    if (_isLoggedIn != null) {
+      return _isLoggedIn!;
+    }
+    // キャッシュがなければローカルから取得
+    await getAccessToken();
+    return _isLoggedIn ?? false;
+  }
+
+  /// アクセストークンをローカルから取得
+  Future<void> getAccessToken() async {
+    final accessToken = authPreferencesService.getAccessToken();
+    _isLoggedIn = accessToken.isNotEmpty;
+    _accessToken = accessToken;
+  }
+
+  /// ログイン
   Future<Result<void>> login() async {
     try {
       final result = await authApiService.login();
 
       switch (result) {
         case SuccessResult<LoginDto>():
-          final value = result.value;
-          logger.w(value);
+          _isLoggedIn = result.value.accessToken?.isNotEmpty;
+          _accessToken = result.value.accessToken;
+          // ログイン状態の変更通知
+          notifyListeners();
           return const SuccessResult(null);
         case FailureResult<LoginDto>():
           logger.e('[AuthRepository] ${result.error}');
