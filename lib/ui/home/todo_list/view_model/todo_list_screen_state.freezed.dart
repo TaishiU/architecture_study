@@ -14,8 +14,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TodoListScreenState {
 
-/// 表示するTodoアイテムのリスト
- Todos get todos;
+/// SSOTから提供されるTodoリスト
+ List<Todo> get todos;/// 検索クエリ
+ String get searchQuery;
 /// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +27,16 @@ $TodoListScreenStateCopyWith<TodoListScreenState> get copyWith => _$TodoListScre
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoListScreenState&&(identical(other.todos, todos) || other.todos == todos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TodoListScreenState&&const DeepCollectionEquality().equals(other.todos, todos)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,todos);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(todos),searchQuery);
 
 @override
 String toString() {
-  return 'TodoListScreenState(todos: $todos)';
+  return 'TodoListScreenState(todos: $todos, searchQuery: $searchQuery)';
 }
 
 
@@ -46,11 +47,11 @@ abstract mixin class $TodoListScreenStateCopyWith<$Res>  {
   factory $TodoListScreenStateCopyWith(TodoListScreenState value, $Res Function(TodoListScreenState) _then) = _$TodoListScreenStateCopyWithImpl;
 @useResult
 $Res call({
- Todos todos
+ List<Todo> todos, String searchQuery
 });
 
 
-$TodosCopyWith<$Res> get todos;
+
 
 }
 /// @nodoc
@@ -63,22 +64,14 @@ class _$TodoListScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? todos = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? todos = null,Object? searchQuery = null,}) {
   return _then(_self.copyWith(
 todos: null == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nullable
-as Todos,
+as List<Todo>,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
-/// Create a copy of TodoListScreenState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$TodosCopyWith<$Res> get todos {
-  
-  return $TodosCopyWith<$Res>(_self.todos, (value) {
-    return _then(_self.copyWith(todos: value));
-  });
-}
+
 }
 
 
@@ -160,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Todos todos)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Todo> todos,  String searchQuery)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TodoListScreenState() when $default != null:
-return $default(_that.todos);case _:
+return $default(_that.todos,_that.searchQuery);case _:
   return orElse();
 
 }
@@ -181,10 +174,10 @@ return $default(_that.todos);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Todos todos)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Todo> todos,  String searchQuery)  $default,) {final _that = this;
 switch (_that) {
 case _TodoListScreenState():
-return $default(_that.todos);case _:
+return $default(_that.todos,_that.searchQuery);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +194,10 @@ return $default(_that.todos);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Todos todos)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Todo> todos,  String searchQuery)?  $default,) {final _that = this;
 switch (_that) {
 case _TodoListScreenState() when $default != null:
-return $default(_that.todos);case _:
+return $default(_that.todos,_that.searchQuery);case _:
   return null;
 
 }
@@ -216,11 +209,20 @@ return $default(_that.todos);case _:
 
 
 class _TodoListScreenState implements TodoListScreenState {
-  const _TodoListScreenState({required this.todos});
+  const _TodoListScreenState({required final  List<Todo> todos, required this.searchQuery}): _todos = todos;
   
 
-/// 表示するTodoアイテムのリスト
-@override final  Todos todos;
+/// SSOTから提供されるTodoリスト
+ final  List<Todo> _todos;
+/// SSOTから提供されるTodoリスト
+@override List<Todo> get todos {
+  if (_todos is EqualUnmodifiableListView) return _todos;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_todos);
+}
+
+/// 検索クエリ
+@override final  String searchQuery;
 
 /// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
@@ -232,16 +234,16 @@ _$TodoListScreenStateCopyWith<_TodoListScreenState> get copyWith => __$TodoListS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoListScreenState&&(identical(other.todos, todos) || other.todos == todos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TodoListScreenState&&const DeepCollectionEquality().equals(other._todos, _todos)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,todos);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_todos),searchQuery);
 
 @override
 String toString() {
-  return 'TodoListScreenState(todos: $todos)';
+  return 'TodoListScreenState(todos: $todos, searchQuery: $searchQuery)';
 }
 
 
@@ -252,11 +254,11 @@ abstract mixin class _$TodoListScreenStateCopyWith<$Res> implements $TodoListScr
   factory _$TodoListScreenStateCopyWith(_TodoListScreenState value, $Res Function(_TodoListScreenState) _then) = __$TodoListScreenStateCopyWithImpl;
 @override @useResult
 $Res call({
- Todos todos
+ List<Todo> todos, String searchQuery
 });
 
 
-@override $TodosCopyWith<$Res> get todos;
+
 
 }
 /// @nodoc
@@ -269,23 +271,15 @@ class __$TodoListScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of TodoListScreenState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? todos = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? todos = null,Object? searchQuery = null,}) {
   return _then(_TodoListScreenState(
-todos: null == todos ? _self.todos : todos // ignore: cast_nullable_to_non_nullable
-as Todos,
+todos: null == todos ? _self._todos : todos // ignore: cast_nullable_to_non_nullable
+as List<Todo>,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
-/// Create a copy of TodoListScreenState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$TodosCopyWith<$Res> get todos {
-  
-  return $TodosCopyWith<$Res>(_self.todos, (value) {
-    return _then(_self.copyWith(todos: value));
-  });
-}
+
 }
 
 // dart format on

@@ -1,5 +1,4 @@
-import 'package:architecture_study/data/repositories/auth/auth_repository.dart';
-import 'package:architecture_study/domain/use_cases/auth/auth_use_case.dart';
+import 'package:architecture_study/ui/home/todo_detail/view/todo_detail_screen.dart';
 import 'package:architecture_study/ui/home/todo_list/view/todo_list_screen.dart';
 import 'package:architecture_study/ui/login/view/login_screen.dart';
 import 'package:architecture_study/ui/profile/view/profile_screen.dart';
@@ -257,10 +256,28 @@ final routerProvider = Provider<GoRouter>(
   (ref) {
     return GoRouter(
       // initialLocation: '/home/tab1', // 初期表示されるパスをTab1に
-      initialLocation: LoginScreen.path,
+      // initialLocation: LoginScreen.path,
+      initialLocation: TodoListScreen.path,
       navigatorKey: _rootNavigatorKey,
       // ルートのNavigator Key
       routes: [
+        // GoRoute(
+        //   path: TodoListScreen.path,
+        //   // name: 'tab1',
+        //   builder: (context, state) => const TodoListScreen(),
+        //   routes: [
+        //     GoRoute(
+        //       path: ':todoId', // /todo_list/:todoId
+        //       builder: (context, state) {
+        //         final todoId = int.parse(
+        //           state.pathParameters['todoId']!,
+        //         );
+        //         return TodoDetailScreen(todoId: todoId);
+        //       },
+        //     ),
+        //   ],
+        // ),
+
         // ログイン画面 (共通のShellRouteとは独立したルート)
         GoRoute(
           path: LoginScreen.path,
@@ -292,6 +309,15 @@ final routerProvider = Provider<GoRouter>(
                   // name: 'tab1',
                   builder: (context, state) => const TodoListScreen(),
                   routes: [
+                    GoRoute(
+                      path: ':todoId', // /todo_list/:todoId
+                      builder: (context, state) {
+                        final todoId = int.parse(
+                          state.pathParameters['todoId']!,
+                        );
+                        return TodoDetailScreen(todoId: todoId);
+                      },
+                    ),
                     GoRoute(
                       path: 'details', // /home/tab1/details
                       name: 'tab1Details',
@@ -371,20 +397,20 @@ final routerProvider = Provider<GoRouter>(
           ],
         ),
       ],
-      refreshListenable: ref.read(authRepositoryProvider),
-      redirect: (context, state) async {
-        final loggedIn = await checkIsLoggedIn(ref);
-        final loggingIn = state.matchedLocation == LoginScreen.path;
-        // ユーザーがログインしていない場合は、ログイン画面へ
-        if (!loggedIn) {
-          return LoginScreen.path;
-        }
-        // ログイン済みのユーザーがまだログイン画面にいる場合は、ホームのTodoリスト画面へ
-        if (loggingIn) {
-          return TodoListScreen.path;
-        }
-        return null;
-      },
+      // refreshListenable: ref.read(authRepositoryProvider),
+      // redirect: (context, state) async {
+      //   final loggedIn = await checkIsLoggedIn(ref);
+      //   final loggingIn = state.matchedLocation == LoginScreen.path;
+      //   // ユーザーがログインしていない場合は、ログイン画面へ
+      //   if (!loggedIn) {
+      //     return LoginScreen.path;
+      //   }
+      //   // ログイン済みのユーザーがまだログイン画面にいる場合は、ホームのTodoリスト画面へ
+      //   if (loggingIn) {
+      //     return TodoListScreen.path;
+      //   }
+      //   return null;
+      // },
       // エラーハンドリング (オプション)
       errorBuilder: (context, state) => Scaffold(
         appBar: AppBar(title: const Text('エラー')),
