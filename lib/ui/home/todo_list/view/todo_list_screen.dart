@@ -1,4 +1,5 @@
 import 'package:architecture_study/domain/entities/todos/todos.dart';
+import 'package:architecture_study/ui/core/components/core_error.dart';
 import 'package:architecture_study/ui/home/todo_list/view_model/todo_list_screen_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -28,7 +29,12 @@ class TodoListScreen extends HookConsumerWidget {
         // データ取得完了（または更新完了）
         AsyncData(value: final state) => _Body(todos: state.todos),
         // エラー発生時
-        AsyncError(:final error) => Center(child: Text('Error: $error')),
+        AsyncError(:final error) => CoreError(
+          error: error,
+          onPressed: () async {
+            await ref.read(todoListScreenProvider.notifier).refresh();
+          },
+        ),
       },
       // 更新ボタン (例としてRefresh呼び出し)
       floatingActionButton: FloatingActionButton(
