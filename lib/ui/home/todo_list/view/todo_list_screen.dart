@@ -1,6 +1,7 @@
-import 'package:architecture_study/domain/entities/todos/todos.dart';
 import 'package:architecture_study/ui/core/components/core_error.dart';
+import 'package:architecture_study/ui/home/todo_list/view_model/todo_list_screen_state.dart';
 import 'package:architecture_study/ui/home/todo_list/view_model/todo_list_screen_view_model.dart';
+import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -15,25 +16,23 @@ class TodoListScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. ViewModelを監視して AsyncValue<TodoListScreenState> を取得
     final viewModel = ref.watch(todoListScreenProvider);
 
-    // 2. AsyncValueの状態に応じて表示を分岐
     return Scaffold(
       appBar: AppBar(title: const Text('Todo List')),
       body: switch (viewModel) {
-        // ロード中
-        AsyncLoading() => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        // データ取得完了（または更新完了）
-        AsyncData(value: final state) => _Body(todos: state.todos),
-        // エラー発生時
+        AsyncLoading() => const Center(child: CircularProgressIndicator()),
+        AsyncData(value: final result) => switch (result) {
+          SuccessResult(value: final state) => _Body(state: state),
+          FailureResult(:final error) => CoreError(
+            error: error,
+            onPressed: () =>
+                ref.read(todoListScreenProvider.notifier).refresh(),
+          ),
+        },
         AsyncError(:final error) => CoreError(
-          error: error,
-          onPressed: () async {
-            await ref.read(todoListScreenProvider.notifier).refresh();
-          },
+          error: error as Exception,
+          onPressed: () => ref.read(todoListScreenProvider.notifier).refresh(),
         ),
       },
       // 更新ボタン (例としてRefresh呼び出し)
@@ -47,12 +46,14 @@ class TodoListScreen extends HookConsumerWidget {
 
 /// Todoリスト本体
 class _Body extends HookConsumerWidget {
-  const _Body({required this.todos});
+  const _Body({required this.state});
 
-  final List<Todo> todos;
+  final TodoListScreenState state;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final todos = state.todos;
+
     if (todos.isEmpty) {
       return const Center(child: Text('No data found.'));
     }
@@ -70,9 +71,6 @@ class _Body extends HookConsumerWidget {
             child: Container(
               height: 80,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              // color: index.isEven
-              //     ? Colors.yellow.shade100
-              //     : Colors.blue.shade100,
               color: todo.completed ? Colors.blue.shade100 : Colors.transparent,
               child: Row(
                 children: [
@@ -102,7 +100,7 @@ class _Body extends HookConsumerWidget {
             ),
           );
         },
-        separatorBuilder: (BuildContext context, int index) {
+        separatorBuilder: (context, index) {
           return Container(
             height: 1,
             width: double.infinity,

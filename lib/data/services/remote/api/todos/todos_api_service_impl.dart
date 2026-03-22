@@ -36,19 +36,4 @@ class TodosApiServiceImpl implements TodosApiService {
       return FailureResult(error);
     }
   }
-
-  @override
-  Future<Result<TodoDto>> fetchById({required int id}) async {
-    try {
-      final response = await apiClient.get(endpoint: '$endpoint/$id');
-      final todoDto = TodoDto.fromJson(response);
-      return SuccessResult(todoDto);
-    } on ApiClientException catch (error) {
-      logger.e('[TodoServiceAPI] ApiClientException: $error');
-      return Result.failure(error);
-    } on Exception catch (error) {
-      logger.e('[TodoServiceAPI] Unexpected Error: $error');
-      return Result.failure(error);
-    }
-  }
 }

@@ -5,7 +5,4 @@ import 'package:architecture_study/utils/result.dart';
 abstract class TodosApiService {
   /// [TodosDto] を取得
   Future<Result<TodosDto>> fetch();
-
-  /// IDを指定して [TodoDto] を取得
-  Future<Result<TodoDto>> fetchById({required int id});
 }

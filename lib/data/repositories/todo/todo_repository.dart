@@ -40,6 +40,9 @@ class TodoRepository {
   /// 外部公開用のTodoリストのStream。UI層はこれを購読する。
   Stream<List<Todo>> get todosStream => _todosStreamController.stream;
 
+  /// 現在キャッシュされているTodoリストを即座に取得するゲッター
+  List<Todo> get latestTodos => List.unmodifiable(_todos);
+
   /// [Todo] 配列を取得してSSOTのキャッシュを更新
   /// [force] が true の場合は、キャッシュがあっても強制的にAPIを叩く
   Future<Result<void>> fetch({bool force = false}) async {

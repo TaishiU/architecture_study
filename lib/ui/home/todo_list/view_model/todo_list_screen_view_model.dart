@@ -2,44 +2,66 @@ import 'dart:async';
 
 import 'package:architecture_study/data/repositories/todo/todo_repository.dart';
 import 'package:architecture_study/ui/home/todo_list/view_model/todo_list_screen_state.dart';
+import 'package:architecture_study/utils/logger.dart';
+import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
-final AsyncNotifierProvider<TodoListScreenViewModel, TodoListScreenState>
+final AsyncNotifierProvider<
+  TodoListScreenViewModel,
+  Result<TodoListScreenState>
+>
 todoListScreenProvider =
     AsyncNotifierProvider.autoDispose<
       TodoListScreenViewModel,
-      TodoListScreenState
+      Result<TodoListScreenState>
     >(
       TodoListScreenViewModel.new,
     );
 
 /// Todoリスト画面のViewModel
-class TodoListScreenViewModel extends AsyncNotifier<TodoListScreenState> {
+class TodoListScreenViewModel
+    extends AsyncNotifier<Result<TodoListScreenState>> {
   @override
-  FutureOr<TodoListScreenState> build() async {
-    // 1. Repository層へのデータ取得依頼 (SSOTを更新)
-    //    内部で _isFetched フラグによって、不必要な通信（「完了」更新等による再実行）はガードされる
-    unawaited(ref.read(todoRepositoryProvider).fetch());
+  FutureOr<Result<TodoListScreenState>> build() async {
+    // 1. SSOT (StreamProvider) を watch する。
+    //    これにより、データの変更（完了状態のトグルなど）があった際に build が自動的に再実行される。
+    final todosAsync = ref.watch(todosStreamProvider);
 
-    // 2. SSOTである StreamProvider を watch する
-    final todos = await ref.watch(todosStreamProvider.future);
+    // 2. Repository層へのデータ取得依頼 (SSOTを更新)
+    //    fetch自体が成功したかどうかを Result 型で判定する。
+    final fetchResult = await ref.read(todoRepositoryProvider).fetch();
 
-    // 3. 状態を構築
-    //    invalidateSelf() 後の再構築では、previousStateはnullになるため、UIの状態もリセットされる
-    final previousState = state.value;
+    return switch (fetchResult) {
+      SuccessResult() => () {
+        // 3. データ取得に成功した場合、現在の最新値を構築して返す
+        final todos =
+            todosAsync.value ?? ref.read(todoRepositoryProvider).latestTodos;
 
-    return TodoListScreenState(
-      todos: todos,
-      searchQuery: previousState?.searchQuery ?? '',
-    );
+        final previousResult = state.value;
+        var searchQuery = '';
+        if (previousResult is SuccessResult<TodoListScreenState>) {
+          searchQuery = previousResult.value.searchQuery;
+        }
+
+        return SuccessResult(
+          TodoListScreenState(todos: todos, searchQuery: searchQuery),
+        );
+      }(),
+      FailureResult(:final error) => () {
+        logger.e('[TodoListScreenViewModel] Error caught: $error');
+        return FailureResult<TodoListScreenState>(error);
+      }(),
+    };
   }
 
   /// 検索クエリを更新する
   void updateSearchQuery(String query) {
-    final currentState = state.value;
-    if (currentState != null) {
-      state = AsyncData(currentState.copyWith(searchQuery: query));
+    final currentResult = state.value;
+    if (currentResult is SuccessResult<TodoListScreenState>) {
+      state = AsyncData(
+        SuccessResult(currentResult.value.copyWith(searchQuery: query)),
+      );
     }
   }
 

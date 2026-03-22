@@ -27,15 +27,4 @@ class FakeTodoApiServiceImpl implements TodosApiService {
     final todosDto = TodosDto(todos: todos);
     return SuccessResult(todosDto);
   }
-
-  @override
-  Future<Result<TodoDto>> fetchById({required int id}) async {
-    const todoDto = TodoDto(
-      userId: 1,
-      id: 1,
-      todo: 'todo1',
-      completed: false,
-    );
-    return const SuccessResult(todoDto);
-  }
 }
