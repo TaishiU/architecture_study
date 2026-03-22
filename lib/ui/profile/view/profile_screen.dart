@@ -1,5 +1,6 @@
 import 'package:architecture_study/ui/core/components/core_error.dart';
 import 'package:architecture_study/ui/profile/view_model/profile_screen_state.dart';
+import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -19,12 +20,16 @@ class ProfileScreen extends HookConsumerWidget {
       appBar: AppBar(title: const Text('プロフィール'), elevation: 0),
       body: switch (viewModel) {
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
-        AsyncData(value: final state) => _Body(state: state),
+        AsyncData(value: final result) => switch (result) {
+          SuccessResult(value: final state) => _Body(state: state),
+          FailureResult(:final error) => CoreError(
+            error: error,
+            onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
+          ),
+        },
         AsyncError(:final error) => CoreError(
-          error: error,
-          onPressed: () async {
-            await ref.read(profileScreenProvider.notifier).refresh();
-          },
+          error: error as Exception,
+          onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
         ),
       },
       floatingActionButton: FloatingActionButton(
@@ -106,15 +111,19 @@ class _Body extends HookConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                _SectionTitle(title: '連絡先', icon: Icons.contact_mail),
+                const _SectionTitle(title: '連絡先', icon: Icons.contact_mail),
                 _InfoCard(
                   items: [
-                    _InfoItem(label: 'メール', value: user.email, isCopyable: true),
+                    _InfoItem(
+                      label: 'メール',
+                      value: user.email,
+                      isCopyable: true,
+                    ),
                     _InfoItem(label: '電話番号', value: user.phone),
                   ],
                 ),
                 const SizedBox(height: 16),
-                _SectionTitle(title: '仕事・学歴', icon: Icons.work),
+                const _SectionTitle(title: '仕事・学歴', icon: Icons.work),
                 _InfoCard(
                   items: [
                     _InfoItem(label: '会社', value: user.company.name),
@@ -124,7 +133,7 @@ class _Body extends HookConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                _SectionTitle(title: '住所', icon: Icons.location_on),
+                const _SectionTitle(title: '住所', icon: Icons.location_on),
                 _InfoCard(
                   items: [
                     _InfoItem(
@@ -148,6 +157,7 @@ class _Body extends HookConsumerWidget {
 /// セクションタイトル
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle({required this.title, required this.icon});
+
   final String title;
   final IconData icon;
 
@@ -174,6 +184,7 @@ class _SectionTitle extends StatelessWidget {
 /// 情報カード
 class _InfoCard extends StatelessWidget {
   const _InfoCard({required this.items});
+
   final List<_InfoItem> items;
 
   @override
