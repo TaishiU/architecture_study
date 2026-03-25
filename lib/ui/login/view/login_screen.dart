@@ -38,8 +38,10 @@ class _Body extends HookConsumerWidget {
         width: 200,
         child: ElevatedButton(
           onPressed: () async {
-            print('Loginボタン押下！');
-            await notifier.login();
+            await notifier.login(
+              username: 'emilys',
+              password: 'emilyspass',
+            );
           },
           child: const Text(
             'Login',

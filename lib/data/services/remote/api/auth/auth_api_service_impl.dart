@@ -6,7 +6,7 @@ import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-/// プロバイダ
+/// AuthApiServiceImplのプロバイダ
 final authApiServiceImplProvider = Provider<AuthApiServiceImpl>(
   (ref) => AuthApiServiceImpl(apiClient: ref.read(apiClientProvider)),
 );
@@ -23,13 +23,16 @@ class AuthApiServiceImpl implements AuthApiService {
   static const endpoint = 'auth';
 
   @override
-  Future<Result<LoginDto>> login() async {
+  Future<Result<LoginDto>> login({
+    required String username,
+    required String password,
+  }) async {
     try {
       final response = await apiClient.post(
         endpoint: '$endpoint/login',
         body: {
-          'username': 'emilys',
-          'password': 'emilyspass',
+          'username': username,
+          'password': password,
           'expiresInMins': 30,
         },
       );
@@ -37,10 +40,10 @@ class AuthApiServiceImpl implements AuthApiService {
       return SuccessResult(loginDto);
     } on ApiClientException catch (error) {
       logger.e('[AuthApiServiceImpl] ApiClientException: $error');
-      return Result.failure(error);
+      return FailureResult(error);
     } on Exception catch (error) {
       logger.e('[AuthApiServiceImpl] Unexpected Error: $error');
-      return Result.failure(error);
+      return FailureResult(error);
     }
   }
 }

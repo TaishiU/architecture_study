@@ -1,3 +1,4 @@
+import 'package:architecture_study/ui/core/components/core_app_bar.dart';
 import 'package:architecture_study/ui/core/components/core_error.dart';
 import 'package:architecture_study/ui/home/todo_list/view_model/todo_list_screen_state.dart';
 import 'package:architecture_study/ui/home/todo_list/view_model/todo_list_screen_view_model.dart';
@@ -19,7 +20,17 @@ class TodoListScreen extends HookConsumerWidget {
     final viewModel = ref.watch(todoListScreenProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Todo List')),
+      appBar: CoreAppBar(
+        title: 'TodoListScreen',
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await ref.read(todoListScreenProvider.notifier).logout();
+            },
+            icon: const Icon(Icons.logout),
+          ),
+        ],
+      ),
       body: switch (viewModel) {
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
         AsyncData(value: final result) => switch (result) {
@@ -35,7 +46,6 @@ class TodoListScreen extends HookConsumerWidget {
           onPressed: () => ref.read(todoListScreenProvider.notifier).refresh(),
         ),
       },
-      // 更新ボタン (例としてRefresh呼び出し)
       floatingActionButton: FloatingActionButton(
         onPressed: () => ref.read(todoListScreenProvider.notifier).refresh(),
         child: const Icon(Icons.refresh),

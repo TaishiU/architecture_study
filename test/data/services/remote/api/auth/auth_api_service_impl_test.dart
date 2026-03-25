@@ -62,7 +62,10 @@ void main() {
           'refreshToken': 'refreshToken',
         },
       );
-      await service.login();
+      await service.login(
+        username: 'emilys',
+        password: 'emilyspass',
+      );
       verify(
         mockApiClient.post(
           endpoint: 'auth/login',
@@ -92,7 +95,10 @@ void main() {
         ),
       ).thenAnswer((_) async => mockResponse);
 
-      final result = await authApiServiceImpl.login();
+      final result = await authApiServiceImpl.login(
+        username: 'emilys',
+        password: 'emilyspass',
+      );
 
       expect(result, isA<SuccessResult<LoginDto>>());
       expect((result as SuccessResult<LoginDto>).value.username, 'emilys');
@@ -108,7 +114,10 @@ void main() {
         ),
       ).thenThrow(apiException);
 
-      final result = await authApiServiceImpl.login();
+      final result = await authApiServiceImpl.login(
+        username: 'emilys',
+        password: 'emilyspass',
+      );
 
       expect(result, isA<FailureResult<LoginDto>>());
       expect((result as FailureResult<LoginDto>).error, apiException);
@@ -123,7 +132,10 @@ void main() {
         ),
       ).thenThrow(exception);
 
-      final result = await authApiServiceImpl.login();
+      final result = await authApiServiceImpl.login(
+        username: 'emilys',
+        password: 'emilyspass',
+      );
 
       expect(result, isA<FailureResult<LoginDto>>());
       expect((result as FailureResult<LoginDto>).error, exception);

@@ -1,3 +1,4 @@
+import 'package:architecture_study/ui/core/components/core_app_bar.dart';
 import 'package:architecture_study/ui/core/components/core_error.dart';
 import 'package:architecture_study/ui/profile/view_model/profile_screen_state.dart';
 import 'package:architecture_study/utils/result.dart';
@@ -17,7 +18,17 @@ class ProfileScreen extends HookConsumerWidget {
     final viewModel = ref.watch(profileScreenProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('プロフィール'), elevation: 0),
+      appBar: CoreAppBar(
+        title: 'ProfileScreen',
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await ref.read(profileScreenProvider.notifier).logout();
+            },
+            icon: const Icon(Icons.logout),
+          ),
+        ],
+      ),
       body: switch (viewModel) {
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
         AsyncData(value: final result) => switch (result) {

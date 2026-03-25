@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:architecture_study/data/repositories/todo/todo_repository.dart';
+import 'package:architecture_study/domain/use_cases/auth/auth_use_case.dart';
 import 'package:architecture_study/ui/home/todo_list/view_model/todo_list_screen_state.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
@@ -80,5 +81,11 @@ class TodoListScreenViewModel
     // 2. 自身のProviderを破棄して0から再構築する。
     //    これにより、build() が実行され、UI固有の状態（searchQueryなど）も初期値に戻る。
     ref.invalidateSelf();
+  }
+
+  /// ログアウトを実行する
+  Future<void> logout() async {
+    final authUseCase = ref.read(authUseCaseProvider);
+    await authUseCase.logout();
   }
 }

@@ -1,3 +1,5 @@
+import 'package:architecture_study/data/repositories/auth/auth_repository.dart';
+import 'package:architecture_study/domain/use_cases/auth/auth_use_case.dart';
 import 'package:architecture_study/ui/home/todo_detail/view/todo_detail_screen.dart';
 import 'package:architecture_study/ui/home/todo_list/view/todo_list_screen.dart';
 import 'package:architecture_study/ui/login/view/login_screen.dart';
@@ -397,20 +399,20 @@ final routerProvider = Provider<GoRouter>(
           ],
         ),
       ],
-      // refreshListenable: ref.read(authRepositoryProvider),
-      // redirect: (context, state) async {
-      //   final loggedIn = await checkIsLoggedIn(ref);
-      //   final loggingIn = state.matchedLocation == LoginScreen.path;
-      //   // ユーザーがログインしていない場合は、ログイン画面へ
-      //   if (!loggedIn) {
-      //     return LoginScreen.path;
-      //   }
-      //   // ログイン済みのユーザーがまだログイン画面にいる場合は、ホームのTodoリスト画面へ
-      //   if (loggingIn) {
-      //     return TodoListScreen.path;
-      //   }
-      //   return null;
-      // },
+      refreshListenable: ref.read(authRepositoryProvider),
+      redirect: (context, state) async {
+        final loggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
+        final loggingIn = state.matchedLocation == LoginScreen.path;
+        // ユーザーがログインしていない場合は、ログイン画面へ
+        if (!loggedIn) {
+          return LoginScreen.path;
+        }
+        // ログイン済みのユーザーがまだログイン画面にいる場合は、ホームのTodoリスト画面へ
+        if (loggingIn) {
+          return TodoListScreen.path;
+        }
+        return null;
+      },
       // エラーハンドリング (オプション)
       errorBuilder: (context, state) => Scaffold(
         appBar: AppBar(title: const Text('エラー')),
@@ -419,3 +421,40 @@ final routerProvider = Provider<GoRouter>(
     );
   },
 );
+
+// final routerProvider = Provider<GoRouter>(
+//       (ref) {
+//     return GoRouter(
+//       initialLocation: TodoListScreen.path,
+//       routes: [
+//         GoRoute(
+//           path: LoginScreen.path,
+//           builder: (context, state) => const LoginScreen(),
+//         ),
+//         GoRoute(
+//           path: TodoListScreen.path,
+//           builder: (context, state) => const TodoListScreen(),
+//         ),
+//       ],
+//       refreshListenable: ref.read(authRepositoryProvider),
+//       redirect: (context, state) async {
+//         final loggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
+//         final loggingIn = state.matchedLocation == LoginScreen.path;
+//         // ユーザーがログインしていない場合は、ログイン画面へ
+//         if (!loggedIn) {
+//           return LoginScreen.path;
+//         }
+//         // ログイン済みのユーザーがまだログイン画面にいる場合は、ホーム画面へ
+//         if (loggingIn) {
+//           return TodoListScreen.path;
+//         }
+//         return null;
+//       },
+//       // エラーハンドリング (オプション)
+//       errorBuilder: (context, state) => Scaffold(
+//         appBar: AppBar(title: const Text('エラー')),
+//         body: Center(child: Text('エラー: ${state.error}')),
+//       ),
+//     );
+//   },
+// );

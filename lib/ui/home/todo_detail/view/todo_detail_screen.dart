@@ -1,3 +1,4 @@
+import 'package:architecture_study/ui/core/components/core_app_bar.dart';
 import 'package:architecture_study/ui/core/components/core_error.dart';
 import 'package:architecture_study/ui/home/todo_detail/view_model/todo_detail_screen_state.dart';
 import 'package:architecture_study/ui/home/todo_detail/view_model/todo_detail_screen_view_model.dart';
@@ -24,7 +25,9 @@ class TodoDetailScreen extends HookConsumerWidget {
     final viewModel = ref.watch(todoDetailScreenProvider(todoId));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Todo Detail')),
+      appBar: const CoreAppBar(
+        title: 'TodoDetailScreen',
+      ),
       body: switch (viewModel) {
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
         AsyncData(value: final result) => switch (result) {

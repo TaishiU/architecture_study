@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service.dart';
+import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service_impl.dart';
 import 'package:architecture_study/data/services/remote/api/api_exception.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -42,6 +45,7 @@ final apiClientProvider = Provider<ApiClient>(
     return ApiClientImpl(
       client,
       baseUrl: baseUrl,
+      authSecureStorageService: ref.read(authSecureStorageServiceImplProvider),
     );
   },
 );
@@ -103,11 +107,13 @@ class ApiClientImpl implements ApiClient {
   ///
   /// [_client] : HTTPリクエストの送信に使用する [http.Client] インスタンス。
   /// [baseUrl] : APIのベースURL。デフォルトは `'https://dummyjson.com'`。
+  /// [authSecureStorageService] : 認証情報のセキュアな永続化サービス。
   /// [retryDelay] : リクエストが失敗した場合の再試行の間隔。デフォルトは1秒。
   /// [maxRetries] : リクエストが失敗した場合の最大再試行回数。デフォルトは3回。
   ApiClientImpl(
     this._client, {
     required this.baseUrl,
+    required this.authSecureStorageService,
     this.retryDelay = const Duration(seconds: 1),
     this.maxRetries = 3,
   });
@@ -118,11 +124,20 @@ class ApiClientImpl implements ApiClient {
   /// APIのベースURL。
   final String baseUrl;
 
+  /// 認証情報のセキュアな永続化サービス
+  final AuthSecureStorageService authSecureStorageService;
+
   /// リクエストが失敗した場合の再試行の間隔。
   final Duration retryDelay;
 
   /// リクエストが失敗した場合の最大再試行回数。
   final int maxRetries;
+
+  /// トークン更新中のフラグ（多重リフレッシュ防止）
+  bool _isRefreshing = false;
+
+  /// トークン更新待ちのキュー
+  final List<Completer<void>> _refreshCompleters = [];
 
   @override
   Future<Map<String, dynamic>> get({
@@ -196,10 +211,17 @@ class ApiClientImpl implements ApiClient {
   }) async {
     final uri = _buildUri(endpoint, queryParameters: queryParameters);
 
+    // アクセストークンの自動付与
+    final accessToken = authSecureStorageService.getAccessToken();
+    final authHeaders = {
+      if (accessToken.isNotEmpty) 'Authorization': 'Bearer $accessToken',
+      ...?headers,
+    };
+
     // ロギング
     logger.d('APIリクエスト: ${method.value} $uri');
-    if (headers != null && headers.isNotEmpty) {
-      logger.d('リクエストヘッダー: $headers');
+    if (authHeaders.isNotEmpty) {
+      logger.d('リクエストヘッダー: $authHeaders');
     }
     if (requestBody != null) {
       logger.d('リクエストボディ: $requestBody');
@@ -214,12 +236,12 @@ class ApiClientImpl implements ApiClient {
         late final http.Response response;
         switch (method) {
           case Method.get:
-            response = await _client.get(uri, headers: headers);
+            response = await _client.get(uri, headers: authHeaders);
           case Method.post:
             response = await _client.post(
               uri,
               headers: {
-                ...?headers,
+                ...authHeaders,
                 'Content-Type': 'application/json',
               },
               body: requestBody != null ? jsonEncode(requestBody) : null,
@@ -228,18 +250,41 @@ class ApiClientImpl implements ApiClient {
             response = await _client.put(
               uri,
               headers: {
-                ...?headers,
+                ...authHeaders,
                 'Content-Type': 'application/json',
               },
               body: requestBody != null ? jsonEncode(requestBody) : null,
             );
           case Method.delete:
-            response = await _client.delete(uri, headers: headers);
+            response = await _client.delete(uri, headers: authHeaders);
         }
 
         logger
           ..i('APIレスポンス受信: ステータスコード ${response.statusCode}')
           ..i('レスポンスボディ: ${response.body}');
+
+        // 401エラー（トークン期限切れ）のハンドリング
+        // ログインAPI自体が401を返した場合はリフレッシュしない
+        if (response.statusCode == 401 &&
+            endpoint != 'auth/refresh' &&
+            endpoint != 'auth/login') {
+          logger.w('401 Unauthorizedを検知。トークンの更新を試みます。');
+          final refreshSuccess = await _handleTokenRefresh();
+
+          if (!refreshSuccess) {
+            // トークン更新失敗。
+            throw UnauthorizedException('Session expired');
+          }
+          // トークン更新成功。新しいトークンでリトライ。
+          return _safeApiCall(
+            method: method,
+            endpoint: endpoint,
+            headers: headers,
+            queryParameters: queryParameters,
+            requestBody: requestBody,
+          );
+        }
+
         return _parseResponse(
           statusCode: response.statusCode,
           responseBody: response.body,
@@ -286,6 +331,7 @@ class ApiClientImpl implements ApiClient {
           statusCode: statusCode,
         );
       case 401:
+        // _safeApiCallでリフレッシュを試みた後、ここに来る場合は最終的なUnauthorized
         throw UnauthorizedException(
           decodedBody.toString(),
           statusCode: statusCode,
@@ -315,6 +361,65 @@ class ApiClientImpl implements ApiClient {
           'Http status $statusCode',
           statusCode: statusCode,
         );
+    }
+  }
+
+  /// トークンの更新処理
+  Future<bool> _handleTokenRefresh() async {
+    if (_isRefreshing) {
+      // 既に更新中の場合は、完了を待つ
+      final completer = Completer<void>();
+      _refreshCompleters.add(completer);
+      await completer.future;
+      return true;
+    }
+
+    _isRefreshing = true;
+    try {
+      // ロード済みであることを保証するためにinit()を呼ぶ
+      await authSecureStorageService.init();
+
+      final refreshToken = authSecureStorageService.getRefreshToken();
+      if (refreshToken.isEmpty) {
+        return false;
+      }
+
+      final refreshUri = _buildUri('auth/refresh');
+      final response = await _client.post(
+        refreshUri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'refreshToken': refreshToken,
+          'expiresInMins': 30,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        final newAccessToken = data['accessToken'] as String;
+        final newRefreshToken = data['refreshToken'] as String;
+
+        await authSecureStorageService.setAccessToken(newAccessToken);
+        await authSecureStorageService.setRefreshToken(newRefreshToken);
+
+        logger.i('トークンの更新に成功しました。');
+        return true;
+      } else {
+        logger.e('トークンの更新に失敗しました。ステータスコード: ${response.statusCode}');
+        // セッション切れとしてデータをクリア
+        await authSecureStorageService.clearAuthData();
+        return false;
+      }
+    } on Exception catch (e) {
+      logger.e('トークンの更新中にエラーが発生しました: $e');
+      return false;
+    } finally {
+      _isRefreshing = false;
+      // 待機していたリクエストを再開させる
+      for (final completer in _refreshCompleters) {
+        completer.complete();
+      }
+      _refreshCompleters.clear();
     }
   }
 }

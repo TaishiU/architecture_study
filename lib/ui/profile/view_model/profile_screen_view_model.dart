@@ -35,4 +35,10 @@ class ProfileScreenViewModel extends AsyncNotifier<Result<ProfileScreenState>> {
     // 自身のProviderを破棄して0から再構築する。
     ref.invalidateSelf();
   }
+
+  /// ログアウトを実行する
+  Future<void> logout() async {
+    final authUseCase = ref.read(authUseCaseProvider);
+    await authUseCase.logout();
+  }
 }
