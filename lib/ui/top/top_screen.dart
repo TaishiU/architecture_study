@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+/// タブバー付きのScaffold
 class ScaffoldWithTabBar extends StatefulWidget {
+  /// コンストラクタ
   const ScaffoldWithTabBar({
     required this.child,
     super.key,
   });
 
+  /// 子Widget
   final Widget child;
 
   @override
