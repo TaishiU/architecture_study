@@ -1,7 +1,8 @@
 import 'package:architecture_study/data/repositories/user/user_repository.dart';
 import 'package:architecture_study/data/services/remote/api/user/user_api_service.dart';
 import 'package:architecture_study/data/services/remote/api/user/user_api_service_impl.dart';
-import 'package:architecture_study/data/services/remote/dto/user/user_dto.dart';
+import 'package:architecture_study/data/services/remote/dto/user/user_dto.dart'
+    as dto;
 import 'package:architecture_study/domain/entities/user/user.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,8 +14,8 @@ import 'user_repository_test.mocks.dart';
 
 // MissingDummyValueErrorを解決するためにダミー値を提供するヘルパー関数
 void _setupDummyValues() {
-  provideDummyBuilder<Result<UserDto>>(
-    (_, _) => const SuccessResult(UserDto()),
+  provideDummyBuilder<Result<dto.UserDto>>(
+    (_, _) => const SuccessResult(dto.UserDto()),
   );
 }
 
@@ -54,7 +55,7 @@ void main() {
   });
 
   group('fetch メソッドのテスト', () {
-    const mockUserDto = UserDto(
+    const mockUserDto = dto.UserDto(
       id: 1,
       firstName: 'John',
       lastName: 'Doe',
@@ -75,6 +76,91 @@ void main() {
       expect(user.lastName, 'Doe');
       expect(user.email, 'john.doe@example.com');
       verify(mockUserApiService.fetch()).called(1);
+    });
+
+    test('すべてのフィールドが定義されたAPI取得成功時に、エンティティに正しく変換されること', () async {
+      const fullDto = dto.UserDto(
+        id: 1,
+        firstName: 'John',
+        lastName: 'Doe',
+        maidenName: 'Smith',
+        age: 30,
+        gender: 'male',
+        email: 'john.doe@example.com',
+        phone: '1234567890',
+        username: 'johndoe',
+        password: 'password',
+        birthDate: '1990-01-01',
+        image: 'http://example.com/image.png',
+        bloodGroup: 'A+',
+        height: 180,
+        weight: 75,
+        eyeColor: 'blue',
+        hair: dto.Hair(color: 'black', type: 'straight'),
+        ip: '127.0.0.1',
+        address: dto.Address(
+          address: '123 Main St',
+          city: 'New York',
+          state: 'NY',
+          stateCode: 'NY',
+          postalCode: '10001',
+          coordinates: dto.Coordinates(lat: 40.7128, lng: -74.0060),
+          country: 'USA',
+        ),
+        macAddress: '00:00:00:00:00:00',
+        university: 'MIT',
+        bank: dto.Bank(
+          cardExpire: '12/25',
+          cardNumber: '1234567890123456',
+          cardType: 'Visa',
+          currency: 'USD',
+          iban: 'US1234567890',
+        ),
+        company: dto.Company(
+          department: 'Engineering',
+          name: 'Tech Corp',
+          title: 'Software Engineer',
+          address: dto.Address(
+            address: '456 Tech Lane',
+            city: 'San Francisco',
+            state: 'CA',
+            stateCode: 'CA',
+            postalCode: '94105',
+            coordinates: dto.Coordinates(lat: 37.7749, lng: -122.4194),
+            country: 'USA',
+          ),
+        ),
+        ein: '12-3456789',
+        ssn: '123-45-6789',
+        userAgent: 'Mozilla/5.0',
+        crypto: dto.Crypto(
+          coin: 'Bitcoin',
+          wallet: '0x123',
+          network: 'Ethereum',
+        ),
+        role: 'admin',
+      );
+
+      when(mockUserApiService.fetch()).thenAnswer(
+        (_) async => const SuccessResult(fullDto),
+      );
+
+      final result = await userRepository.fetch();
+
+      expect(result, isA<SuccessResult<User>>());
+      final user = (result as SuccessResult<User>).value;
+
+      // 各フィールドの変換を確認
+      expect(user.id, 1);
+      expect(user.firstName, 'John');
+      expect(user.hair.color, 'black');
+      expect(user.address.city, 'New York');
+      expect(user.address.coordinates.lat, 40.7128);
+      expect(user.bank.cardType, 'Visa');
+      expect(user.company.name, 'Tech Corp');
+      expect(user.company.address.city, 'San Francisco');
+      expect(user.crypto.coin, 'Bitcoin');
+      expect(user.role, 'admin');
     });
 
     test('APIがFailureResultを返した場合、FailureResultを返すこと', () async {
@@ -104,7 +190,7 @@ void main() {
 
   group('Entity変換のバリデーション', () {
     test('必須フィールド(id)が欠損している場合はFailureResultを返すこと', () async {
-      const incompleteDto = UserDto(firstName: 'No ID');
+      const incompleteDto = dto.UserDto(firstName: 'No ID');
       when(mockUserApiService.fetch()).thenAnswer(
         (_) async => const SuccessResult(incompleteDto),
       );
@@ -119,7 +205,7 @@ void main() {
     });
 
     test('null可能なフィールドにはデフォルト値が入ること', () async {
-      const minimalDto = UserDto(id: 1);
+      const minimalDto = dto.UserDto(id: 1);
       when(mockUserApiService.fetch()).thenAnswer(
         (_) async => const SuccessResult(minimalDto),
       );
