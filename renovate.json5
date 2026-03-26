@@ -55,7 +55,7 @@
       "automergeType": "pr",
       "prTitle": "Update {{depName}} to {{newVersion}} (patch/minor)"
     },
-    // メジャー更新は自動マージ禁止
+    // その他の Dart / Flutter パッケージ全体（メジャー更新は自動マージ禁止）
     {
       "manager": "pub",
       "updateTypes": [
@@ -79,6 +79,24 @@
       "automerge": false,
       "automergeType": "pr",
       "prTitle": "Update Firebase SDKs ({{groupName}})"
-    }
+    },
+    // GitHub Actions の更新はパッチ・マイナーのみ自動マージ
+    {
+      "manager": "github-actions",
+      "updateTypes": [
+        "patch",
+        "minor"
+      ],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    // GitHub Actions のメジャー更新は自動マージ禁止
+    {
+      "manager": "github-actions",
+      "updateTypes": [
+        "major"
+      ],
+      "automerge": false
+    },
   ]
 }
