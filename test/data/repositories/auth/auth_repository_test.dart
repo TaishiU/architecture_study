@@ -1,147 +1,210 @@
-// import 'package:architecture_study/data/repositories/auth/auth_repository.dart';
-// import 'package:architecture_study/data/services/local/preferences/auth/auth_preferences_service.dart';
-// import 'package:architecture_study/data/services/local/preferences/auth/auth_preferences_service_impl.dart';
-// import 'package:architecture_study/data/services/remote/api/auth/auth_api_service.dart';
-// import 'package:architecture_study/data/services/remote/api/auth/auth_api_service_impl.dart';
-// import 'package:architecture_study/data/services/remote/dto/login/login_dto.dart';
-// import 'package:architecture_study/utils/result.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:hooks_riverpod/hooks_riverpod.dart';
-// import 'package:mockito/annotations.dart';
-// import 'package:mockito/mockito.dart';
-//
-// import 'auth_repository_test.mocks.dart';
-//
-// // MissingDummyValueErrorを解決するためにダミー値を提供するヘルパー関数
-// void _setupDummyValues() {
-//   provideDummyBuilder<Result<LoginDto>>(
-//     (_, _) => const SuccessResult(LoginDto()),
-//   );
-//   provideDummyBuilder<Result<void>>(
-//     (_, _) => const SuccessResult(null),
-//   );
-// }
-//
-// @GenerateMocks([
-//   AuthApiService,
-//   AuthApiServiceImpl,
-//   AuthPreferencesService,
-//   AuthPreferencesServiceImpl,
-// ])
-// void main() {
-//   // main関数の先頭でダミー値をセットアップ
-//   _setupDummyValues();
-//
-//   late MockAuthApiService mockAuthApiService;
-//   late MockAuthPreferencesService mockAuthPreferencesService;
-//   late AuthRepository authRepository;
-//
-//   setUp(() {
-//     mockAuthApiService = MockAuthApiService();
-//     mockAuthPreferencesService = MockAuthPreferencesService();
-//     authRepository = AuthRepository(
-//       authApiService: mockAuthApiService,
-//       authPreferencesService: mockAuthPreferencesService,
-//     );
-//   });
-//
-//   // authRepositoryProviderのテスト
-//   group('authRepositoryProvider', () {
-//     late ProviderContainer container;
-//     late MockAuthApiServiceImpl mockAuthApiServiceImpl;
-//     late MockAuthPreferencesServiceImpl mockAuthPreferencesServiceImpl;
-//
-//     setUp(() {
-//       mockAuthApiServiceImpl = MockAuthApiServiceImpl();
-//       mockAuthPreferencesServiceImpl = MockAuthPreferencesServiceImpl();
-//       // Providerをモックするoverrideを設定してProviderContainerを初期化
-//       container = ProviderContainer(
-//         overrides: [
-//           authApiServiceImplProvider.overrideWith(
-//             (ref) => mockAuthApiServiceImpl,
-//           ),
-//           authPreferencesServiceImplProvider.overrideWith(
-//             (ref) => mockAuthPreferencesServiceImpl,
-//           ),
-//         ],
-//       );
-//     });
-//
-//     tearDown(() {
-//       container.dispose();
-//     });
-//
-//     test('authRepositoryProviderはAuthRepositoryのインスタンスを返すこと', () {
-//       final repository = container.read(authRepositoryProvider);
-//       expect(repository, isA<AuthRepository>());
-//     });
-//
-//     test(
-//       'authRepositoryProviderは指定された'
-//       'AuthApiServiceとAuthPreferencesServiceで初期化されること',
-//       () async {
-//         final repository = container.read(authRepositoryProvider);
-//
-//         // モックされたloginメソッドを呼び出すことで、
-//         // 内部で渡されたAuthApiServiceが使用されていることを確認
-//         when(mockAuthApiServiceImpl.login()).thenAnswer(
-//           (_) async => const SuccessResult(LoginDto()),
-//         );
-//         // AuthPreferencesServiceのメソッドは今回は直接呼び出されないが、
-//         // 依存関係が正しく解決されていることを確認するためにモックを渡している
-//         // 必要に応じてwhen/verifyを追加
-//
-//         await repository.login();
-//         verify(mockAuthApiServiceImpl.login()).called(1);
-//         // `AuthPreferencesService`のメソッドがリポジトリ内で使われるようになったら、
-//         // ここにverifyを追加すること
-//         // verify(mockAuthPreferencesServiceImpl.saveToken()).called(1);
-//       },
-//     );
-//   });
-//
-//   // loginメソッドのテスト
-//   group('login', () {
-//     test(
-//       'AuthApiServiceがSuccessResultを返した場合、SuccessResult<void>を返すこと',
-//       () async {
-//         const mockLoginDto = LoginDto();
-//         when(mockAuthApiService.login()).thenAnswer(
-//           (_) async => const SuccessResult(mockLoginDto),
-//         );
-//
-//         final result = await authRepository.login();
-//
-//         expect(result, isA<SuccessResult<void>>());
-//         verify(mockAuthApiService.login()).called(1);
-//       },
-//     );
-//
-//     test(
-//       'AuthApiServiceがFailureResultを返した場合、FailureResult<void>を返すこと',
-//       () async {
-//         final exception = Exception('API Error');
-//         when(mockAuthApiService.login()).thenAnswer(
-//           (_) async => FailureResult(exception),
-//         );
-//
-//         final result = await authRepository.login();
-//
-//         expect(result, isA<FailureResult<void>>());
-//         expect((result as FailureResult<void>).error, exception);
-//         verify(mockAuthApiService.login()).called(1);
-//       },
-//     );
-//
-//     test('AuthApiServiceが例外をスローした場合、FailureResult<void>を返すこと', () async {
-//       final exception = Exception('Network Error');
-//       when(mockAuthApiService.login()).thenThrow(exception);
-//
-//       final result = await authRepository.login();
-//
-//       expect(result, isA<FailureResult<void>>());
-//       expect((result as FailureResult<void>).error, exception);
-//       verify(mockAuthApiService.login()).called(1);
-//     });
-//   });
-// }
+import 'package:architecture_study/data/repositories/auth/auth_repository.dart';
+import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service.dart';
+import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service_impl.dart';
+import 'package:architecture_study/data/services/remote/api/auth/auth_api_service.dart';
+import 'package:architecture_study/data/services/remote/api/auth/auth_api_service_impl.dart';
+import 'package:architecture_study/data/services/remote/dto/login/login_dto.dart';
+import 'package:architecture_study/utils/result.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+
+import 'auth_repository_test.mocks.dart';
+
+// MissingDummyValueErrorを解決するためにダミー値を提供するヘルパー関数
+void _setupDummyValues() {
+  provideDummyBuilder<Result<LoginDto>>(
+    (_, _) => const SuccessResult(LoginDto()),
+  );
+  provideDummyBuilder<Result<void>>(
+    (_, _) => const SuccessResult(null),
+  );
+}
+
+@GenerateMocks([
+  AuthApiService,
+  AuthApiServiceImpl,
+  AuthSecureStorageService,
+  AuthSecureStorageServiceImpl,
+])
+void main() {
+  _setupDummyValues();
+
+  late MockAuthApiService mockAuthApiService;
+  late MockAuthSecureStorageService mockAuthSecureStorageService;
+  late AuthRepository authRepository;
+
+  setUp(() {
+    mockAuthApiService = MockAuthApiService();
+    mockAuthSecureStorageService = MockAuthSecureStorageService();
+    authRepository = AuthRepository(
+      authApiService: mockAuthApiService,
+      authSecureStorageService: mockAuthSecureStorageService,
+    );
+
+    // デフォルトのスタブ設定
+    when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
+    when(mockAuthSecureStorageService.getAccessToken()).thenReturn('');
+  });
+
+  group('authRepositoryProvider', () {
+    late ProviderContainer container;
+    late MockAuthApiServiceImpl mockAuthApiServiceImpl;
+    late MockAuthSecureStorageServiceImpl mockAuthSecureStorageServiceImpl;
+
+    setUp(() {
+      mockAuthApiServiceImpl = MockAuthApiServiceImpl();
+      mockAuthSecureStorageServiceImpl = MockAuthSecureStorageServiceImpl();
+      container = ProviderContainer(
+        overrides: [
+          authApiServiceImplProvider.overrideWith(
+            (ref) => mockAuthApiServiceImpl,
+          ),
+          authSecureStorageServiceImplProvider.overrideWith(
+            (ref) => mockAuthSecureStorageServiceImpl,
+          ),
+        ],
+      );
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+
+    test('authRepositoryProviderはAuthRepositoryのインスタンスを返すこと', () {
+      final repository = container.read(authRepositoryProvider);
+      expect(repository, isA<AuthRepository>());
+    });
+  });
+
+  group('isLoggedIn', () {
+    test('初回呼び出し時にストレージから初期化され、トークンがあればtrueを返すこと', () async {
+      when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
+      when(
+        mockAuthSecureStorageService.getAccessToken(),
+      ).thenReturn('valid_token');
+
+      final result = await authRepository.isLoggedIn;
+
+      expect(result, isTrue);
+      verify(mockAuthSecureStorageService.init()).called(1);
+      verify(mockAuthSecureStorageService.getAccessToken()).called(1);
+    });
+
+    test('初回呼び出し時にトークンがなければfalseを返すこと', () async {
+      when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
+      when(mockAuthSecureStorageService.getAccessToken()).thenReturn('');
+
+      final result = await authRepository.isLoggedIn;
+
+      expect(result, isFalse);
+      verify(mockAuthSecureStorageService.init()).called(1);
+    });
+
+    test('2回目以降の呼び出しではストレージにアクセスせずキャッシュを返すこと', () async {
+      when(mockAuthSecureStorageService.init()).thenAnswer((_) async => {});
+      when(mockAuthSecureStorageService.getAccessToken()).thenReturn('token');
+
+      // 1回目
+      await authRepository.isLoggedIn;
+      // 2回目
+      final result = await authRepository.isLoggedIn;
+
+      expect(result, isTrue);
+      verify(mockAuthSecureStorageService.init()).called(1);
+      verify(mockAuthSecureStorageService.getAccessToken()).called(1);
+    });
+  });
+
+  group('login', () {
+    const username = 'test_user';
+    const password = 'password123';
+    const accessToken = 'access_token';
+    const refreshToken = 'refresh_token';
+
+    test('成功時にトークンを保存し、SuccessResultを返し、リスナーに通知すること', () async {
+      var notifyCount = 0;
+      authRepository.addListener(() => notifyCount++);
+
+      when(
+        mockAuthApiService.login(username: username, password: password),
+      ).thenAnswer(
+        (_) async => const SuccessResult(
+          LoginDto(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          ),
+        ),
+      );
+      when(
+        mockAuthSecureStorageService.setAccessToken(accessToken),
+      ).thenAnswer((_) async => {});
+      when(
+        mockAuthSecureStorageService.setRefreshToken(refreshToken),
+      ).thenAnswer((_) async => {});
+
+      final result = await authRepository.login(
+        username: username,
+        password: password,
+      );
+
+      expect(result, isA<SuccessResult<void>>());
+      expect(await authRepository.isLoggedIn, isTrue);
+      expect(notifyCount, 1);
+
+      verify(
+        mockAuthSecureStorageService.setAccessToken(accessToken),
+      ).called(1);
+      verify(
+        mockAuthSecureStorageService.setRefreshToken(refreshToken),
+      ).called(1);
+    });
+
+    test('APIがFailureResultを返した場合、FailureResultを返し、トークンを保存しないこと', () async {
+      final exception = Exception('Login Failed');
+      when(
+        mockAuthApiService.login(username: username, password: password),
+      ).thenAnswer((_) async => FailureResult(exception));
+
+      final result = await authRepository.login(
+        username: username,
+        password: password,
+      );
+
+      expect(result, isA<FailureResult<void>>());
+      expect((result as FailureResult<void>).error, exception);
+      verifyNever(mockAuthSecureStorageService.setAccessToken(any));
+    });
+
+    test('例外発生時にFailureResultを返すこと', () async {
+      when(
+        mockAuthApiService.login(username: username, password: password),
+      ).thenThrow(Exception('Network Error'));
+
+      final result = await authRepository.login(
+        username: username,
+        password: password,
+      );
+
+      expect(result, isA<FailureResult<void>>());
+    });
+  });
+
+  group('logout', () {
+    test('ストレージをクリアし、状態を更新してリスナーに通知すること', () async {
+      var notifyCount = 0;
+      authRepository.addListener(() => notifyCount++);
+
+      when(
+        mockAuthSecureStorageService.clearAuthData(),
+      ).thenAnswer((_) async => true);
+
+      await authRepository.logout();
+
+      expect(await authRepository.isLoggedIn, isFalse);
+      expect(notifyCount, 1);
+      verify(mockAuthSecureStorageService.clearAuthData()).called(1);
+    });
+  });
+}

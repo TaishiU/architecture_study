@@ -7,13 +7,13 @@ part of 'todos.dart';
 // **************************************************************************
 
 _Todos _$TodosFromJson(Map<String, dynamic> json) => _Todos(
-  todos: (json['todo'] as List<dynamic>)
+  todos: (json['todos'] as List<dynamic>)
       .map((e) => Todo.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
 
 Map<String, dynamic> _$TodosToJson(_Todos instance) => <String, dynamic>{
-  'todo': instance.todos,
+  'todos': instance.todos,
 };
 
 _Todo _$TodoFromJson(Map<String, dynamic> json) => _Todo(

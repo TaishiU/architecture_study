@@ -38,7 +38,7 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'Todos(todo: $todos)';
+  return 'Todos(todos: $todos)';
 }
 
 
@@ -245,7 +245,7 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'Todos(todo: $todos)';
+  return 'Todos(todos: $todos)';
 }
 
 

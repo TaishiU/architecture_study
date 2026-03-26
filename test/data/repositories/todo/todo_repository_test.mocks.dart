@@ -57,19 +57,6 @@ class MockTodosApiService extends _i1.Mock implements _i3.TodosApiService {
             ),
           )
           as _i4.Future<_i5.Result<_i6.TodosDto>>);
-
-  @override
-  _i4.Future<_i5.Result<_i6.TodoDto>> fetchById({required int? id}) =>
-      (super.noSuchMethod(
-            Invocation.method(#fetchById, [], {#id: id}),
-            returnValue: _i4.Future<_i5.Result<_i6.TodoDto>>.value(
-              _i7.dummyValue<_i5.Result<_i6.TodoDto>>(
-                this,
-                Invocation.method(#fetchById, [], {#id: id}),
-              ),
-            ),
-          )
-          as _i4.Future<_i5.Result<_i6.TodoDto>>);
 }
 
 /// A class which mocks [TodosApiServiceImpl].
@@ -101,17 +88,4 @@ class MockTodosApiServiceImpl extends _i1.Mock
             ),
           )
           as _i4.Future<_i5.Result<_i6.TodosDto>>);
-
-  @override
-  _i4.Future<_i5.Result<_i6.TodoDto>> fetchById({required int? id}) =>
-      (super.noSuchMethod(
-            Invocation.method(#fetchById, [], {#id: id}),
-            returnValue: _i4.Future<_i5.Result<_i6.TodoDto>>.value(
-              _i7.dummyValue<_i5.Result<_i6.TodoDto>>(
-                this,
-                Invocation.method(#fetchById, [], {#id: id}),
-              ),
-            ),
-          )
-          as _i4.Future<_i5.Result<_i6.TodoDto>>);
 }
