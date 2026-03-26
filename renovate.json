@@ -2,5 +2,27 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "packageNames": [
+        "flutter"
+      ],
+      "enabled": false
+    },
+    {
+      "packagePatterns": [
+        "^flutter_"
+      ],
+      "minor": true,
+      "major": false
+    },
+    {
+      "packageNames": [
+        "dart"
+      ],
+      "minor": true,
+      "major": false
+    }
   ]
 }
