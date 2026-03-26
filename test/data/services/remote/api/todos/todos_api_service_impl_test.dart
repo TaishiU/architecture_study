@@ -20,7 +20,6 @@ void main() {
     todosApiServiceImpl = TodosApiServiceImpl(apiClient: mockApiClient);
   });
 
-  // todosApiServiceImplProviderのテスト
   group('todosApiServiceImplProvider', () {
     late ProviderContainer container;
     late MockApiClient mockApiClient;
@@ -44,28 +43,31 @@ void main() {
     });
 
     test('todosApiServiceImplProviderは指定されたApiClientで初期化されること', () async {
-      // todosApiServiceImplProviderがmockApiClientで初期化されていることを確認するために、
-      // serviceのfetchメソッドを呼び出し、mockApiClientのgetメソッドが呼ばれることを検証する。
       final service = container.read(todosApiServiceImplProvider);
-      when(mockApiClient.get(endpoint: 'todo')).thenAnswer(
-        (_) async => {'todo': <Map<String, dynamic>>[]},
+      when(
+        mockApiClient.get(endpoint: 'todos'),
+      ).thenAnswer(
+        (_) async => {
+          'todos': <Map<String, dynamic>>[],
+        },
       );
       await service.fetch();
-      verify(mockApiClient.get(endpoint: 'todo')).called(1);
+      verify(
+        mockApiClient.get(endpoint: 'todos'),
+      ).called(1);
     });
   });
 
-  // fetchメソッドのテスト
   group('fetch', () {
-    test('todosの取得に成功した場合、SuccessResultを返すこと', () async {
+    test('todosの取得に成功した場合、SuccessResult<TodosDto>を返すこと', () async {
       final mockResponse = {
-        'todo': [
+        'todos': [
           {'id': 1, 'userId': 1, 'todo': 'Test Todo 1', 'completed': false},
           {'id': 2, 'userId': 1, 'todo': 'Test Todo 2', 'completed': true},
         ],
       };
       when(
-        mockApiClient.get(endpoint: 'todo'),
+        mockApiClient.get(endpoint: 'todos'),
       ).thenAnswer((_) async => mockResponse);
 
       final result = await todosApiServiceImpl.fetch();
@@ -77,7 +79,9 @@ void main() {
 
     test('ApiClientExceptionが発生した場合、FailureResultを返すこと', () async {
       final apiException = ApiClientException('Not Found', statusCode: 404);
-      when(mockApiClient.get(endpoint: 'todo')).thenThrow(apiException);
+      when(
+        mockApiClient.get(endpoint: 'todos'),
+      ).thenThrow(apiException);
 
       final result = await todosApiServiceImpl.fetch();
 
@@ -87,7 +91,9 @@ void main() {
 
     test('その他の例外が発生した場合、FailureResultを返すこと', () async {
       final exception = Exception('Something went wrong');
-      when(mockApiClient.get(endpoint: 'todo')).thenThrow(exception);
+      when(
+        mockApiClient.get(endpoint: 'todos'),
+      ).thenThrow(exception);
 
       final result = await todosApiServiceImpl.fetch();
 
