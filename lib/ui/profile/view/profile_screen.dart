@@ -150,7 +150,8 @@ class _Body extends HookConsumerWidget {
                     _InfoItem(
                       label: '住所',
                       value:
-                          '${user.address.address}, ${user.address.city}, ${user.address.state}, ${user.address.country}',
+                          '${user.address.address}, ${user.address.city}, '
+                          '${user.address.state}, ${user.address.country}',
                     ),
                     _InfoItem(label: '郵便番号', value: user.address.postalCode),
                   ],
