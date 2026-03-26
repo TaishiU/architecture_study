@@ -94,8 +94,8 @@ class CoreError extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
             if (showRetry) ...[

@@ -25,7 +25,9 @@ class AuthUseCase {
     required String username,
     required String password,
   }) async {
-    return ref.read(authRepositoryProvider).login(
+    return ref
+        .read(authRepositoryProvider)
+        .login(
           username: username,
           password: password,
         );

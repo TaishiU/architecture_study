@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:architecture_study/data/repositories/todo/todo_repository.dart';
 import 'package:architecture_study/ui/home/todo_detail/view_model/todo_detail_screen_state.dart';

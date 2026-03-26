@@ -6,11 +6,7 @@ import 'package:flutter/material.dart';
 /// 共通レイアウトを提供する、Scaffoldのラッパークラスです。
 class BaseScaffold extends StatelessWidget {
   /// [BaseScaffold]を生成する。
-  const BaseScaffold({
-    required this.body,
-    required this.title,
-    super.key,
-  });
+  const BaseScaffold({required this.body, required this.title, super.key});
 
   /// タイトル
   final String title;
@@ -21,9 +17,7 @@ class BaseScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: AppBar(title: Text(title)),
       body: Center(child: body),
     );
   }
