@@ -43,8 +43,16 @@ jobs:
       - name: Dartコードのフォーマット
         run: dart format .
 
-      - name: Dartコードの解析
+      #      - name: Dartコードの解析
+      #        run: dart analyze
+
+      - name: mainアプリのDartコードの解析
         run: dart analyze
+
+      - name: widgetbookのDartコードの解析
+        run: |
+          cd widgetbook
+          dart analyze
 
       - name: Flutterコードの解析
         run: flutter analyze
