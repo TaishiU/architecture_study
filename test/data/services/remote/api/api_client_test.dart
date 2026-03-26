@@ -1,493 +1,490 @@
-// import 'dart:convert';
-// import 'dart:io';
-//
-// import 'package:architecture_study/data/services/remote/api/api_client.dart';
-// import 'package:architecture_study/data/services/remote/api/api_exception.dart';
-// import 'package:fake_async/fake_async.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:hooks_riverpod/hooks_riverpod.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:mockito/annotations.dart';
-// import 'package:mockito/mockito.dart';
-//
-// // MockClientを生成するためのアノテーション
-// @GenerateMocks([http.Client])
-// import 'api_client_test.mocks.dart';
-//
-// const String testBaseUrl = 'http://test.com';
-// const Map<String, String> jsonContentTypeHeader = {
-//   'Content-Type': 'application/json',
-// };
-//
-// void main() {
-//   late MockClient mockClient;
-//   late ApiClientImpl apiClient;
-//   late ProviderContainer container;
-//
-//   setUp(() {
-//     mockClient = MockClient();
-//     container = ProviderContainer(
-//       overrides: [
-//         baseUrlProvider.overrideWithValue(testBaseUrl),
-//       ],
-//     );
-//     apiClient = ApiClientImpl(
-//       mockClient,
-//       baseUrl: container.read(baseUrlProvider),
-//     );
-//   });
-//
-//   tearDown(() {
-//     container.dispose();
-//   });
-//
-//   group('ApiClientImpl', () {
-//     test('ApiClientImplがhttp.ClientとbaseUrlで正しく初期化されること', () {
-//       expect(apiClient, isA<ApiClientImpl>());
-//       expect(apiClient.baseUrl, 'http://test.com');
-//     });
-//
-//     test('GETリクエストが成功し、期待されるMap<String, dynamic>が返されること', () async {
-//       final responseBody = {'id': 1, 'name': 'Test Item'};
-//       when(
-//         mockClient.get(
-//           Uri.parse('$testBaseUrl/endpoint?param1=value1'),
-//           headers: jsonContentTypeHeader,
-//         ),
-//       ).thenAnswer(
-//         (_) async => http.Response(
-//           json.encode(responseBody),
-//           200,
-//           headers: {'content-type': 'application/json'},
-//         ),
-//       );
-//
-//       final result = await apiClient.get(
-//         endpoint: 'endpoint',
-//         queryParameters: {'param1': 'value1'},
-//         headers: jsonContentTypeHeader,
-//       );
-//
-//       expect(result, responseBody);
-//       verify(
-//         mockClient.get(
-//           Uri.parse('$testBaseUrl/endpoint?param1=value1'),
-//           headers: jsonContentTypeHeader,
-//         ),
-//       ).called(1);
-//     });
-//
-//     group('GETリクエストのHTTPエラーハンドリング', () {
-//       final errorCases = [
-//         (statusCode: 400, exceptionType: BadRequestException),
-//         (statusCode: 401, exceptionType: UnauthorizedException),
-//         (statusCode: 403, exceptionType: ForbiddenException),
-//         (statusCode: 404, exceptionType: NotFoundException),
-//         (statusCode: 405, exceptionType: MethodNotAllowedException),
-//         (statusCode: 500, exceptionType: InternalServerErrorException),
-//         (statusCode: 502, exceptionType: UnknownErrorException),
-//         // その他のエラーとして502 Bad Gatewayを例に
-//       ];
-//
-//       for (final errorCase in errorCases) {
-//         test(
-//           'HTTP ${errorCase.statusCode} の場合に'
-//           '${errorCase.exceptionType}がスローされること',
-//           () async {
-//             final errorBody = {'message': 'Error ${errorCase.statusCode}'};
-//             final endpoint = 'error_${errorCase.statusCode}';
-//             when(
-//               mockClient.get(
-//                 Uri.parse('$testBaseUrl/$endpoint'),
-//                 headers: anyNamed('headers'),
-//               ),
-//             ).thenAnswer(
-//               (_) async => http.Response(
-//                 json.encode(errorBody),
-//                 errorCase.statusCode,
-//                 headers: {'content-type': 'application/json'},
-//               ),
-//             );
-//
-//             expect(
-//               () => apiClient.get(endpoint: endpoint),
-//               throwsA(isA<ApiClientException>()),
-//             );
-//             verify(
-//               mockClient.get(
-//                 Uri.parse('$testBaseUrl/$endpoint'),
-//                 headers: anyNamed('headers'),
-//               ),
-//             ).called(1);
-//           },
-//         );
-//       }
-//     });
-//
-//     test('POSTリクエストが成功し、期待されるMap<String, dynamic>が返されること', () async {
-//       final requestBody = {'title': 'foo', 'body': 'bar', 'userId': 1};
-//       final responseBody = {'id': 101, ...requestBody};
-//       when(
-//         mockClient.post(
-//           Uri.parse('$testBaseUrl/posts'),
-//           headers: jsonContentTypeHeader,
-//           body: json.encode(requestBody),
-//         ),
-//       ).thenAnswer(
-//         (_) async => http.Response(
-//           json.encode(responseBody),
-//           201, // POSTの場合は201 Createdが一般的
-//           headers: {'content-type': 'application/json'},
-//         ),
-//       );
-//
-//       final result = await apiClient.post(
-//         endpoint: 'posts',
-//         body: requestBody,
-//         headers: jsonContentTypeHeader,
-//       );
-//
-//       expect(result, responseBody);
-//       verify(
-//         mockClient.post(
-//           Uri.parse('$testBaseUrl/posts'),
-//           headers: jsonContentTypeHeader,
-//           body: json.encode(requestBody),
-//         ),
-//       ).called(1);
-//     });
-//
-//     test('POSTリクエストで400 Bad Requestの場合にBadRequestExceptionがスローされること', () async {
-//       final requestBody = {'title': 'foo', 'body': 'bar', 'userId': 1};
-//       final errorBody = {'message': 'Bad Request'};
-//       when(
-//         mockClient.post(
-//           Uri.parse('$testBaseUrl/bad_request'),
-//           headers: anyNamed('headers'),
-//           body: json.encode(requestBody),
-//         ),
-//       ).thenAnswer(
-//         (_) async => http.Response(
-//           json.encode(errorBody),
-//           400,
-//           headers: {'content-type': 'application/json'},
-//         ),
-//       );
-//
-//       expect(
-//         () => apiClient.post(endpoint: 'bad_request', body: requestBody),
-//         throwsA(isA<BadRequestException>()),
-//       );
-//       verify(
-//         mockClient.post(
-//           Uri.parse('$testBaseUrl/bad_request'),
-//           headers: anyNamed('headers'),
-//           body: json.encode(requestBody),
-//         ),
-//       ).called(1);
-//     });
-//
-//     test('PUTリクエストが成功し、期待されるMap<String, dynamic>が返されること', () async {
-//       final requestBody = {'id': 1, 'title': 'updated title'};
-//       final responseBody = {'id': 1, 'title': 'updated title'};
-//       when(
-//         mockClient.put(
-//           Uri.parse('$testBaseUrl/posts/1'),
-//           headers: jsonContentTypeHeader,
-//           body: json.encode(requestBody),
-//         ),
-//       ).thenAnswer(
-//         (_) async => http.Response(
-//           json.encode(responseBody),
-//           200,
-//           headers: {'content-type': 'application/json'},
-//         ),
-//       );
-//
-//       final result = await apiClient.put(
-//         endpoint: 'posts/1',
-//         body: requestBody,
-//         headers: jsonContentTypeHeader,
-//       );
-//
-//       expect(result, responseBody);
-//       verify(
-//         mockClient.put(
-//           Uri.parse('$testBaseUrl/posts/1'),
-//           headers: jsonContentTypeHeader,
-//           body: json.encode(requestBody),
-//         ),
-//       ).called(1);
-//     });
-//
-//     test('PUTリクエストで400 Bad Requestの場合にBadRequestExceptionがスローされること', () async {
-//       final requestBody = {'id': 1, 'title': 'updated title'};
-//       final errorBody = {'message': 'Bad Request'};
-//       when(
-//         mockClient.put(
-//           Uri.parse('$testBaseUrl/bad_request/1'),
-//           headers: anyNamed('headers'),
-//           body: json.encode(requestBody),
-//         ),
-//       ).thenAnswer(
-//         (_) async => http.Response(
-//           json.encode(errorBody),
-//           400,
-//           headers: {'content-type': 'application/json'},
-//         ),
-//       );
-//
-//       expect(
-//         () => apiClient.put(endpoint: 'bad_request/1', body: requestBody),
-//         throwsA(isA<BadRequestException>()),
-//       );
-//       verify(
-//         mockClient.put(
-//           Uri.parse('$testBaseUrl/bad_request/1'),
-//           headers: anyNamed('headers'),
-//           body: json.encode(requestBody),
-//         ),
-//       ).called(1);
-//     });
-//
-//     test('DELETEリクエストが成功し、期待されるMap<String, dynamic>が返されること', () async {
-//       final responseBody = {'message': 'Item deleted successfully'};
-//       when(
-//         mockClient.delete(
-//           Uri.parse('$testBaseUrl/posts/1'),
-//           headers: anyNamed('headers'),
-//         ),
-//       ).thenAnswer(
-//         (_) async => http.Response(
-//           json.encode(responseBody),
-//           200,
-//           headers: {'content-type': 'application/json'},
-//         ),
-//       );
-//
-//       final result = await apiClient.delete(
-//         endpoint: 'posts/1',
-//       );
-//
-//       expect(result, responseBody);
-//       verify(
-//         mockClient.delete(
-//           Uri.parse('$testBaseUrl/posts/1'),
-//           headers: anyNamed('headers'),
-//         ),
-//       ).called(1);
-//     });
-//
-//     test(
-//       'DELETEリクエストで400 Bad Requestの場合にBadRequestExceptionがスローされること',
-//       () async {
-//         final errorBody = {'message': 'Bad Request'};
-//         when(
-//           mockClient.delete(
-//             Uri.parse('$testBaseUrl/bad_request/1'),
-//             headers: anyNamed('headers'),
-//           ),
-//         ).thenAnswer(
-//           (_) async => http.Response(
-//             json.encode(errorBody),
-//             400,
-//             headers: {'content-type': 'application/json'},
-//           ),
-//         );
-//
-//         expect(
-//           () => apiClient.delete(endpoint: 'bad_request/1'),
-//           throwsA(isA<BadRequestException>()),
-//         );
-//         verify(
-//           mockClient.delete(
-//             Uri.parse('$testBaseUrl/bad_request/1'),
-//             headers: anyNamed('headers'),
-//           ),
-//         ).called(1);
-//       },
-//     );
-//
-//     test(
-//       'ネットワークエラー時にリトライが行われ、最終的にNoInternetConnectionExceptionがスローされること',
-//       () async {
-//         fakeAsync((async) {
-//           when(
-//             mockClient.get(
-//               any,
-//               headers: anyNamed('headers'),
-//             ),
-//           ).thenAnswer((_) async => throw const SocketException('No Internet'));
-//
-//           // APIコールをバックグラウンドで開始し、そのFutureを保持
-//           final future = apiClient.get(endpoint: 'retry_fail');
-//
-//           // 期待される例外がスローされることをアサート
-//           expect(
-//             future,
-//             throwsA(isA<NoInternetConnectionException>()),
-//           );
-//
-//           // _safeApiCallはmaxRetries=3なので、初回+3リトライで合計4回試行される。
-//           // 3回のリトライそれぞれでretryDelayが挟まるため、3回分の遅延を進める
-//           for (var i = 0; i < apiClient.maxRetries; i++) {
-//             async.elapse(apiClient.retryDelay); // 各リトライ遅延を進める
-//           }
-//
-//           // microtaskキューをフラッシュして、全ての非同期処理が完了するのを待つ
-//           async.flushMicrotasks();
-//
-//           // 最終的なverify: 初回と3回のリトライで合計4回呼ばれる
-//           verify(
-//             mockClient.get(
-//               Uri.parse('$testBaseUrl/retry_fail'),
-//               headers: anyNamed('headers'),
-//             ),
-//           ).called(apiClient.maxRetries + 1);
-//         });
-//       },
-//     );
-//
-//     test('ネットワークエラー後にリトライして成功すること', () async {
-//       final responseBody = {'id': 1, 'name': 'Test Item'};
-//       var callCount = 0; // callCountをthenAnswerのクロージャの外に移動
-//       when(
-//         mockClient.get(
-//           any, // 位置引数には any を使用
-//           headers: anyNamed('headers'), // 名前付き引数には anyNamed を使用
-//         ),
-//       ).thenAnswer((_) async {
-//         callCount++;
-//         if (callCount == 1) {
-//           // 初回呼び出しの場合
-//           throw const SocketException('No Internet');
-//         }
-//         return http.Response(
-//           json.encode(responseBody),
-//           200,
-//           headers: {'content-type': 'application/json'},
-//         );
-//       });
-//
-//       final result = await apiClient.get(endpoint: 'retry_success');
-//
-//       expect(result, responseBody);
-//       // 初回とリトライ1回で計2回呼ばれる想定
-//       verify(
-//         mockClient.get(
-//           Uri.parse('$testBaseUrl/retry_success'), // 定数を使用
-//           headers: anyNamed('headers'),
-//         ),
-//       ).called(2);
-//     });
-//
-//     test('http.ClientExceptionが発生した場合にApiClientExceptionがスローされること', () async {
-//       when(
-//         mockClient.get(
-//           Uri.parse('$testBaseUrl/client_error'),
-//           headers: anyNamed('headers'),
-//         ),
-//       ).thenThrow(http.ClientException('Client Error'));
-//
-//       expect(
-//         () => apiClient.get(endpoint: 'client_error'),
-//         throwsA(isA<ApiClientException>()),
-//       );
-//       verify(
-//         mockClient.get(
-//           Uri.parse('$testBaseUrl/client_error'),
-//           headers: anyNamed('headers'),
-//         ),
-//       ).called(1);
-//     });
-//
-//     test('無効なJSONレスポンスが返された場合にApiClientExceptionがスローされること', () async {
-//       when(
-//         mockClient.get(
-//           Uri.parse('$testBaseUrl/invalid_json'),
-//           headers: anyNamed('headers'),
-//         ),
-//       ).thenAnswer(
-//         (_) async => http.Response(
-//           'This is not a JSON string',
-//           200,
-//           headers: {'content-type': 'application/json'},
-//         ),
-//       );
-//
-//       expect(
-//         () => apiClient.get(endpoint: 'invalid_json'),
-//         throwsA(isA<ApiClientException>()),
-//       );
-//       verify(
-//         mockClient.get(
-//           Uri.parse('$testBaseUrl/invalid_json'),
-//           headers: anyNamed('headers'),
-//         ),
-//       ).called(1);
-//     });
-//
-//     test(
-//       'レスポンスボディがMap<String, dynamic>ではない場合にApiClientExceptionがスローされること',
-//       () async {
-//         when(
-//           mockClient.get(
-//             Uri.parse('$testBaseUrl/non_map_json'),
-//             headers: anyNamed('headers'),
-//           ),
-//         ).thenAnswer(
-//           (_) async => http.Response(
-//             json.encode(['item1', 'item2']), // Mapではないリストを返す
-//             200,
-//             headers: {'content-type': 'application/json'},
-//           ),
-//         );
-//
-//         expect(
-//           () => apiClient.get(endpoint: 'non_map_json'),
-//           throwsA(
-//             isA<ApiClientException>(),
-//           ), // FormatException ではなく ApiClientException を期待
-//         );
-//         verify(
-//           mockClient.get(
-//             Uri.parse('$testBaseUrl/non_map_json'),
-//             headers: anyNamed('headers'),
-//           ),
-//         ).called(1);
-//       },
-//     );
-//
-//     test('その他の予期せぬエラーが発生した場合にそれが再スローされること', () async {
-//       when(
-//         mockClient.get(
-//           Uri.parse('$testBaseUrl/unexpected_error'),
-//           headers: anyNamed('headers'),
-//         ),
-//       ).thenAnswer((_) async => throw Exception('Unexpected error occurred'));
-//
-//       expect(
-//         () => apiClient.get(endpoint: 'unexpected_error'),
-//         throwsA(isA<Exception>()),
-//       );
-//       verify(
-//         mockClient.get(
-//           Uri.parse('$testBaseUrl/unexpected_error'),
-//           headers: anyNamed('headers'),
-//         ),
-//       ).called(1);
-//     });
-//   }); // ApiClientImpl groupの閉じ括弧
-//
-//   group('apiClientProvider', () {
-//     test('apiClientProviderがApiClientImplのインスタンスを正しく提供すること', () {
-//       final providedClient = container.read(apiClientProvider);
-//       expect(providedClient, isA<ApiClientImpl>());
-//     });
-//
-//     test('提供されるApiClientImplがbaseUrlProviderから取得したベースURLを使用していること', () {
-//       final providedClient = container.read(apiClientProvider) as ApiClientImpl;
-//       expect(providedClient.baseUrl, 'http://test.com');
-//     });
-//   }); // apiClientProvider groupの閉じ括弧
-// } // main関数の閉じ括弧
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service.dart';
+import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service_impl.dart';
+import 'package:architecture_study/data/services/remote/api/api_client.dart';
+import 'package:architecture_study/data/services/remote/api/api_exception.dart';
+import 'package:fake_async/fake_async.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+
+@GenerateMocks([http.Client, AuthSecureStorageService])
+import 'api_client_test.mocks.dart';
+
+const String testBaseUrl = 'https://test.com';
+
+void main() {
+  late MockClient mockHttpClient;
+  late MockAuthSecureStorageService mockAuthService;
+  late ApiClientImpl apiClient;
+  late ProviderContainer container;
+
+  setUp(() {
+    mockHttpClient = MockClient();
+    mockAuthService = MockAuthSecureStorageService();
+
+    // AuthSecureStorageService の初期化関連のデフォルト動作
+    when(mockAuthService.init()).thenAnswer((_) async {});
+    when(mockAuthService.getAccessToken()).thenReturn('');
+    when(mockAuthService.getRefreshToken()).thenReturn('');
+    when(mockAuthService.clearAuthData()).thenAnswer((_) async => true);
+
+    container = ProviderContainer(
+      overrides: [
+        baseUrlProvider.overrideWithValue(testBaseUrl),
+        authSecureStorageServiceImplProvider.overrideWithValue(mockAuthService),
+      ],
+    );
+
+    apiClient = ApiClientImpl(
+      mockHttpClient,
+      baseUrl: testBaseUrl,
+      authSecureStorageService: mockAuthService,
+      retryDelay: Duration.zero, // テストを高速化するために遅延をゼロにする
+    );
+  });
+
+  tearDown(() {
+    container.dispose();
+  });
+
+  group('ApiClientImpl', () {
+    test('初期化時に各フィールドが正しく設定されること', () {
+      expect(apiClient.baseUrl, testBaseUrl);
+      expect(apiClient.authSecureStorageService, mockAuthService);
+    });
+
+    group('GET', () {
+      test('200 OKの場合、デコードされたMapを返すこと', () async {
+        final responseBody = {'id': 1, 'name': 'test'};
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 200));
+
+        final result = await apiClient.get(endpoint: 'test');
+
+        expect(result, responseBody);
+        verify(
+          mockHttpClient.get(
+            Uri.parse('$testBaseUrl/test'),
+            headers: anyNamed('headers'),
+          ),
+        ).called(1);
+      });
+
+      test('クエリパラメータが正しく付与されること', () async {
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('{}', 200));
+
+        await apiClient.get(
+          endpoint: 'test',
+          queryParameters: {'q': 'flutter', 'page': 1},
+        );
+
+        final capturedUri =
+            verify(
+                  mockHttpClient.get(captureAny, headers: anyNamed('headers')),
+                ).captured.single
+                as Uri;
+        expect(capturedUri.queryParameters, {'q': 'flutter', 'page': '1'});
+      });
+    });
+
+    group('POST', () {
+      test('201 Createdの場合、デコードされたMapを返すこと', () async {
+        final requestBody = {'name': 'new item'};
+        final responseBody = {'id': 101, 'name': 'new item'};
+        when(
+          mockHttpClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 201));
+
+        final result = await apiClient.post(
+          endpoint: 'items',
+          body: requestBody,
+        );
+
+        expect(result, responseBody);
+        verify(
+          mockHttpClient.post(
+            Uri.parse('$testBaseUrl/items'),
+            headers: anyNamed('headers'),
+            body: jsonEncode(requestBody),
+          ),
+        ).called(1);
+      });
+    });
+
+    group('認証ヘッダー', () {
+      test('アクセストークンが存在する場合、Authorizationヘッダーが付与されること', () async {
+        when(mockAuthService.getAccessToken()).thenReturn('valid_token');
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('{}', 200));
+
+        await apiClient.get(endpoint: 'test');
+
+        final capturedHeaders =
+            verify(
+                  mockHttpClient.get(any, headers: captureAnyNamed('headers')),
+                ).captured.single
+                as Map<String, String>;
+        expect(capturedHeaders['Authorization'], 'Bearer valid_token');
+      });
+
+      test('カスタムヘッダーを指定した場合、アクセストークンと共に出力されること', () async {
+        when(mockAuthService.getAccessToken()).thenReturn('token123');
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('{}', 200));
+
+        final customHeaders = {'X-Custom-Header': 'custom_value'};
+        await apiClient.get(endpoint: 'test', headers: customHeaders);
+
+        final capturedHeaders =
+            verify(
+                  mockHttpClient.get(any, headers: captureAnyNamed('headers')),
+                ).captured.single
+                as Map<String, String>;
+
+        expect(capturedHeaders['Authorization'], 'Bearer token123');
+        expect(capturedHeaders['X-Custom-Header'], 'custom_value');
+      });
+    });
+
+    group('PUT', () {
+      test('200 OKの場合、デコードされたMapを返すこと', () async {
+        final requestBody = {'name': 'updated item'};
+        final responseBody = {'id': 1, 'name': 'updated item'};
+        when(
+          mockHttpClient.put(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 200));
+
+        final result = await apiClient.put(
+          endpoint: 'items/1',
+          body: requestBody,
+        );
+
+        expect(result, responseBody);
+        verify(
+          mockHttpClient.put(
+            Uri.parse('$testBaseUrl/items/1'),
+            headers: anyNamed('headers'),
+            body: jsonEncode(requestBody),
+          ),
+        ).called(1);
+      });
+    });
+
+    group('DELETE', () {
+      test('200 OKの場合、デコードされたMapを返すこと', () async {
+        final responseBody = {'success': true};
+        when(
+          mockHttpClient.delete(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 200));
+
+        final result = await apiClient.delete(endpoint: 'items/1');
+
+        expect(result, responseBody);
+        verify(
+          mockHttpClient.delete(
+            Uri.parse('$testBaseUrl/items/1'),
+            headers: anyNamed('headers'),
+          ),
+        ).called(1);
+      });
+    });
+
+    group('ステータスコード別エラーハンドリング', () {
+      final errorCodes = {
+        400: isA<BadRequestException>(),
+        403: isA<ForbiddenException>(),
+        404: isA<NotFoundException>(),
+        405: isA<MethodNotAllowedException>(),
+        500: isA<InternalServerErrorException>(),
+        503: isA<UnknownErrorException>(),
+      };
+
+      for (final entry in errorCodes.entries) {
+        final code = entry.key;
+        final matcher = entry.value;
+
+        test('$code の場合に ${matcher.runtimeType} を投げること', () async {
+          when(
+            mockHttpClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer(
+            (_) async => http.Response('{"error": "message"}', code),
+          );
+
+          expect(() => apiClient.get(endpoint: 'error'), throwsA(matcher));
+        });
+      }
+    });
+
+    group('エラーハンドリング & トークンリフレッシュ', () {
+      test('401エラー時にトークンリフレッシュが走り、成功すれば再試行すること', () async {
+        when(mockAuthService.getRefreshToken()).thenReturn('old_refresh_token');
+
+        var callCount = 0;
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer((
+          _,
+        ) async {
+          callCount++;
+          if (callCount == 1) {
+            return http.Response('{"message": "unauthorized"}', 401);
+          }
+          return http.Response('{"id": 1}', 200);
+        });
+
+        when(
+          mockHttpClient.post(
+            Uri.parse('$testBaseUrl/auth/refresh'),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            jsonEncode({
+              'accessToken': 'new_access_token',
+              'refreshToken': 'new_refresh_token',
+            }),
+            200,
+          ),
+        );
+
+        final result = await apiClient.get(endpoint: 'data');
+
+        expect(result, {'id': 1});
+        verify(mockAuthService.setAccessToken('new_access_token')).called(1);
+        verify(mockAuthService.setRefreshToken('new_refresh_token')).called(1);
+        verify(
+          mockHttpClient.get(
+            Uri.parse('$testBaseUrl/data'),
+            headers: anyNamed('headers'),
+          ),
+        ).called(2);
+      });
+
+      test(
+        '401エラー時にリフレッシュトークンが空の場合、リフレッシュせずUnauthorizedExceptionを投げること',
+        () async {
+          when(mockAuthService.getRefreshToken()).thenReturn('');
+
+          when(
+            mockHttpClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer(
+            (_) async => http.Response('{"message": "unauthorized"}', 401),
+          );
+
+          await expectLater(
+            apiClient.get(endpoint: 'data'),
+            throwsA(isA<UnauthorizedException>()),
+          );
+          verifyNever(
+            mockHttpClient.post(
+              Uri.parse('$testBaseUrl/auth/refresh'),
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          );
+        },
+      );
+
+      test('同時に複数の401が発生した場合、リフレッシュは1回のみ行われ、他は待機すること', () async {
+        when(mockAuthService.getRefreshToken()).thenReturn('refresh_token');
+
+        var refreshCallCount = 0;
+        when(
+          mockHttpClient.post(
+            Uri.parse('$testBaseUrl/auth/refresh'),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async {
+          refreshCallCount++;
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+          return http.Response(
+            jsonEncode({
+              'accessToken': 'new_at',
+              'refreshToken': 'new_rt',
+            }),
+            200,
+          );
+        });
+
+        var getCallCount = 0;
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async {
+            getCallCount++;
+            // 最初の2回（req1, req2）は401を返し、リトライ時は200を返す
+            if (getCallCount <= 2) {
+              return http.Response('{}', 401);
+            }
+            return http.Response('{}', 200);
+          },
+        );
+
+        // 同時に2つのリクエスト
+        final results = await Future.wait([
+          apiClient.get(endpoint: 'req1'),
+          apiClient.get(endpoint: 'req2'),
+        ]);
+
+        expect(results, [<String, dynamic>{}, <String, dynamic>{}]);
+        expect(refreshCallCount, 1);
+        expect(getCallCount, 4); // 初回2回 + リトライ2回
+      });
+
+      test('リフレッシュ中に例外が発生した場合、falseを返しUnauthorizedExceptionを投げること', () async {
+        when(mockAuthService.getRefreshToken()).thenReturn('refresh_token');
+
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async => http.Response('{}', 401),
+        );
+
+        when(
+          mockHttpClient.post(
+            Uri.parse('$testBaseUrl/auth/refresh'),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenThrow(Exception('Refresh error'));
+
+        await expectLater(
+          apiClient.get(endpoint: 'data'),
+          throwsA(isA<UnauthorizedException>()),
+        );
+      });
+
+      test('401エラー時にリフレッシュが失敗した場合、UnauthorizedExceptionを投げること', () async {
+        when(
+          mockAuthService.getRefreshToken(),
+        ).thenReturn('invalid_refresh_token');
+
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async => http.Response('{"message": "unauthorized"}', 401),
+        );
+
+        when(
+          mockHttpClient.post(
+            Uri.parse('$testBaseUrl/auth/refresh'),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('{"message": "expired"}', 400));
+
+        await expectLater(
+          apiClient.get(endpoint: 'data'),
+          throwsA(isA<UnauthorizedException>()),
+        );
+        verify(mockAuthService.clearAuthData()).called(1);
+      });
+
+      test('loginエンドポイントで401が発生した場合、リフレッシュを試みずに例外を投げること', () async {
+        when(
+          mockHttpClient.post(
+            Uri.parse('$testBaseUrl/auth/login'),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response('{"message": "unauthorized"}', 401),
+        );
+
+        await expectLater(
+          apiClient.post(endpoint: 'auth/login', body: {}),
+          throwsA(isA<UnauthorizedException>()),
+        );
+        verifyNever(mockAuthService.getRefreshToken());
+      });
+
+      test('http.ClientExceptionが発生した場合、ApiClientExceptionを投げること', () async {
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenThrow(
+          http.ClientException('Client error'),
+        );
+
+        await expectLater(
+          apiClient.get(endpoint: 'test'),
+          throwsA(isA<ApiClientException>()),
+        );
+      });
+
+      test('予期せぬ例外が発生した場合、そのままスローされること', () async {
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenThrow(
+          ArgumentError('Unexpected error'),
+        );
+
+        await expectLater(
+          apiClient.get(endpoint: 'test'),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+
+      test(
+        'リトライ上限に達してもSocketExceptionが続く場合、NoInternetConnectionExceptionを投げること',
+        () {
+          fakeAsync((async) {
+            when(
+              mockHttpClient.get(any, headers: anyNamed('headers')),
+            ).thenAnswer(
+              (_) async => throw const SocketException('No Network'),
+            );
+
+            expect(
+              apiClient.get(endpoint: 'test'),
+              throwsA(isA<NoInternetConnectionException>()),
+            );
+
+            for (var i = 0; i < apiClient.maxRetries; i++) {
+              async.elapse(apiClient.retryDelay);
+            }
+            async.flushMicrotasks();
+
+            verify(
+              mockHttpClient.get(any, headers: anyNamed('headers')),
+            ).called(4);
+          });
+        },
+      );
+    });
+
+    test(
+      'レスポンスがMapでない場合にApiClientException（Bad response format）を投げること',
+      () async {
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('["list", "not", "map"]', 200));
+
+        expect(
+          () => apiClient.get(endpoint: 'test'),
+          throwsA(
+            isA<ApiClientException>().having(
+              (e) => e.message,
+              'message',
+              contains('Bad response format'),
+            ),
+          ),
+        );
+      },
+    );
+  });
+
+  group('apiClientProvider', () {
+    test('Provider経由でApiClientImplが取得できること', () {
+      final client = container.read(apiClientProvider);
+      expect(client, isA<ApiClientImpl>());
+    });
+  });
+}
