@@ -34,8 +34,16 @@ jobs:
       - name: Flutterクリーン
         run: flutter clean
 
-      - name: Dart/Flutterの依存関係を取得
+        #      - name: Dart/Flutterの依存関係を取得
+        #        run: flutter pub get
+
+      - name: mainアプリのDart/Flutterの依存関係を取得
         run: flutter pub get
+
+      - name: widgetbookのDart/Flutterの依存関係を取得
+        run: |
+          cd widgetbook
+          flutter pub get
 
       - name: Dartコードの修正
         run: dart fix --apply .
