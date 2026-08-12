@@ -10,6 +10,8 @@ environment:
 
 dependencies:
   cupertino_icons: ^1.0.8
+  drift: ^2.34.3
+  drift_flutter: ^0.3.1
   flutter:
     sdk: flutter
   flutter_riverpod:
@@ -20,11 +22,13 @@ dependencies:
   http:
   json_annotation:
   logger:
+  path_provider: ^2.1.6
   shared_preferences:
   very_good_analysis:
 
 dev_dependencies:
   build_runner:
+  drift_dev: ^2.34.0
   fake_async:
   flutter_lints: ^6.0.0
   flutter_test:
