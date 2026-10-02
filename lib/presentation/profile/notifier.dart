@@ -1,17 +1,17 @@
-part of 'profile_screen_state.dart';
+part of 'state.dart';
 
 /// プロバイダ
-final AsyncNotifierProvider<ProfileScreenViewModel, ProfileScreenState>
+final AsyncNotifierProvider<ProfileScreenNotifier, ProfileScreenState>
 profileScreenProvider =
     AsyncNotifierProvider.autoDispose<
-      ProfileScreenViewModel,
+      ProfileScreenNotifier,
       ProfileScreenState
     >(
-      ProfileScreenViewModel.new,
+      ProfileScreenNotifier.new,
     );
 
-/// プロフィール画面のViewModel
-class ProfileScreenViewModel extends AsyncNotifier<ProfileScreenState> {
+/// プロフィール画面のNotifier
+class ProfileScreenNotifier extends AsyncNotifier<ProfileScreenState> {
   @override
   Future<ProfileScreenState> build() async {
     final result = await ref.read(userRepositoryProvider).fetch();
@@ -22,7 +22,7 @@ class ProfileScreenViewModel extends AsyncNotifier<ProfileScreenState> {
         user: value,
       ),
       FailureResult(:final error) => () {
-        logger.e('[ProfileScreenViewModel] Error caught: $error');
+        logger.e('[ProfileScreenNotifier] Error caught: $error');
         throw error;
       }(),
     };

@@ -6,8 +6,8 @@ import 'package:architecture_study/utils/result.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-part 'profile_screen_state.freezed.dart';
-part 'profile_screen_view_model.dart';
+part 'state.freezed.dart';
+part 'notifier.dart';
 
 /// 画面の状態
 @freezed

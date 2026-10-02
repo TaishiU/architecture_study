@@ -3,7 +3,7 @@ import 'package:architecture_study/domain/use_cases/auth/auth_use_case.dart';
 import 'package:architecture_study/presentation/home/todo_detail/todo_detail_screen.dart';
 import 'package:architecture_study/presentation/home/todo_list/todo_list_screen.dart';
 import 'package:architecture_study/presentation/login/login_screen.dart';
-import 'package:architecture_study/presentation/profile/profile_screen.dart';
+import 'package:architecture_study/presentation/profile/screen.dart';
 import 'package:architecture_study/presentation/task/task_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
