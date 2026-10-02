@@ -41,6 +41,11 @@ analyzer:
     - "**/*.gen.dart"
     - "**/*.gr.dart"
     - "**/*.mocks.dart"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - linux/**
 
 linter:
   rules:
