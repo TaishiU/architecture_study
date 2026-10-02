@@ -14,7 +14,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Task {
 
- int get id; int get userId; String get title; bool get completed;
+/// ID
+ int get id;/// ユーザーID
+ int get userId;/// タイトル
+ String get title;/// 完了フラグ
+ bool get completed;
 /// Create a copy of Task
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -212,9 +216,13 @@ class _Task implements Task {
   const _Task({required this.id, required this.userId, required this.title, required this.completed});
   
 
+/// ID
 @override final  int id;
+/// ユーザーID
 @override final  int userId;
+/// タイトル
 @override final  String title;
+/// 完了フラグ
 @override final  bool completed;
 
 /// Create a copy of Task
