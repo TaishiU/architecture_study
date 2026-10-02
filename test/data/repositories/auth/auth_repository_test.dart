@@ -4,6 +4,7 @@ import 'package:architecture_study/data/services/local/secure_storage/auth/auth_
 import 'package:architecture_study/data/services/remote/api/auth/auth_api_service.dart';
 import 'package:architecture_study/data/services/remote/api/auth/auth_api_service_impl.dart';
 import 'package:architecture_study/data/services/remote/dto/login/login_dto.dart';
+import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -173,7 +174,7 @@ void main() {
       );
 
       expect(result, isA<FailureResult<void>>());
-      expect((result as FailureResult<void>).error, exception);
+      expect((result as FailureResult<void>).error, isA<AppError>());
       verifyNever(mockAuthSecureStorageService.setAccessToken(any));
     });
 

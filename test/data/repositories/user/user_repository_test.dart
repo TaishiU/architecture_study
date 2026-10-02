@@ -4,6 +4,7 @@ import 'package:architecture_study/data/services/remote/api/user/user_api_servic
 import 'package:architecture_study/data/services/remote/dto/user/user_dto.dart'
     as dto;
 import 'package:architecture_study/domain/entities/user/user.dart';
+import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -172,7 +173,7 @@ void main() {
       final result = await userRepository.fetch();
 
       expect(result, isA<FailureResult<User>>());
-      expect((result as FailureResult).error, exception);
+      expect((result as FailureResult).error, isA<AppError>());
     });
 
     test('例外発生時にFailureResultを返すこと', () async {
@@ -181,10 +182,7 @@ void main() {
       final result = await userRepository.fetch();
 
       expect(result, isA<FailureResult<User>>());
-      expect(
-        (result as FailureResult).error.toString(),
-        contains('Network Error'),
-      );
+      expect((result as FailureResult).error, isA<AppError>());
     });
   });
 
@@ -198,10 +196,7 @@ void main() {
       final result = await userRepository.fetch();
 
       expect(result, isA<FailureResult<User>>());
-      expect(
-        (result as FailureResult).error.toString(),
-        contains('Required fields missing for User'),
-      );
+      expect((result as FailureResult).error, isA<UnknownError>());
     });
 
     test('null可能なフィールドにはデフォルト値が入ること', () async {
