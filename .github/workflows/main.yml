@@ -73,7 +73,7 @@ jobs:
 
       #      - name: Slack通知
       #        if: ${{ always() }}
-      #        uses: slackapi/slack-github-action@v2.1.1
+      #        uses: slackapi/slack-github-action@v3.0.0
       #        with:
       #          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
       #          webhook-type: incoming-webhook
@@ -84,7 +84,7 @@ jobs:
 
       - name: Slack通知
         if: ${{ always() }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v3.0.0
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
