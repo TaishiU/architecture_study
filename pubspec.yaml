@@ -1,13 +1,10 @@
 name: architecture_study
-description: "A new Flutter project."
-publish_to: 'none'
+description: A new Flutter project.
+publish_to: none
 version: 1.0.0+1
-
 environment:
   sdk: ^3.11.0
   flutter: 3.41.2
-
-
 dependencies:
   cupertino_icons: ^1.0.8
   drift: ^2.34.3
@@ -25,7 +22,6 @@ dependencies:
   path_provider: ^2.1.6
   shared_preferences:
   very_good_analysis:
-
 dev_dependencies:
   build_runner:
   drift_dev: ^2.34.0
@@ -36,6 +32,5 @@ dev_dependencies:
   freezed:
   json_serializable:
   mockito:
-
 flutter:
   uses-material-design: true

@@ -2,6 +2,16 @@ import yaml
 import sys
 import os
 
+# None を null ではなく空文字列として出力するカスタム Representer
+# pubspec.yaml の慣習に合わせて `package_name:` の形式を保持する
+class _PubspecDumper(yaml.SafeDumper):
+    pass
+
+def _represent_none(dumper, _):
+    return dumper.represent_scalar('tag:yaml.org,2002:null', '')
+
+_PubspecDumper.add_representer(type(None), _represent_none)
+
 def sort_dependencies(file_path: str) -> None:
     """
     pubspec.yamlファイル内のdependenciesとdev_dependenciesセクションをアルファベット順にソートします。
@@ -25,7 +35,7 @@ def sort_dependencies(file_path: str) -> None:
                 pubspec['dev_dependencies'] = sorted_dev_deps
 
             with open(file_path, 'w', encoding='utf-8') as f:
-                yaml.dump(pubspec, f, sort_keys=False, default_flow_style=False, indent=2, Dumper=yaml.SafeDumper)
+                yaml.dump(pubspec, f, sort_keys=False, default_flow_style=False, indent=2, Dumper=_PubspecDumper)
             print(f"'{file_path}' のdependenciesとdev_dependenciesがソートされました。")
         else:
             print(f"エラー: '{file_path}' が空であるか、有効なYAMLファイルではありません。", file=sys.stderr)
