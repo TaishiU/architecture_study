@@ -3,6 +3,7 @@
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
+RESET='\033[0m'
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
 if [ -z "$REPO_ROOT" ]; then
@@ -19,26 +20,26 @@ ISSUE_LINES=$(printf '%s\n' "$ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info
 ISSUE_COUNT=$(printf '%s\n' "$ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)
 
 if [ "$ISSUE_COUNT" -gt 0 ]; then
-  printf "${RED} ❌ dart analyze %d件の問題を検出\n\n" "$ISSUE_COUNT"
+  printf "${RED} ❌ dart analyze %d件の問題を検出${RESET}\n\n" "$ISSUE_COUNT"
   printf '%s\n' "$ISSUE_LINES" | while IFS= read -r line; do
     printf "${YELLOW}%s${RESET}\n" "$line"
   done
   exit 1
 fi
-printf "${GREEN} ✅ dart analyze 問題なし\n"
+printf "${GREEN} ✅ dart analyze 問題なし${RESET}\n"
 
 FLUTTER_ANALYZE_OUTPUT=$(flutter analyze 2>&1)
 FLUTTER_ISSUE_LINES=$(printf '%s\n' "$FLUTTER_ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info)\s+-' || true)
 FLUTTER_ISSUE_COUNT=$(printf '%s\n' "$FLUTTER_ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)
 
 if [ "$FLUTTER_ISSUE_COUNT" -gt 0 ]; then
-  printf "${RED} ❌ flutter analyze %d件の問題を検出\n\n" "$FLUTTER_ISSUE_COUNT"
+  printf "${RED} ❌ flutter analyze %d件の問題を検出${RESET}\n\n" "$FLUTTER_ISSUE_COUNT"
   printf '%s\n' "$FLUTTER_ISSUE_LINES" | while IFS= read -r line; do
     printf "${YELLOW}%s${RESET}\n" "$line"
   done
   exit 1
 fi
-printf "${GREEN} ✅ flutter analyze 問題なし\n"
+printf "${GREEN} ✅ flutter analyze 問題なし${RESET}\n"
 
 # ユニットテストを実行する
 TEST_LOG=$(mktemp)
@@ -63,9 +64,9 @@ COVERAGE=$(grep -oE "headerCovTableEntry(Lo|Med|Hi)\">[0-9.]+&nbsp;%" coverage/h
 FAIL_COUNT=$(printf '%s\n' "$TEST_OUTPUT" | grep -oE ' -[0-9]+:' | tail -1 | grep -oE '[0-9]+' || echo "0")
 
 if [ "${FAIL_COUNT:-0}" -gt 0 ]; then
-  printf "${RED} 📊 [テスト完了] 失敗: ${FAIL_COUNT}件 | カバレッジ: $COVERAGE\n"
+  printf "${RED} 📊 [テスト完了] 失敗: ${FAIL_COUNT}件 | カバレッジ: $COVERAGE${RESET}\n"
 else
-  printf "${GREEN} 📊 [テスト完了] カバレッジ: $COVERAGE\n"
+  printf "${GREEN} 📊 [テスト完了] カバレッジ: $COVERAGE${RESET}\n"
 fi
 # ブラウザで開く
 open coverage/html/index.html

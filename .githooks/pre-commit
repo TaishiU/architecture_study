@@ -3,6 +3,7 @@
 # 色の定義
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+RESET='\033[0m'
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
@@ -11,7 +12,7 @@ STAGED_FREEZED=$(git diff --cached --name-only -- '*.dart' | xargs grep -l '@fre
 if [ -n "$STAGED_FREEZED" ]; then
   echo "🔨 @freezedファイルの変更を検知。build_runnerを実行中..."
   dart run build_runner build --delete-conflicting-outputs
-  echo "${GREEN} ✅ build_runner 完了！"
+  printf "${GREEN} ✅ build_runner 完了！${RESET}\n"
 fi
 
 # 2. pubspec.yamlが変更に含まれる場合は依存関係をソート
@@ -39,7 +40,7 @@ ISSUE_LINES=$(printf '%s\n' "$ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info
 ISSUE_COUNT=$(printf '%s\n' "$ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)
 
 if [ "$ISSUE_COUNT" -gt 0 ]; then
-  printf "${RED} ❌ dart analyze %d件の問題を検出\n\n" "$ISSUE_COUNT"
+  printf "${RED} ❌ dart analyze %d件の問題を検出${RESET}\n\n" "$ISSUE_COUNT"
   printf '%s\n' "$ISSUE_LINES" | while IFS= read -r line; do
     printf "%s\n" "$line"
   done
@@ -47,7 +48,7 @@ if [ "$ISSUE_COUNT" -gt 0 ]; then
   exit 1
 fi
 
-echo "${GREEN} ✅ dart analyze 問題なし"
+printf "${GREEN} ✅ dart analyze 問題なし${RESET}\n"
 
 echo "🔍 flutter analyze 実行中..."
 FLUTTER_ANALYZE_OUTPUT=$(flutter analyze 2>&1)
@@ -55,7 +56,7 @@ FLUTTER_ISSUE_LINES=$(printf '%s\n' "$FLUTTER_ANALYZE_OUTPUT" | grep -E '^\s*(er
 FLUTTER_ISSUE_COUNT=$(printf '%s\n' "$FLUTTER_ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)
 
 if [ "$FLUTTER_ISSUE_COUNT" -gt 0 ]; then
-  printf "${RED} ❌ flutter analyze %d件の問題を検出\n\n" "$FLUTTER_ISSUE_COUNT"
+  printf "${RED} ❌ flutter analyze %d件の問題を検出${RESET}\n\n" "$FLUTTER_ISSUE_COUNT"
   printf '%s\n' "$FLUTTER_ISSUE_LINES" | while IFS= read -r line; do
     printf "%s\n" "$line"
   done
@@ -63,7 +64,7 @@ if [ "$FLUTTER_ISSUE_COUNT" -gt 0 ]; then
   exit 1
 fi
 
-echo "${GREEN} ✅ flutter analyze 問題なし"
+printf "${GREEN} ✅ flutter analyze 問題なし${RESET}\n"
 
 # 6. 修正・生成されたファイルを再ステージング
 git add .
