@@ -28,8 +28,7 @@ enum Method {
   put('PUT'),
 
   /// HTTP DELETEメソッド。
-  delete('DELETE')
-  ;
+  delete('DELETE');
 
   const Method(this.value);
 
@@ -276,7 +275,7 @@ class ApiClientImpl implements ApiClient {
             throw UnauthorizedException('Session expired');
           }
           // トークン更新成功。新しいトークンでリトライ。
-          return _safeApiCall(
+          return await _safeApiCall(
             method: method,
             endpoint: endpoint,
             headers: headers,

@@ -97,6 +97,6 @@ class UnknownErrorException extends ApiClientException {
   ///
   /// [message] : 例外に関する説明メッセージ。
   /// [statusCode] : 例外に関連するHTTPステータスコード。
-  UnknownErrorException(String message, {int? statusCode})
-    : super('Unknown Error: $message', statusCode: statusCode);
+  UnknownErrorException(String message, {super.statusCode})
+    : super('Unknown Error: $message');
 }
