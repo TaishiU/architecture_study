@@ -28,6 +28,7 @@ if [ "$ISSUE_COUNT" -gt 0 ]; then
 fi
 printf "${GREEN} ✅ dart analyze 問題なし${RESET}\n"
 
+echo "🔍 flutter analyze 実行中..."
 FLUTTER_ANALYZE_OUTPUT=$(flutter analyze 2>&1)
 FLUTTER_ISSUE_LINES=$(printf '%s\n' "$FLUTTER_ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info)\s+-' || true)
 FLUTTER_ISSUE_COUNT=$(printf '%s\n' "$FLUTTER_ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)
@@ -51,7 +52,7 @@ rm -f "$TEST_LOG"
 lcov --extract coverage/lcov.info 'lib/data/**/*_repository.dart' \
   --extract coverage/lcov.info 'lib/data/**/*_service_impl.dart' \
   --extract coverage/lcov.info 'lib/data/**/api_client.dart' \
-  --extract coverage/lcov.info 'lib/ui/**/*_view_model.dart' \
+  --extract coverage/lcov.info 'lib/presentation/**/*_view_model.dart' \
   -o coverage/lcov_extract.info
 # 自動生成ファイルを対象から除外
 lcov --remove coverage/lcov_extract.info 'lib/**/*.g.dart' \

@@ -1,4 +1,4 @@
-import 'package:architecture_study/ui/core/styles/app_color.dart';
+import 'package:architecture_study/design_system/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart';

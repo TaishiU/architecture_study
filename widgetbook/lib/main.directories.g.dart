@@ -11,7 +11,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:widgetbook/widgetbook.dart' as _widgetbook;
-import 'package:widgetbook_workspace/ui/core/components/core_error.dart'
+import 'package:widgetbook_workspace/design_system/components/core_error.dart'
     as _widgetbook_workspace_ui_core_components_core_error;
 
 final directories = <_widgetbook.WidgetbookNode>[

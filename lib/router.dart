@@ -1,10 +1,10 @@
 import 'package:architecture_study/data/repositories/auth/auth_repository.dart';
 import 'package:architecture_study/domain/use_cases/auth/auth_use_case.dart';
-import 'package:architecture_study/ui/home/todo_detail/view/todo_detail_screen.dart';
-import 'package:architecture_study/ui/home/todo_list/view/todo_list_screen.dart';
-import 'package:architecture_study/ui/login/view/login_screen.dart';
-import 'package:architecture_study/ui/profile/view/profile_screen.dart';
-import 'package:architecture_study/ui/task/view/task_screen.dart';
+import 'package:architecture_study/presentation/home/todo_detail/todo_detail_screen.dart';
+import 'package:architecture_study/presentation/home/todo_list/todo_list_screen.dart';
+import 'package:architecture_study/presentation/login/login_screen.dart';
+import 'package:architecture_study/presentation/profile/profile_screen.dart';
+import 'package:architecture_study/presentation/task/task_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
