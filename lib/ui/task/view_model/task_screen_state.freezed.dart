@@ -14,6 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskScreenState {
 
+/// タスク一覧
  List<Task> get tasks;
 /// Create a copy of TaskScreenState
 /// with the given fields replaced by the non-null parameter values.
@@ -209,7 +210,9 @@ class _TaskScreenState implements TaskScreenState {
   const _TaskScreenState({required final  List<Task> tasks}): _tasks = tasks;
   
 
+/// タスク一覧
  final  List<Task> _tasks;
+/// タスク一覧
 @override List<Task> get tasks {
   if (_tasks is EqualUnmodifiableListView) return _tasks;
   // ignore: implicit_dynamic_type

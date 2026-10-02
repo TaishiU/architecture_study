@@ -1,7 +1,7 @@
+import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/ui/core/components/core_app_bar.dart';
 import 'package:architecture_study/ui/core/components/core_error.dart';
 import 'package:architecture_study/ui/profile/view_model/profile_screen_state.dart';
-import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -31,17 +31,25 @@ class ProfileScreen extends HookConsumerWidget {
       ),
       body: switch (viewModel) {
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
-        AsyncData(value: final result) => switch (result) {
-          SuccessResult(value: final state) => _Body(state: state),
-          FailureResult(:final error) => CoreError(
+        AsyncData(:final value) => _Body(state: value),
+        AsyncError(:final error) => switch (error) {
+          NetworkError() => CoreError(
             error: error,
             onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
           ),
+          ServerError() => CoreError(
+            error: error,
+            onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
+          ),
+          AppError() => CoreError(
+            error: error,
+            onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
+          ),
+          _ => CoreError(
+            error: Exception(error.toString()),
+            onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
+          ),
         },
-        AsyncError(:final error) => CoreError(
-          error: error as Exception,
-          onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
-        ),
       },
       floatingActionButton: FloatingActionButton(
         onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),

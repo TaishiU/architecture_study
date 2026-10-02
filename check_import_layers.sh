@@ -160,5 +160,5 @@ while IFS='	' read -r vfile vimport vreason; do
   printf "  → %s\n\n" "$vreason"
 done <"$VIOLATION_LOG"
 
-printf "${YELLOW}上記のimport違反を修正してから再度pushしてください。${RESET}\n\n"
+printf "${YELLOW}上記のimport違反を修正してから再実行してください。${RESET}\n\n"
 exit 1

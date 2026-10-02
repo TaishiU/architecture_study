@@ -5,6 +5,7 @@ import 'package:architecture_study/data/services/remote/dto/user/user_dto.dart'
 import 'package:architecture_study/data/services/remote/dto/user/user_dto.dart'
     show UserDto;
 import 'package:architecture_study/domain/entities/user/user.dart';
+import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -33,15 +34,15 @@ class UserRepository {
         case SuccessResult<UserDto>():
           final user = _toEntity(result.value);
           if (user == null) {
-            return FailureResult(Exception('Required fields missing for User'));
+            return const FailureResult(UnknownError());
           }
           return SuccessResult(user);
         case FailureResult<UserDto>():
           logger.e('[UserRepository] ${result.error}');
-          return FailureResult(result.error);
+          return FailureResult(AppError.from(result.error));
       }
     } on Exception catch (error) {
-      return FailureResult(error);
+      return FailureResult(AppError.from(error));
     }
   }
 
