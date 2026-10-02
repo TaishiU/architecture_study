@@ -58,19 +58,9 @@ if [ "$LINES_HIT" -lt "$LINES_FOUND" ]; then
     /^LH:/ { lh = $2; if (lh + 0 < lf + 0) printf "  %s (%d/%d行)\n", file, lh, lf }
   ' coverage/lcov_extract.info
   printf "\n上記ファイルのテストカバレッジを100%%にしてから再度pushしてください。\n"
+  printf "💡 カバレッジの詳細は次のコマンドを実行してブラウザで確認できます: sh scripts/fix-and-test.sh\n"
   exit 1
 fi
 
 printf "${GREEN} ✅ カバレッジ 100%%\n"
-
-# 5. HTML生成 & ブラウザで確認
-genhtml coverage/lcov_extract.info -o coverage/html 2>/dev/null
-open coverage/html/index.html
-
-printf "\nブラウザでカバレッジレポートを確認してください。\n"
-printf "カバレッジを確認しました。pushを続行しますか？ [y/N]: "
-read -r ANSWER </dev/tty
-case "$ANSWER" in
-  [yY]) echo "🚀 pushを続行します。" ;;
-  *) echo "push をキャンセルしました。"; exit 1 ;;
-esac
+echo "🚀 pushを続行します。"

@@ -58,42 +58,42 @@ void main() {
       expect(apiClient.authSecureStorageService, mockAuthService);
     });
 
-    // group('GET', () {
-    //   test('200 OKの場合、デコードされたMapを返すこと', () async {
-    //     final responseBody = {'id': 1, 'name': 'test'};
-    //     when(
-    //       mockHttpClient.get(any, headers: anyNamed('headers')),
-    // ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 200));
-    //
-    //     final result = await apiClient.get(endpoint: 'test');
-    //
-    //     expect(result, responseBody);
-    //     verify(
-    //       mockHttpClient.get(
-    //         Uri.parse('$testBaseUrl/test'),
-    //         headers: anyNamed('headers'),
-    //       ),
-    //     ).called(1);
-    //   });
-    //
-    //   test('クエリパラメータが正しく付与されること', () async {
-    //     when(
-    //       mockHttpClient.get(any, headers: anyNamed('headers')),
-    //     ).thenAnswer((_) async => http.Response('{}', 200));
-    //
-    //     await apiClient.get(
-    //       endpoint: 'test',
-    //       queryParameters: {'q': 'flutter', 'page': 1},
-    //     );
-    //
-    //     final capturedUri =
-    //         verify(
-    //            mockHttpClient.get(captureAny, headers: anyNamed('headers')),
-    //             ).captured.single
-    //             as Uri;
-    //     expect(capturedUri.queryParameters, {'q': 'flutter', 'page': '1'});
-    //   });
-    // });
+    group('GET', () {
+      test('200 OKの場合、デコードされたMapを返すこと', () async {
+        final responseBody = {'id': 1, 'name': 'test'};
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 200));
+
+        final result = await apiClient.get(endpoint: 'test');
+
+        expect(result, responseBody);
+        verify(
+          mockHttpClient.get(
+            Uri.parse('$testBaseUrl/test'),
+            headers: anyNamed('headers'),
+          ),
+        ).called(1);
+      });
+
+      test('クエリパラメータが正しく付与されること', () async {
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('{}', 200));
+
+        await apiClient.get(
+          endpoint: 'test',
+          queryParameters: {'q': 'flutter', 'page': 1},
+        );
+
+        final capturedUri =
+            verify(
+                  mockHttpClient.get(captureAny, headers: anyNamed('headers')),
+                ).captured.single
+                as Uri;
+        expect(capturedUri.queryParameters, {'q': 'flutter', 'page': '1'});
+      });
+    });
 
     group('POST', () {
       test('201 Createdの場合、デコードされたMapを返すこと', () async {
