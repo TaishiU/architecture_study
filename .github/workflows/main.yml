@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: コードのチェックアウト
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Flutterのセットアップ
         uses: subosito/flutter-action@v2
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: コードのチェックアウト
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Flutterのセットアップ
         uses: subosito/flutter-action@v2
