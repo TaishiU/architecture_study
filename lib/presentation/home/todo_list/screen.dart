@@ -42,7 +42,7 @@ class TodoListScreen extends HookConsumerWidget {
           ),
         },
         AsyncError(:final error) => CoreError(
-          error: error as Exception,
+          error: error,
           onPressed: () => ref.read(todoListScreenProvider.notifier).refresh(),
         ),
       },

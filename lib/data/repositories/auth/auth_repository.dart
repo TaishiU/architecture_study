@@ -3,6 +3,7 @@ import 'package:architecture_study/data/services/local/secure_storage/auth/auth_
 import 'package:architecture_study/data/services/remote/api/auth/auth_api_service.dart';
 import 'package:architecture_study/data/services/remote/api/auth/auth_api_service_impl.dart';
 import 'package:architecture_study/data/services/remote/dto/login/login_dto.dart';
+import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/foundation.dart';
@@ -88,10 +89,10 @@ class AuthRepository extends ChangeNotifier {
           return const SuccessResult(null);
         case FailureResult<LoginDto>():
           logger.e('[AuthRepository] ${result.error}');
-          return FailureResult(result.error);
+          return FailureResult(AppError.from(result.error));
       }
     } on Exception catch (error) {
-      return FailureResult(error);
+      return FailureResult(AppError.from(error));
     }
   }
 

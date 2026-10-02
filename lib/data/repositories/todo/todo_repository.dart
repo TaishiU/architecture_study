@@ -4,6 +4,7 @@ import 'package:architecture_study/data/services/remote/api/todos/todos_api_serv
 import 'package:architecture_study/data/services/remote/api/todos/todos_api_service_impl.dart';
 import 'package:architecture_study/data/services/remote/dto/todos/todos_dto.dart';
 import 'package:architecture_study/domain/entities/todos/todos.dart';
+import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -70,10 +71,10 @@ class TodoRepository {
           return const SuccessResult(null);
         case FailureResult<TodosDto>():
           logger.e('[TodoRepository] ${result.error}');
-          return FailureResult(result.error);
+          return FailureResult(AppError.from(result.error));
       }
     } on Exception catch (error) {
-      return Result.failure(error);
+      return FailureResult(AppError.from(error));
     }
   }
 

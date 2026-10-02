@@ -1,6 +1,5 @@
 import 'package:architecture_study/design_system/components/core_app_bar.dart';
 import 'package:architecture_study/design_system/components/core_error.dart';
-import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/presentation/profile/notifier.dart';
 import 'package:architecture_study/presentation/profile/state.dart';
 import 'package:flutter/material.dart';
@@ -33,24 +32,10 @@ class ProfileScreen extends HookConsumerWidget {
       body: switch (viewModel) {
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
         AsyncData(:final value) => _Body(state: value),
-        AsyncError(:final error) => switch (error) {
-          NetworkError() => CoreError(
-            error: error,
-            onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
-          ),
-          ServerError() => CoreError(
-            error: error,
-            onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
-          ),
-          AppError() => CoreError(
-            error: error,
-            onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
-          ),
-          _ => CoreError(
-            error: Exception(error.toString()),
-            onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
-          ),
-        },
+        AsyncError(:final error) => CoreError(
+          error: error,
+          onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
+        ),
       },
       floatingActionButton: FloatingActionButton(
         onPressed: () => ref.read(profileScreenProvider.notifier).refresh(),
