@@ -73,4 +73,6 @@ fi
 printf "${GREEN} ✅ flutter analyze 問題なし${RESET}\n"
 
 # 6. 修正・生成されたファイルを再ステージング
-git add .
+if ! git diff --quiet || git ls-files --others --exclude-standard | grep -q .; then
+  git add .
+fi
