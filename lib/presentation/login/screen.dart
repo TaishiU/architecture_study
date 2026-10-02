@@ -1,6 +1,6 @@
 import 'package:architecture_study/design_system/components/core_app_bar.dart';
 import 'package:architecture_study/design_system/styles/app_text_style.dart';
-import 'package:architecture_study/presentation/login/login_screen_state.dart';
+import 'package:architecture_study/presentation/login/notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

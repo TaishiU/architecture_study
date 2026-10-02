@@ -2,26 +2,23 @@ import 'dart:async';
 
 import 'package:architecture_study/data/repositories/todo/todo_repository.dart';
 import 'package:architecture_study/domain/use_cases/auth/auth_use_case.dart';
-import 'package:architecture_study/presentation/home/todo_list/todo_list_screen_state.dart';
+import 'package:architecture_study/presentation/home/todo_list/state.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
-final AsyncNotifierProvider<
-  TodoListScreenViewModel,
-  Result<TodoListScreenState>
->
+final AsyncNotifierProvider<TodoListScreenNotifier, Result<TodoListScreenState>>
 todoListScreenProvider =
     AsyncNotifierProvider.autoDispose<
-      TodoListScreenViewModel,
+      TodoListScreenNotifier,
       Result<TodoListScreenState>
     >(
-      TodoListScreenViewModel.new,
+      TodoListScreenNotifier.new,
     );
 
-/// Todoリスト画面のViewModel
-class TodoListScreenViewModel
+/// Todoリスト画面のNotifier
+class TodoListScreenNotifier
     extends AsyncNotifier<Result<TodoListScreenState>> {
   @override
   FutureOr<Result<TodoListScreenState>> build() async {
@@ -50,7 +47,7 @@ class TodoListScreenViewModel
         );
       }(),
       FailureResult(:final error) => () {
-        logger.e('[TodoListScreenViewModel] Error caught: $error');
+        logger.e('[TodoListScreenNotifier] Error caught: $error');
         return FailureResult<TodoListScreenState>(error);
       }(),
     };

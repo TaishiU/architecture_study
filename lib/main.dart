@@ -11,7 +11,7 @@ Future<void> main() async {
   // SharedPreferencesWithCache の初期化
   final sharedPreferencesWithCache = await SharedPreferencesWithCache.create(
     cacheOptions: const SharedPreferencesWithCacheOptions(
-      // アプリケーションで利用するキーをallowListに指定してください。
+      // アプリケーションで利用するキーをallowListに指定
       allowList: <String>{
         'access_token',
         'refresh_token',
@@ -41,7 +41,6 @@ class MyApp extends ConsumerWidget {
   /// コンストラクタ
   const MyApp({super.key});
 
-  // This view is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
@@ -56,5 +55,3 @@ class MyApp extends ConsumerWidget {
     );
   }
 }
-
-//////////////////////////////////////////////////////////////

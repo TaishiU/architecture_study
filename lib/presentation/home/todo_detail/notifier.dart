@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:architecture_study/data/repositories/todo/todo_repository.dart';
-import 'package:architecture_study/presentation/home/todo_detail/todo_detail_screen_state.dart';
+import 'package:architecture_study/presentation/home/todo_detail/state.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,20 +9,20 @@ import 'package:hooks_riverpod/misc.dart';
 
 /// プロバイダ（ .family で todoId を受け取る）
 final AsyncNotifierProviderFamily<
-  TodoDetailScreenViewModel,
+  TodoDetailScreenNotifier,
   Result<TodoDetailScreenState>,
   int
 >
 todoDetailScreenProvider = AsyncNotifierProvider.autoDispose
-    .family<TodoDetailScreenViewModel, Result<TodoDetailScreenState>, int>(
-      TodoDetailScreenViewModel.new,
+    .family<TodoDetailScreenNotifier, Result<TodoDetailScreenState>, int>(
+      TodoDetailScreenNotifier.new,
     );
 
-/// Todo詳細画面のViewModel
-class TodoDetailScreenViewModel
+/// Todo詳細画面のNotifier
+class TodoDetailScreenNotifier
     extends AsyncNotifier<Result<TodoDetailScreenState>> {
   /// コンストラクタ (Riverpod 3.0 では、名前付き引数ではなく位置引数として受け取る)
-  TodoDetailScreenViewModel(this.todoId);
+  TodoDetailScreenNotifier(this.todoId);
 
   /// プロバイダの .family 引数となる todoId
   final int todoId;
@@ -60,7 +60,7 @@ class TodoDetailScreenViewModel
         return SuccessResult(TodoDetailScreenState(todo: latestTodo));
       }(),
       FailureResult(:final error) => () {
-        logger.e('[TodoDetailScreenViewModel] Error caught: $error');
+        logger.e('[TodoDetailScreenNotifier] Error caught: $error');
         return FailureResult<TodoDetailScreenState>(error);
       }(),
     };

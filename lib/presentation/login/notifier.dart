@@ -1,14 +1,18 @@
-part of 'login_screen_state.dart';
+import 'package:architecture_study/domain/use_cases/auth/auth_use_case.dart';
+import 'package:architecture_study/presentation/login/state.dart';
+import 'package:architecture_study/utils/logger.dart';
+import 'package:architecture_study/utils/result.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-/// LoginScreenViewModelのプロバイダ
-final AsyncNotifierProvider<LoginScreenViewModel, LoginScreenState>
+/// LoginScreenNotifierのプロバイダ
+final AsyncNotifierProvider<LoginScreenNotifier, LoginScreenState>
 loginScreenProvider =
-    AsyncNotifierProvider.autoDispose<LoginScreenViewModel, LoginScreenState>(
-      LoginScreenViewModel.new,
+    AsyncNotifierProvider.autoDispose<LoginScreenNotifier, LoginScreenState>(
+      LoginScreenNotifier.new,
     );
 
-/// ログイン画面のViewModel
-class LoginScreenViewModel extends AsyncNotifier<LoginScreenState> {
+/// ログイン画面のNotifier
+class LoginScreenNotifier extends AsyncNotifier<LoginScreenState> {
   @override
   Future<LoginScreenState> build() async {
     return const LoginScreenState(
@@ -29,16 +33,12 @@ class LoginScreenViewModel extends AsyncNotifier<LoginScreenState> {
 
     switch (result) {
       case SuccessResult<void>():
-        // final value = state.value;
-        // if (value == null) {
-        //   return;
-        // }
         // ログイン状態は AuthRepository の通知によって GoRouter が検知し、
         // 自動的にホーム画面へリダイレクトされるため、ここで state を変更する必要はないが、
         // 必要に応じて UI のフィードバック処理を行う。
         return;
       case FailureResult<void>():
-        logger.e('[LoginScreenViewModel] login failed: ${result.error}');
+        logger.e('[LoginScreenNotifier] login failed: ${result.error}');
         throw Exception();
     }
   }

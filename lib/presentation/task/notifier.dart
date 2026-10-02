@@ -1,17 +1,22 @@
-part of 'task_screen_state.dart';
+import 'dart:async';
+
+import 'package:architecture_study/data/repositories/task/task_repository.dart';
+import 'package:architecture_study/presentation/task/state.dart';
+import 'package:architecture_study/utils/result.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
-final AsyncNotifierProvider<TaskScreenViewModel, Result<TaskScreenState>>
+final AsyncNotifierProvider<TaskScreenNotifier, Result<TaskScreenState>>
 taskScreenProvider =
     AsyncNotifierProvider.autoDispose<
-      TaskScreenViewModel,
+      TaskScreenNotifier,
       Result<TaskScreenState>
     >(
-      TaskScreenViewModel.new,
+      TaskScreenNotifier.new,
     );
 
-/// タスク画面のViewModel
-class TaskScreenViewModel extends AsyncNotifier<Result<TaskScreenState>> {
+/// タスク画面のNotifier
+class TaskScreenNotifier extends AsyncNotifier<Result<TaskScreenState>> {
   @override
   Future<Result<TaskScreenState>> build() async {
     final tasksAsync = ref.watch(tasksStreamProvider);

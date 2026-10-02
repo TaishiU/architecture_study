@@ -1,7 +1,7 @@
 import 'package:architecture_study/design_system/components/core_app_bar.dart';
 import 'package:architecture_study/design_system/components/core_error.dart';
-import 'package:architecture_study/presentation/home/todo_detail/todo_detail_screen_state.dart';
-import 'package:architecture_study/presentation/home/todo_detail/todo_detail_screen_view_model.dart';
+import 'package:architecture_study/presentation/home/todo_detail/notifier.dart';
+import 'package:architecture_study/presentation/home/todo_detail/state.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

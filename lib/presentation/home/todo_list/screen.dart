@@ -1,7 +1,7 @@
 import 'package:architecture_study/design_system/components/core_app_bar.dart';
 import 'package:architecture_study/design_system/components/core_error.dart';
-import 'package:architecture_study/presentation/home/todo_list/todo_list_screen_state.dart';
-import 'package:architecture_study/presentation/home/todo_list/todo_list_screen_view_model.dart';
+import 'package:architecture_study/presentation/home/todo_list/notifier.dart';
+import 'package:architecture_study/presentation/home/todo_list/state.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

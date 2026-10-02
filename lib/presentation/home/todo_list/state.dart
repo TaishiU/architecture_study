@@ -1,7 +1,7 @@
 import 'package:architecture_study/domain/entities/todos/todos.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'todo_list_screen_state.freezed.dart';
+part 'state.freezed.dart';
 
 /// 画面の状態を表すクラス
 @freezed
