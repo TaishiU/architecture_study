@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// タブバー付きのScaffold
-class ScaffoldWithTabBar extends StatefulWidget {
+class TopScreen extends StatefulWidget {
   /// コンストラクタ
-  const ScaffoldWithTabBar({
+  const TopScreen({
     required this.child,
     super.key,
   });
@@ -13,10 +13,10 @@ class ScaffoldWithTabBar extends StatefulWidget {
   final Widget child;
 
   @override
-  State<ScaffoldWithTabBar> createState() => _ScaffoldWithTabBarState();
+  State<TopScreen> createState() => _TopScreenState();
 }
 
-class _ScaffoldWithTabBarState extends State<ScaffoldWithTabBar>
+class _TopScreenState extends State<TopScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
