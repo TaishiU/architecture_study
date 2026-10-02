@@ -1,14 +1,21 @@
 name: Flutter CI
 
-on: [ push ]
+on:
+  push:
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  analyze:
     runs-on: ubuntu-latest
-
     steps:
       - name: コードのチェックアウト
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Flutterのセットアップ
         uses: subosito/flutter-action@v2
@@ -16,12 +23,6 @@ jobs:
           channel: stable
           flutter-version-file: pubspec.yaml
           cache: true
-
-      - name: Flutterバージョン確認
-        run: flutter --version
-
-      - name: Flutter SDKのパスを環境変数に追加
-        run: echo "$HOME/flutter/bin" >> $GITHUB_PATH
 
       - name: Pubキャッシュの復元
         uses: actions/cache@v5
@@ -31,47 +32,62 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pub-
 
-      - name: Flutterクリーン
-        run: flutter clean
-
-      - name: Dart/Flutterの依存関係を取得
+      - name: 依存関係を取得
         run: flutter pub get
 
-      - name: widgetbookのDart/Flutterの依存関係を取得
-        run: |
-          cd widgetbook
-          flutter pub get
+      - name: widgetbookの依存関係を取得
+        run: cd widgetbook && flutter pub get
 
-      - name: Dartコードの修正
-        run: dart fix --apply .
+      - name: フォーマット確認
+        run: dart format --output=none --set-exit-if-changed .
 
-      - name: Dartコードのフォーマット
-        run: dart format .
-
-      - name: Dartコードの解析
-        run: dart analyze
-
-      - name: widgetbookのDartコードの解析
-        run: |
-          cd widgetbook
-          dart analyze
-
-      - name: Flutterコードの解析
+      - name: Flutter静的解析
         run: flutter analyze
 
-      - name: テストの実行とカバレッジレポートの生成
-        run: flutter test --coverage
+      - name: widgetbook静的解析
+        run: cd widgetbook && dart analyze
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: コードのチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Flutterのセットアップ
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: Pubキャッシュの復元
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: 依存関係を取得
+        run: flutter pub get
+
+      - name: テスト実行
+        run: flutter test
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [analyze, test]
+    if: always()
+    steps:
       - name: Slack通知
-        if: ${{ always() }}
         uses: slackapi/slack-github-action@v3.0.0
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            text: "*GitHub Action build result*: analyze=${{ needs.analyze.result }} / test=${{ needs.test.result }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
             blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  text: "GitHub Action build result: analyze=${{ needs.analyze.result }} / test=${{ needs.test.result }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
