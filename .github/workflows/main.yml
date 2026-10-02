@@ -2,9 +2,14 @@ name: Flutter CI
 
 on:
   push:
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'widgetbook/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'analysis_options.yaml'
+      - '.github/workflows/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
