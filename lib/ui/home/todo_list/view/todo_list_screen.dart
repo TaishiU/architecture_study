@@ -46,10 +46,6 @@ class TodoListScreen extends HookConsumerWidget {
           onPressed: () => ref.read(todoListScreenProvider.notifier).refresh(),
         ),
       },
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => ref.read(todoListScreenProvider.notifier).refresh(),
-        child: const Icon(Icons.refresh),
-      ),
     );
   }
 }

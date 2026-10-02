@@ -4,6 +4,7 @@ import 'package:architecture_study/ui/home/todo_detail/view/todo_detail_screen.d
 import 'package:architecture_study/ui/home/todo_list/view/todo_list_screen.dart';
 import 'package:architecture_study/ui/login/view/login_screen.dart';
 import 'package:architecture_study/ui/profile/view/profile_screen.dart';
+import 'package:architecture_study/ui/task/view/task_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -41,6 +42,8 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
             case 0:
               context.go(TodoListScreen.path);
             case 1:
+              context.go(TaskScreen.path);
+            case 2:
               context.go(ProfileScreen.path);
           }
         },
@@ -48,6 +51,10 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.task),
+            label: 'Task',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -104,6 +111,10 @@ final routerProvider = Provider<GoRouter>(
                   },
                 ),
               ],
+            ),
+            GoRoute(
+              path: TaskScreen.path,
+              builder: (context, state) => const TaskScreen(),
             ),
             GoRoute(
               path: ProfileScreen.path,

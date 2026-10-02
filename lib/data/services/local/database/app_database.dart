@@ -12,32 +12,41 @@ final appDatabaseProvider = Provider<AppDatabase>((ref) {
   return db;
 });
 
-/// Todoアイテムを永続化するDriftテーブル定義。
-class TodoItems extends Table {
-  /// サーバーサイドのID（主キー）。
-  IntColumn get id => integer()();
+/// タスクアイテムを永続化するDriftテーブル定義。
+class TaskItems extends Table {
+  /// DB自動採番ID（主キー）。
+  IntColumn get id => integer().autoIncrement()();
 
   /// ユーザーID。
   IntColumn get userId => integer()();
 
-  /// Todoのテキスト。
+  /// タスクのテキスト。
   TextColumn get todo => text()();
 
   /// 完了フラグ。
   BoolColumn get completed => boolean().withDefault(const Constant(false))();
-
-  @override
-  Set<Column> get primaryKey => {id};
 }
 
 /// アプリ全体で使用するDriftデータベース。
-@DriftDatabase(tables: [TodoItems])
+@DriftDatabase(tables: [TaskItems])
 class AppDatabase extends _$AppDatabase {
   /// コンストラクタ。[executor] を省略するとデフォルト接続を使用する。
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      await m.recreateAllViews();
+      for (final table in allTables) {
+        await m.deleteTable(table.actualTableName);
+        await m.createTable(table);
+      }
+    },
+  );
 
   static QueryExecutor _openConnection() {
     return driftDatabase(

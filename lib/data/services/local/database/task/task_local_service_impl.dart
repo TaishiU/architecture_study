@@ -8,7 +8,7 @@ final taskLocalServiceImplProvider = Provider<TaskLocalServiceImpl>(
   (ref) => TaskLocalServiceImpl(ref.read(appDatabaseProvider)),
 );
 
-/// [TaskLocalService] のDrift実装クラス。
+/// [TaskLocalService] の実装。Driftを使用してSQLiteへアクセスする。
 class TaskLocalServiceImpl implements TaskLocalService {
   /// コンストラクタ。
   TaskLocalServiceImpl(this._db);
@@ -16,15 +16,28 @@ class TaskLocalServiceImpl implements TaskLocalService {
   final AppDatabase _db;
 
   @override
-  Stream<List<TodoItem>> watchAll() => _db.select(_db.todoItems).watch();
+  Stream<List<TaskItem>> watchAll() => _db.select(_db.taskItems).watch();
 
   @override
-  Future<List<TodoItem>> fetchAll() => _db.select(_db.todoItems).get();
+  Future<List<TaskItem>> fetchAll() => _db.select(_db.taskItems).get();
 
   @override
-  Future<void> upsertAll(List<TodoItem> items) async {
+  Future<void> insert({required String title}) async {
+    await _db
+        .into(_db.taskItems)
+        .insert(
+          TaskItemsCompanion.insert(
+            userId: 0,
+            todo: title,
+            completed: const Value(false),
+          ),
+        );
+  }
+
+  @override
+  Future<void> upsertAll(List<TaskItem> items) async {
     await _db.batch(
-      (batch) => batch.insertAllOnConflictUpdate(_db.todoItems, items),
+      (batch) => batch.insertAllOnConflictUpdate(_db.taskItems, items),
     );
   }
 
@@ -33,11 +46,11 @@ class TaskLocalServiceImpl implements TaskLocalService {
     required int id,
     required bool completed,
   }) async {
-    await (_db.update(_db.todoItems)..where((t) => t.id.equals(id))).write(
-      TodoItemsCompanion(completed: Value(completed)),
+    await (_db.update(_db.taskItems)..where((t) => t.id.equals(id))).write(
+      TaskItemsCompanion(completed: Value(completed)),
     );
   }
 
   @override
-  Future<void> deleteAll() => _db.delete(_db.todoItems).go();
+  Future<void> deleteAll() => _db.delete(_db.taskItems).go();
 }

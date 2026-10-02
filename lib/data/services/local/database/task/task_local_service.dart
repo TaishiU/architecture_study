@@ -1,17 +1,20 @@
 import 'package:architecture_study/data/services/local/database/app_database.dart';
 
-/// ローカルDBのタスク操作を抽象化するインターフェース。
+/// タスクのローカルDB操作を抽象化するサービス。
 abstract class TaskLocalService {
-  /// 全タスクをリアルタイムで監視するStreamを返す。
-  Stream<List<TodoItem>> watchAll();
+  /// 全タスクをリアルタイム監視するストリームを返す。
+  Stream<List<TaskItem>> watchAll();
 
-  /// 全タスクを一括取得する。
-  Future<List<TodoItem>> fetchAll();
+  /// 全タスクを一度取得する。
+  Future<List<TaskItem>> fetchAll();
 
-  /// 全タスクをupsert（挿入 or 更新）する。
-  Future<void> upsertAll(List<TodoItem> items);
+  /// タスクを1件追加する。
+  Future<void> insert({required String title});
 
-  /// 指定IDのタスクの完了状態を更新する。
+  /// タスク一覧を一括upsertする。
+  Future<void> upsertAll(List<TaskItem> items);
+
+  /// 指定IDの完了状態を更新する。
   Future<void> updateCompletion({required int id, required bool completed});
 
   /// 全タスクを削除する。
