@@ -49,5 +49,21 @@ fi
 
 echo "${GREEN} ✅ dart analyze 問題なし"
 
+echo "🔍 flutter analyze 実行中..."
+FLUTTER_ANALYZE_OUTPUT=$(flutter analyze 2>&1)
+FLUTTER_ISSUE_LINES=$(printf '%s\n' "$FLUTTER_ANALYZE_OUTPUT" | grep -E '^\s*(error|warning|info)\s+-' || true)
+FLUTTER_ISSUE_COUNT=$(printf '%s\n' "$FLUTTER_ISSUE_LINES" | grep -cE '^\s*(error|warning|info)\s+-' || true)
+
+if [ "$FLUTTER_ISSUE_COUNT" -gt 0 ]; then
+  printf "${RED} ❌ flutter analyze %d件の問題を検出\n\n" "$FLUTTER_ISSUE_COUNT"
+  printf '%s\n' "$FLUTTER_ISSUE_LINES" | while IFS= read -r line; do
+    printf "%s\n" "$line"
+  done
+  printf "\n上記の問題を修正してから再度commitしてください。\n\n"
+  exit 1
+fi
+
+echo "${GREEN} ✅ flutter analyze 問題なし"
+
 # 6. 修正・生成されたファイルを再ステージング
 git add .
