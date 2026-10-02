@@ -7,6 +7,18 @@ RESET='\033[0m'
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
+# *.dart / pubspec.yaml / pubspec.lock の変更がなければ全処理をスキップ
+UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
+if [ -n "$UPSTREAM" ]; then
+  CHANGED=$(git diff --name-only "$UPSTREAM"...HEAD)
+else
+  CHANGED=$(git diff --name-only HEAD~1...HEAD 2>/dev/null || true)
+fi
+if ! printf '%s\n' "$CHANGED" | grep -qE '\.dart$|pubspec\.(yaml|lock)$'; then
+  echo "*.dart / pubspec の変更なし。pre-pushをスキップします。"
+  exit 0
+fi
+
 # 1. テストを実行
 echo "🧪 flutter test 実行中..."
 TEST_OUTPUT=$(flutter test --coverage 2>&1)

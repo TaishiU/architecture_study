@@ -7,6 +7,12 @@ RESET='\033[0m'
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
+# *.dartの変更がなければ全処理をスキップ
+if ! git diff --cached --name-only | grep -q '\.dart$'; then
+  echo "*.dartファイルの変更なし。pre-commitをスキップします。"
+  exit 0
+fi
+
 # 1. @freezedファイルが変更に含まれる場合はbuild_runnerを実行
 STAGED_FREEZED=$(git diff --cached --name-only -- '*.dart' | xargs grep -l '@freezed' 2>/dev/null || true)
 if [ -n "$STAGED_FREEZED" ]; then
