@@ -13,11 +13,11 @@ import 'user_api_service_impl_test.mocks.dart';
 @GenerateMocks([ApiClient])
 void main() {
   late MockApiClient mockApiClient;
-  late UserApiServiceImpl userApiServiceImpl;
+  late UsersApiServiceImpl userApiServiceImpl;
 
   setUp(() {
     mockApiClient = MockApiClient();
-    userApiServiceImpl = UserApiServiceImpl(apiClient: mockApiClient);
+    userApiServiceImpl = UsersApiServiceImpl(apiClient: mockApiClient);
   });
 
   group('userApiServiceImplProvider', () {
@@ -38,12 +38,12 @@ void main() {
     });
 
     test('userApiServiceImplProviderはUserApiServiceImplのインスタンスを返すこと', () {
-      final service = container.read(userApiServiceImplProvider);
-      expect(service, isA<UserApiServiceImpl>());
+      final service = container.read(usersApiServiceImplProvider);
+      expect(service, isA<UsersApiServiceImpl>());
     });
 
     test('userApiServiceImplProviderは指定されたApiClientで初期化されること', () async {
-      final service = container.read(userApiServiceImplProvider);
+      final service = container.read(usersApiServiceImplProvider);
       when(
         mockApiClient.get(endpoint: 'users/1'),
       ).thenAnswer(
@@ -52,7 +52,7 @@ void main() {
           'firstName': 'Test',
         },
       );
-      await service.fetch();
+      await service.fetchById();
       verify(
         mockApiClient.get(endpoint: 'users/1'),
       ).called(1);
@@ -71,7 +71,7 @@ void main() {
         mockApiClient.get(endpoint: 'users/1'),
       ).thenAnswer((_) async => mockResponse);
 
-      final result = await userApiServiceImpl.fetch();
+      final result = await userApiServiceImpl.fetchById();
 
       expect(result, isA<SuccessResult<UserDto>>());
       final successResult = result as SuccessResult<UserDto>;
@@ -87,7 +87,7 @@ void main() {
         mockApiClient.get(endpoint: 'users/1'),
       ).thenThrow(apiException);
 
-      final result = await userApiServiceImpl.fetch();
+      final result = await userApiServiceImpl.fetchById();
 
       expect(result, isA<FailureResult<UserDto>>());
       expect((result as FailureResult<UserDto>).error, apiException);
@@ -99,7 +99,7 @@ void main() {
         mockApiClient.get(endpoint: 'users/1'),
       ).thenThrow(exception);
 
-      final result = await userApiServiceImpl.fetch();
+      final result = await userApiServiceImpl.fetchById();
 
       expect(result, isA<FailureResult<UserDto>>());
       expect((result as FailureResult<UserDto>).error, exception);

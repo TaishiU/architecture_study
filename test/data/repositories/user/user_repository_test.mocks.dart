@@ -36,34 +36,34 @@ class _FakeApiClient_0 extends _i1.SmartFake implements _i2.ApiClient {
     : super(parent, parentInvocation);
 }
 
-/// A class which mocks [UserApiService].
+/// A class which mocks [UsersApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserApiService extends _i1.Mock implements _i3.UserApiService {
-  MockUserApiService() {
+class MockUsersApiService extends _i1.Mock implements _i3.UsersApiService {
+  MockUsersApiService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<_i5.Result<_i6.UserDto>> fetch() =>
+  _i4.Future<_i5.Result<_i6.UserDto>> fetchById() =>
       (super.noSuchMethod(
-            Invocation.method(#fetch, []),
+            Invocation.method(#fetchById, []),
             returnValue: _i4.Future<_i5.Result<_i6.UserDto>>.value(
               _i7.dummyValue<_i5.Result<_i6.UserDto>>(
                 this,
-                Invocation.method(#fetch, []),
+                Invocation.method(#fetchById, []),
               ),
             ),
           )
           as _i4.Future<_i5.Result<_i6.UserDto>>);
 }
 
-/// A class which mocks [UserApiServiceImpl].
+/// A class which mocks [UsersApiServiceImpl].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserApiServiceImpl extends _i1.Mock
-    implements _i8.UserApiServiceImpl {
-  MockUserApiServiceImpl() {
+class MockUsersApiServiceImpl extends _i1.Mock
+    implements _i8.UsersApiServiceImpl {
+  MockUsersApiServiceImpl() {
     _i1.throwOnMissingStub(this);
   }
 
@@ -76,13 +76,13 @@ class MockUserApiServiceImpl extends _i1.Mock
           as _i2.ApiClient);
 
   @override
-  _i4.Future<_i5.Result<_i6.UserDto>> fetch() =>
+  _i4.Future<_i5.Result<_i6.UserDto>> fetchById() =>
       (super.noSuchMethod(
-            Invocation.method(#fetch, []),
+            Invocation.method(#fetchById, []),
             returnValue: _i4.Future<_i5.Result<_i6.UserDto>>.value(
               _i7.dummyValue<_i5.Result<_i6.UserDto>>(
                 this,
-                Invocation.method(#fetch, []),
+                Invocation.method(#fetchById, []),
               ),
             ),
           )

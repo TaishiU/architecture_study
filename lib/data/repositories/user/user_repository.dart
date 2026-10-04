@@ -12,22 +12,22 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 /// プロバイダ
 final userRepositoryProvider = Provider<UserRepository>(
   (ref) => UserRepository(
-    userApiService: ref.read(userApiServiceImplProvider),
+    usersApiService: ref.read(usersApiServiceImplProvider),
   ),
 );
 
 /// リポジトリクラス
 class UserRepository {
   /// コンストラクタ
-  UserRepository({required this.userApiService});
+  UserRepository({required this.usersApiService});
 
   /// Userに関連するAPI通信を抽象化したサービスインターフェース。
-  final UserApiService userApiService;
+  final UsersApiService usersApiService;
 
   /// [User] を取得
   Future<Result<User>> fetch() async {
     try {
-      final result = await userApiService.fetch();
+      final result = await usersApiService.fetchById();
 
       switch (result) {
         case SuccessResult<UserDto>():

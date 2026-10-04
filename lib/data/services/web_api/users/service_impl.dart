@@ -7,14 +7,14 @@ import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
-final userApiServiceImplProvider = Provider<UserApiServiceImpl>(
-  (ref) => UserApiServiceImpl(apiClient: ref.read(apiClientProvider)),
+final usersApiServiceImplProvider = Provider<UsersApiServiceImpl>(
+  (ref) => UsersApiServiceImpl(apiClient: ref.read(apiClientProvider)),
 );
 
 /// APIサービス実装クラス
-class UserApiServiceImpl implements UserApiService {
+class UsersApiServiceImpl implements UsersApiService {
   /// コンストラクタ
-  UserApiServiceImpl({required this.apiClient});
+  UsersApiServiceImpl({required this.apiClient});
 
   ///　ApiClient
   final ApiClient apiClient;
@@ -23,17 +23,17 @@ class UserApiServiceImpl implements UserApiService {
   static const endpoint = 'users';
 
   @override
-  Future<Result<UserDto>> fetch() async {
+  Future<Result<UserDto>> fetchById() async {
     try {
       // throw NoInternetConnectionException('通信エラー');
       final response = await apiClient.get(endpoint: '$endpoint/1');
       final userDto = UserDto.fromJson(response);
       return SuccessResult(userDto);
     } on ApiClientException catch (error) {
-      logger.e('[UsererviceAPI] ApiClientException: $error');
+      logger.e('[UsersApiServiceImpl] ApiClientException: $error');
       return FailureResult(error);
     } on Exception catch (error) {
-      logger.e('[UsererviceAPI] Unexpected Error: $error');
+      logger.e('[UsersApiServiceImpl] Unexpected Error: $error');
       return FailureResult(error);
     }
   }

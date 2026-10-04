@@ -19,27 +19,27 @@ void _setupDummyValues() {
   );
 }
 
-@GenerateMocks([UserApiService, UserApiServiceImpl])
+@GenerateMocks([UsersApiService, UsersApiServiceImpl])
 void main() {
   _setupDummyValues();
 
-  late MockUserApiService mockUserApiService;
+  late MockUsersApiService mockUserApiService;
   late UserRepository userRepository;
 
   setUp(() {
-    mockUserApiService = MockUserApiService();
-    userRepository = UserRepository(userApiService: mockUserApiService);
+    mockUserApiService = MockUsersApiService();
+    userRepository = UserRepository(usersApiService: mockUserApiService);
   });
 
   group('userRepositoryProvider', () {
     late ProviderContainer container;
-    late MockUserApiServiceImpl mockUserApiServiceImpl;
+    late MockUsersApiServiceImpl mockUserApiServiceImpl;
 
     setUp(() {
-      mockUserApiServiceImpl = MockUserApiServiceImpl();
+      mockUserApiServiceImpl = MockUsersApiServiceImpl();
       container = ProviderContainer(
         overrides: [
-          userApiServiceImplProvider.overrideWith(
+          usersApiServiceImplProvider.overrideWith(
             (ref) => mockUserApiServiceImpl,
           ),
         ],
@@ -63,7 +63,7 @@ void main() {
     );
 
     test('API取得成功時にSuccessResult<User>を返すこと', () async {
-      when(mockUserApiService.fetch()).thenAnswer(
+      when(mockUserApiService.fetchById()).thenAnswer(
         (_) async => const SuccessResult(mockUserDto),
       );
 
@@ -75,7 +75,7 @@ void main() {
       expect(user.firstName, 'John');
       expect(user.lastName, 'Doe');
       expect(user.email, 'john.doe@example.com');
-      verify(mockUserApiService.fetch()).called(1);
+      verify(mockUserApiService.fetchById()).called(1);
     });
 
     test('すべてのフィールドが定義されたAPI取得成功時に、エンティティに正しく変換されること', () async {
@@ -141,7 +141,7 @@ void main() {
         role: 'admin',
       );
 
-      when(mockUserApiService.fetch()).thenAnswer(
+      when(mockUserApiService.fetchById()).thenAnswer(
         (_) async => const SuccessResult(fullDto),
       );
 
@@ -165,7 +165,7 @@ void main() {
 
     test('APIがFailureResultを返した場合、FailureResultを返すこと', () async {
       final exception = Exception('API Error');
-      when(mockUserApiService.fetch()).thenAnswer(
+      when(mockUserApiService.fetchById()).thenAnswer(
         (_) async => FailureResult(exception),
       );
 
@@ -176,7 +176,9 @@ void main() {
     });
 
     test('例外発生時にFailureResultを返すこと', () async {
-      when(mockUserApiService.fetch()).thenThrow(Exception('Network Error'));
+      when(
+        mockUserApiService.fetchById(),
+      ).thenThrow(Exception('Network Error'));
 
       final result = await userRepository.fetch();
 
@@ -188,7 +190,7 @@ void main() {
   group('Entity変換のバリデーション', () {
     test('必須フィールド(id)が欠損している場合はFailureResultを返すこと', () async {
       const incompleteDto = dto.UserDto(firstName: 'No ID');
-      when(mockUserApiService.fetch()).thenAnswer(
+      when(mockUserApiService.fetchById()).thenAnswer(
         (_) async => const SuccessResult(incompleteDto),
       );
 
@@ -200,7 +202,7 @@ void main() {
 
     test('null可能なフィールドにはデフォルト値が入ること', () async {
       const minimalDto = dto.UserDto(id: 1);
-      when(mockUserApiService.fetch()).thenAnswer(
+      when(mockUserApiService.fetchById()).thenAnswer(
         (_) async => const SuccessResult(minimalDto),
       );
 
