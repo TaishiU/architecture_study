@@ -18,7 +18,7 @@ STAGED_FREEZED=$(git diff --cached --name-only -- '*.dart' | xargs grep -l '@fre
 if [ -n "$STAGED_FREEZED" ]; then
   echo "🔨 @freezedファイルの変更を検知。build_runnerを実行中..."
   dart run build_runner build --delete-conflicting-outputs
-  printf "${GREEN} ✅ build_runner 完了！${RESET}\n"
+  printf "${GREEN} ✅ build_runner 完了${RESET}\n"
 fi
 
 # 2. pubspec.yamlが変更に含まれる場合は依存関係をソート

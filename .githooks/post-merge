@@ -9,5 +9,5 @@ RESET='\033[0m'
 if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -Eq "pubspec\.yaml|pubspec\.lock"; then
   printf "${GREEN} 📦 pubspec.yaml / pubspec.lock の変更を検知しました。flutter pub get を実行します...${RESET}\n"
   flutter pub get
-  printf "${GREEN} ✅ flutter pub get 実行完了！${RESET}\n"
+  printf "${GREEN} ✅ flutter pub get 実行完了${RESET}\n"
 fi

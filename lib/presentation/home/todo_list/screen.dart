@@ -2,8 +2,8 @@ import 'package:architecture_study/design_system/components/core_app_bar.dart';
 import 'package:architecture_study/design_system/components/core_error.dart';
 import 'package:architecture_study/presentation/home/todo_list/notifier.dart';
 import 'package:architecture_study/presentation/home/todo_list/state.dart';
+import 'package:architecture_study/router/navigation_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// Todoリスト画面
@@ -65,7 +65,7 @@ class _Body extends HookConsumerWidget {
         itemBuilder: (context, index) {
           final todo = todos[index];
           return InkWell(
-            onTap: () => context.go('${TodoListScreen.path}/${todo.id}'),
+            onTap: () => context.toTodoDetailScreen(todo.id),
             child: Container(
               height: 80,
               padding: const EdgeInsets.symmetric(horizontal: 16),

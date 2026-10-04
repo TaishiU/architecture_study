@@ -1,5 +1,5 @@
 import 'package:architecture_study/data/services/local_storage/preferences/shared_preferences_service_impl.dart';
-import 'package:architecture_study/router.dart';
+import 'package:architecture_study/router/router.dart';
 import 'package:architecture_study/utils/unauthorized_error_observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

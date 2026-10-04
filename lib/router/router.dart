@@ -78,11 +78,8 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final routerProvider = Provider<GoRouter>(
   (ref) {
     return GoRouter(
-      // initialLocation: '/home/tab1', // 初期表示されるパスをTab1に
-      // initialLocation: LoginScreen.path,
       initialLocation: TodoListScreen.path,
       navigatorKey: _rootNavigatorKey,
-      // ルートのNavigator Key
       routes: [
         // ログイン画面 (共通のShellRouteとは独立したルート)
         GoRoute(
@@ -127,17 +124,14 @@ final routerProvider = Provider<GoRouter>(
       redirect: (context, state) async {
         final loggedIn = await ref.read(authUseCaseProvider).checkIsLoggedIn();
         final loggingIn = state.matchedLocation == LoginScreen.path;
-        // ユーザーがログインしていない場合は、ログイン画面へ
         if (!loggedIn) {
           return LoginScreen.path;
         }
-        // ログイン済みのユーザーがまだログイン画面にいる場合は、ホームのTodoリスト画面へ
         if (loggingIn) {
           return TodoListScreen.path;
         }
         return null;
       },
-      // エラーハンドリング (オプション)
       errorBuilder: (context, state) => Scaffold(
         appBar: AppBar(title: const Text('エラー')),
         body: Center(child: Text('エラー: ${state.error}')),
@@ -145,43 +139,3 @@ final routerProvider = Provider<GoRouter>(
     );
   },
 );
-
-// final routerProvider = Provider<GoRouter>(
-//       (ref) {
-//     return GoRouter(
-//       initialLocation: TodoListScreen.path,
-//       routes: [
-//         GoRoute(
-//           path: LoginScreen.path,
-//           builder: (context, state) => const LoginScreen(),
-//         ),
-//         GoRoute(
-//           path: TodoListScreen.path,
-//           builder: (context, state) => const TodoListScreen(),
-//         ),
-//       ],
-//       refreshListenable: ref.read(authRepositoryProvider),
-//       redirect: (context, state) async {
-//         final loggedIn = await ref.read(authUseCaseProvider)
-//
-//
-//         .checkIsLoggedIn();
-//         final loggingIn = state.matchedLocation == LoginScreen.path;
-//         // ユーザーがログインしていない場合は、ログイン画面へ
-//         if (!loggedIn) {
-//           return LoginScreen.path;
-//         }
-//         // ログイン済みのユーザーがまだログイン画面にいる場合は、ホーム画面へ
-//         if (loggingIn) {
-//           return TodoListScreen.path;
-//         }
-//         return null;
-//       },
-//       // エラーハンドリング (オプション)
-//       errorBuilder: (context, state) => Scaffold(
-//         appBar: AppBar(title: const Text('エラー')),
-//         body: Center(child: Text('エラー: ${state.error}')),
-//       ),
-//     );
-//   },
-// );
