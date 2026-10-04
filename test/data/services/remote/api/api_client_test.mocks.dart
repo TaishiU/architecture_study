@@ -7,7 +7,7 @@ import 'dart:async' as _i3;
 import 'dart:convert' as _i4;
 import 'dart:typed_data' as _i6;
 
-import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service.dart'
+import 'package:architecture_study/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart'
     as _i7;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;

@@ -2,7 +2,6 @@ import 'package:architecture_study/design_system/components/core_app_bar.dart';
 import 'package:architecture_study/design_system/components/core_error.dart';
 import 'package:architecture_study/presentation/home/todo_list/notifier.dart';
 import 'package:architecture_study/presentation/home/todo_list/state.dart';
-import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -33,14 +32,7 @@ class TodoListScreen extends HookConsumerWidget {
       ),
       body: switch (viewModel) {
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
-        AsyncData(value: final result) => switch (result) {
-          SuccessResult(value: final state) => _Body(state: state),
-          FailureResult(:final error) => CoreError(
-            error: error,
-            onPressed: () =>
-                ref.read(todoListScreenProvider.notifier).refresh(),
-          ),
-        },
+        AsyncData(:final value) => _Body(state: value),
         AsyncError(:final error) => CoreError(
           error: error,
           onPressed: () => ref.read(todoListScreenProvider.notifier).refresh(),

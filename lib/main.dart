@@ -1,4 +1,4 @@
-import 'package:architecture_study/data/services/local/preferences/shared_preferences_service_impl.dart';
+import 'package:architecture_study/data/services/local_storage/preferences/shared_preferences_service_impl.dart';
 import 'package:architecture_study/router.dart';
 import 'package:architecture_study/utils/unauthorized_error_observer.dart';
 import 'package:flutter/material.dart';

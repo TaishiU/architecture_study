@@ -1,26 +1,20 @@
-import 'dart:async';
-
 import 'package:architecture_study/data/repositories/task/task_repository.dart';
 import 'package:architecture_study/presentation/task/state.dart';
-import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
-final AsyncNotifierProvider<TaskScreenNotifier, Result<TaskScreenState>>
+final AsyncNotifierProvider<TaskScreenNotifier, TaskScreenState>
 taskScreenProvider =
-    AsyncNotifierProvider.autoDispose<
-      TaskScreenNotifier,
-      Result<TaskScreenState>
-    >(
+    AsyncNotifierProvider.autoDispose<TaskScreenNotifier, TaskScreenState>(
       TaskScreenNotifier.new,
     );
 
 /// タスク画面のNotifier
-class TaskScreenNotifier extends AsyncNotifier<Result<TaskScreenState>> {
+class TaskScreenNotifier extends AsyncNotifier<TaskScreenState> {
   @override
-  Future<Result<TaskScreenState>> build() async {
+  Future<TaskScreenState> build() async {
     final tasksAsync = ref.watch(tasksStreamProvider);
-    return SuccessResult(TaskScreenState(tasks: tasksAsync.value ?? []));
+    return TaskScreenState(tasks: tasksAsync.value ?? []);
   }
 
   /// タスクを追加する

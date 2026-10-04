@@ -1,7 +1,7 @@
-import 'package:architecture_study/data/services/remote/api/api_client.dart';
-import 'package:architecture_study/data/services/remote/api/api_exception.dart';
-import 'package:architecture_study/data/services/remote/api/auth/auth_api_service_impl.dart';
-import 'package:architecture_study/data/services/remote/dto/login/login_dto.dart';
+import 'package:architecture_study/data/services/web_api/api_client.dart';
+import 'package:architecture_study/data/services/web_api/api_exception.dart';
+import 'package:architecture_study/data/services/web_api/auth/login/dto.dart';
+import 'package:architecture_study/data/services/web_api/auth/login/service_impl.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

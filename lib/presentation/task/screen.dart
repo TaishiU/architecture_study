@@ -3,7 +3,6 @@ import 'package:architecture_study/design_system/components/core_error.dart';
 import 'package:architecture_study/domain/entities/task/task.dart';
 import 'package:architecture_study/presentation/task/notifier.dart';
 import 'package:architecture_study/presentation/task/state.dart';
-import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -27,15 +26,9 @@ class TaskScreen extends HookConsumerWidget {
       ),
       body: switch (viewModel) {
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
-        AsyncData(value: final result) => switch (result) {
-          SuccessResult(value: final state) => _Body(state: state),
-          FailureResult(:final error) => CoreError(
-            error: error,
-            onPressed: () => ref.read(taskScreenProvider.notifier).refresh(),
-          ),
-        },
+        AsyncData(:final value) => _Body(state: value),
         AsyncError(:final error) => CoreError(
-          error: error as Exception,
+          error: error,
           onPressed: () => ref.read(taskScreenProvider.notifier).refresh(),
         ),
       },

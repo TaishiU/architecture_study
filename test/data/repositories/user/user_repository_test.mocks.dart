@@ -5,14 +5,13 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:architecture_study/data/services/remote/api/api_client.dart'
+import 'package:architecture_study/data/services/web_api/api_client.dart'
     as _i2;
-import 'package:architecture_study/data/services/remote/api/user/user_api_service.dart'
+import 'package:architecture_study/data/services/web_api/users/dto.dart' as _i6;
+import 'package:architecture_study/data/services/web_api/users/service.dart'
     as _i3;
-import 'package:architecture_study/data/services/remote/api/user/user_api_service_impl.dart'
+import 'package:architecture_study/data/services/web_api/users/service_impl.dart'
     as _i8;
-import 'package:architecture_study/data/services/remote/dto/user/user_dto.dart'
-    as _i6;
 import 'package:architecture_study/utils/result.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i7;

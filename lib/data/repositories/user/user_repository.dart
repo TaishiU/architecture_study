@@ -1,9 +1,8 @@
-import 'package:architecture_study/data/services/remote/api/user/user_api_service.dart';
-import 'package:architecture_study/data/services/remote/api/user/user_api_service_impl.dart';
-import 'package:architecture_study/data/services/remote/dto/user/user_dto.dart'
-    as dto;
-import 'package:architecture_study/data/services/remote/dto/user/user_dto.dart'
+import 'package:architecture_study/data/services/web_api/users/dto.dart' as dto;
+import 'package:architecture_study/data/services/web_api/users/dto.dart'
     show UserDto;
+import 'package:architecture_study/data/services/web_api/users/service.dart';
+import 'package:architecture_study/data/services/web_api/users/service_impl.dart';
 import 'package:architecture_study/domain/entities/user/user.dart';
 import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/logger.dart';

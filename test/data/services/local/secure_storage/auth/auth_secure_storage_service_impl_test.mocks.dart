@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:architecture_study/data/services/local/secure_storage/secure_storage_service.dart'
+import 'package:architecture_study/data/services/local_storage/secure_storage/secure_storage_service.dart'
     as _i3;
 import 'package:flutter/foundation.dart' as _i5;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i2;

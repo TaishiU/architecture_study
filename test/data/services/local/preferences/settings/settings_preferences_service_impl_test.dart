@@ -1,6 +1,6 @@
-import 'package:architecture_study/data/services/local/preferences/settings/settings_preferences_service_impl.dart';
-import 'package:architecture_study/data/services/local/preferences/shared_preferences_service.dart';
-import 'package:architecture_study/data/services/local/preferences/shared_preferences_service_impl.dart';
+import 'package:architecture_study/data/services/local_storage/preferences/settings/settings_preferences_service_impl.dart';
+import 'package:architecture_study/data/services/local_storage/preferences/shared_preferences_service.dart';
+import 'package:architecture_study/data/services/local_storage/preferences/shared_preferences_service_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hooks_riverpod/misc.dart';

@@ -10,17 +10,16 @@ import 'package:hooks_riverpod/misc.dart';
 /// プロバイダ（ .family で todoId を受け取る）
 final AsyncNotifierProviderFamily<
   TodoDetailScreenNotifier,
-  Result<TodoDetailScreenState>,
+  TodoDetailScreenState,
   int
 >
 todoDetailScreenProvider = AsyncNotifierProvider.autoDispose
-    .family<TodoDetailScreenNotifier, Result<TodoDetailScreenState>, int>(
+    .family<TodoDetailScreenNotifier, TodoDetailScreenState, int>(
       TodoDetailScreenNotifier.new,
     );
 
 /// Todo詳細画面のNotifier
-class TodoDetailScreenNotifier
-    extends AsyncNotifier<Result<TodoDetailScreenState>> {
+class TodoDetailScreenNotifier extends AsyncNotifier<TodoDetailScreenState> {
   /// コンストラクタ (Riverpod 3.0 では、名前付き引数ではなく位置引数として受け取る)
   TodoDetailScreenNotifier(this.todoId);
 
@@ -28,7 +27,7 @@ class TodoDetailScreenNotifier
   final int todoId;
 
   @override
-  FutureOr<Result<TodoDetailScreenState>> build() async {
+  FutureOr<TodoDetailScreenState> build() async {
     // 1. SSOT (StreamProvider) を watch する
     final todosAsync = ref.watch(todosStreamProvider);
 
@@ -36,7 +35,7 @@ class TodoDetailScreenNotifier
     final todo = todosAsync.value?.where((t) => t.id == todoId).firstOrNull;
 
     if (todo != null) {
-      return SuccessResult(TodoDetailScreenState(todo: todo));
+      return TodoDetailScreenState(todo: todo);
     }
 
     // 3. まだデータがない（または取得中）の場合は fetch を試みる
@@ -52,16 +51,14 @@ class TodoDetailScreenNotifier
             .firstOrNull;
 
         if (latestTodo == null) {
-          return FailureResult<TodoDetailScreenState>(
-            Exception('Todo not found'),
-          );
+          throw Exception('Todo not found');
         }
 
-        return SuccessResult(TodoDetailScreenState(todo: latestTodo));
+        return TodoDetailScreenState(todo: latestTodo);
       }(),
       FailureResult(:final error) => () {
         logger.e('[TodoDetailScreenNotifier] Error caught: $error');
-        return FailureResult<TodoDetailScreenState>(error);
+        throw error;
       }(),
     };
   }

@@ -1,8 +1,8 @@
-import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service.dart';
-import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service_impl.dart';
-import 'package:architecture_study/data/services/remote/api/auth/auth_api_service.dart';
-import 'package:architecture_study/data/services/remote/api/auth/auth_api_service_impl.dart';
-import 'package:architecture_study/data/services/remote/dto/login/login_dto.dart';
+import 'package:architecture_study/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart';
+import 'package:architecture_study/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
+import 'package:architecture_study/data/services/web_api/auth/login/dto.dart';
+import 'package:architecture_study/data/services/web_api/auth/login/service.dart';
+import 'package:architecture_study/data/services/web_api/auth/login/service_impl.dart';
 import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';

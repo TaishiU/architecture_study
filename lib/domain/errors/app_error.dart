@@ -1,4 +1,4 @@
-import 'package:architecture_study/data/services/remote/api/api_exception.dart';
+import 'package:architecture_study/data/services/web_api/api_exception.dart';
 
 /// アプリケーション全体で使用するドメインエラーの基底クラス。
 ///

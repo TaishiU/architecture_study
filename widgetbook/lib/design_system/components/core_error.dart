@@ -1,4 +1,4 @@
-import 'package:architecture_study/data/services/remote/api/api_exception.dart';
+import 'package:architecture_study/data/services/web_api/api_exception.dart';
 import 'package:architecture_study/design_system/components/core_error.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';

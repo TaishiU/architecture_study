@@ -5,20 +5,20 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 
-import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service.dart'
+import 'package:architecture_study/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart'
     as _i10;
-import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service_impl.dart'
+import 'package:architecture_study/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart'
     as _i11;
-import 'package:architecture_study/data/services/local/secure_storage/secure_storage_service.dart'
+import 'package:architecture_study/data/services/local_storage/secure_storage/secure_storage_service.dart'
     as _i3;
-import 'package:architecture_study/data/services/remote/api/api_client.dart'
+import 'package:architecture_study/data/services/web_api/api_client.dart'
     as _i2;
-import 'package:architecture_study/data/services/remote/api/auth/auth_api_service.dart'
-    as _i4;
-import 'package:architecture_study/data/services/remote/api/auth/auth_api_service_impl.dart'
-    as _i9;
-import 'package:architecture_study/data/services/remote/dto/login/login_dto.dart'
+import 'package:architecture_study/data/services/web_api/auth/login/dto.dart'
     as _i7;
+import 'package:architecture_study/data/services/web_api/auth/login/service.dart'
+    as _i4;
+import 'package:architecture_study/data/services/web_api/auth/login/service_impl.dart'
+    as _i9;
 import 'package:architecture_study/utils/result.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;

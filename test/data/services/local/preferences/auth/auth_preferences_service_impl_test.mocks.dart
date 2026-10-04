@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:architecture_study/data/services/local/preferences/shared_preferences_service.dart'
+import 'package:architecture_study/data/services/local_storage/preferences/shared_preferences_service.dart'
     as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:shared_preferences/src/shared_preferences_async.dart' as _i4;

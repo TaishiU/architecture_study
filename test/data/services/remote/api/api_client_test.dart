@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service.dart';
-import 'package:architecture_study/data/services/local/secure_storage/auth/auth_secure_storage_service_impl.dart';
-import 'package:architecture_study/data/services/remote/api/api_client.dart';
-import 'package:architecture_study/data/services/remote/api/api_exception.dart';
+import 'package:architecture_study/data/services/local_storage/secure_storage/auth/auth_secure_storage_service.dart';
+import 'package:architecture_study/data/services/local_storage/secure_storage/auth/auth_secure_storage_service_impl.dart';
+import 'package:architecture_study/data/services/web_api/api_client.dart';
+import 'package:architecture_study/data/services/web_api/api_exception.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

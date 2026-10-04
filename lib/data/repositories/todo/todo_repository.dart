@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:architecture_study/data/services/remote/api/todos/todos_api_service.dart';
-import 'package:architecture_study/data/services/remote/api/todos/todos_api_service_impl.dart';
-import 'package:architecture_study/data/services/remote/dto/todos/todos_dto.dart';
+import 'package:architecture_study/data/services/web_api/todos/dto.dart';
+import 'package:architecture_study/data/services/web_api/todos/service.dart';
+import 'package:architecture_study/data/services/web_api/todos/service_impl.dart';
 import 'package:architecture_study/domain/entities/todos/todos.dart';
 import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/logger.dart';
@@ -115,9 +115,9 @@ class TodoRepository {
   }
 }
 
-// import 'package:architecture_study/data/services/remote/api/todos/todos_api_service.dart';
-// import 'package:architecture_study/data/services/remote/api/todos/todos_api_service_impl.dart';
-// import 'package:architecture_study/data/services/remote/dto/todos/todos_dto.dart';
+// import 'package:architecture_study/data/services/web_api/todos/service.dart';
+// import 'package:architecture_study/data/services/web_api/todos/service_impl.dart';
+// import 'package:architecture_study/data/services/web_api/todos/dto.dart';
 // import 'package:architecture_study/domain/entities/todos/todos.dart';
 // import 'package:architecture_study/utils/logger.dart';
 // import 'package:architecture_study/utils/result.dart';

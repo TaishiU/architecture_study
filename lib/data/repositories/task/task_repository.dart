@@ -1,6 +1,6 @@
-import 'package:architecture_study/data/services/local/database/app_database.dart';
-import 'package:architecture_study/data/services/local/database/task/task_local_service.dart';
-import 'package:architecture_study/data/services/local/database/task/task_local_service_impl.dart';
+import 'package:architecture_study/data/services/local_storage/database/app_database.dart';
+import 'package:architecture_study/data/services/local_storage/database/task/task_local_service.dart';
+import 'package:architecture_study/data/services/local_storage/database/task/task_local_service_impl.dart';
 import 'package:architecture_study/domain/entities/task/task.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
