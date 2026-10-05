@@ -4,7 +4,6 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened ]
 
-# 必要な権限
 permissions:
   contents: write
   pull-requests: write
@@ -12,11 +11,10 @@ permissions:
 jobs:
   auto-approve-merge:
     runs-on: ubuntu-latest
-    # 自分自身の PR の場合のみ実行（他者からの PR は対象外）
     if: github.actor == github.repository_owner
     steps:
-      # 既存の CI がパスするまで待機するため、needs で依存させるのは不要
-      # （auto-merge 機能側が CI のパスを待ってくれるため）
+      - name: コードのチェックアウト
+        uses: actions/checkout@v5
 
       - name: Approve and enable auto-merge
         run: |
