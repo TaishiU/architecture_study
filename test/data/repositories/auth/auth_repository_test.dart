@@ -175,7 +175,11 @@ void main() {
 
       expect(result, isA<FailureResult<void>>());
       expect((result as FailureResult<void>).error, isA<AppError>());
-      verifyNever(mockAuthSecureStorageService.setAccessToken(token: any));
+      verifyNever(
+        mockAuthSecureStorageService.setAccessToken(
+          token: anyNamed('token'),
+        ),
+      );
     });
 
     test('例外発生時にFailureResultを返すこと', () async {

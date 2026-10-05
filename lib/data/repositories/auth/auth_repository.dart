@@ -100,6 +100,7 @@ class AuthRepository extends ChangeNotifier {
   Future<void> logout() async {
     await authSecureStorageService.clearAuthData();
     _isLoggedIn = false;
+    _isLoaded = true;
     notifyListeners();
   }
 }

@@ -136,7 +136,10 @@ void main() {
     test('clearAuthDataはメモリとストレージの両方をクリアすること', () async {
       // 事前にデータをセット
       when(
-        mockSecureStorage.write(key: any, value: any),
+        mockSecureStorage.write(
+          key: anyNamed('key'),
+          value: anyNamed('value'),
+        ),
       ).thenAnswer((_) async {});
       await authSecureStorageService.setAccessToken(token: 'token');
       await authSecureStorageService.setRefreshToken(token: 'token');
