@@ -16,7 +16,7 @@ void main() {
   setUp(() {
     mockSharedPreferencesWithCache = MockSharedPreferencesWithCache();
     serviceImpl = SharedPreferencesServiceImpl(
-      mockSharedPreferencesWithCache,
+      sharedPreferences: mockSharedPreferencesWithCache,
     );
 
     // 各テストケースの前にモックの呼び出し履歴をクリア
@@ -32,7 +32,9 @@ void main() {
       container = ProviderContainer(
         overrides: [
           sharedPreferencesServiceImplProvider.overrideWithValue(
-            SharedPreferencesServiceImpl(mockSharedPreferencesWithCache),
+            SharedPreferencesServiceImpl(
+              sharedPreferences: mockSharedPreferencesWithCache,
+            ),
           ),
         ],
       );
@@ -63,7 +65,7 @@ void main() {
         when(
           mockSharedPreferencesWithCache.getString('test_key'),
         ).thenReturn('test_value');
-        final value = service.getString('test_key');
+        final value = service.getString(key: 'test_key');
         expect(value, 'test_value');
         verify(
           mockSharedPreferencesWithCache.getString('test_key'),
@@ -95,7 +97,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getString('test_key'),
       ).thenReturn('test_value');
-      final result = serviceImpl.getString('test_key');
+      final result = serviceImpl.getString(key: 'test_key');
       expect(result, 'test_value');
       verify(mockSharedPreferencesWithCache.getString('test_key')).called(1);
     });
@@ -104,7 +106,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getString('non_existent_key'),
       ).thenReturn(null);
-      final result = serviceImpl.getString('non_existent_key');
+      final result = serviceImpl.getString(key: 'non_existent_key');
       expect(result, isNull);
       verify(
         mockSharedPreferencesWithCache.getString('non_existent_key'),
@@ -117,7 +119,7 @@ void main() {
         mockSharedPreferencesWithCache.getString('non_existent_key'),
       ).thenReturn(null);
       final result = serviceImpl.getString(
-        'non_existent_key',
+        key: 'non_existent_key',
         defaultValue: 'default_value',
       );
       expect(result, 'default_value');
@@ -133,7 +135,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.setString('test_key', 'test_value'),
       ).thenAnswer((_) async => true);
-      await serviceImpl.setString('test_key', 'test_value');
+      await serviceImpl.setString(key: 'test_key', value: 'test_value');
       verify(
         mockSharedPreferencesWithCache.setString('test_key', 'test_value'),
       ).called(1);
@@ -146,7 +148,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getBool('test_key'),
       ).thenReturn(true);
-      final result = serviceImpl.getBool('test_key');
+      final result = serviceImpl.getBool(key: 'test_key');
       expect(result, isTrue);
       verify(mockSharedPreferencesWithCache.getBool('test_key')).called(1);
     });
@@ -155,7 +157,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getBool('non_existent_key'),
       ).thenReturn(null);
-      final result = serviceImpl.getBool('non_existent_key');
+      final result = serviceImpl.getBool(key: 'non_existent_key');
       expect(result, isNull);
       verify(
         mockSharedPreferencesWithCache.getBool('non_existent_key'),
@@ -168,7 +170,7 @@ void main() {
         mockSharedPreferencesWithCache.getBool('non_existent_key'),
       ).thenReturn(null);
       final result = serviceImpl.getBool(
-        'non_existent_key',
+        key: 'non_existent_key',
         defaultValue: false,
       );
       expect(result, isFalse);
@@ -184,7 +186,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.setBool('test_key', true),
       ).thenAnswer((_) async => true);
-      await serviceImpl.setBool('test_key', value: true);
+      await serviceImpl.setBool(key: 'test_key', value: true);
       verify(
         mockSharedPreferencesWithCache.setBool('test_key', true),
       ).called(1);
@@ -195,7 +197,7 @@ void main() {
   group('getInt', () {
     test('キーに対応する整数が保存されている場合、その整数を返すこと', () {
       when(mockSharedPreferencesWithCache.getInt('test_key')).thenReturn(123);
-      final result = serviceImpl.getInt('test_key');
+      final result = serviceImpl.getInt(key: 'test_key');
       expect(result, 123);
       verify(mockSharedPreferencesWithCache.getInt('test_key')).called(1);
     });
@@ -204,7 +206,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getInt('non_existent_key'),
       ).thenReturn(null);
-      final result = serviceImpl.getInt('non_existent_key');
+      final result = serviceImpl.getInt(key: 'non_existent_key');
       expect(result, isNull);
       verify(
         mockSharedPreferencesWithCache.getInt('non_existent_key'),
@@ -216,7 +218,10 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getInt('non_existent_key'),
       ).thenReturn(null);
-      final result = serviceImpl.getInt('non_existent_key', defaultValue: 0);
+      final result = serviceImpl.getInt(
+        key: 'non_existent_key',
+        defaultValue: 0,
+      );
       expect(result, 0);
       verify(
         mockSharedPreferencesWithCache.getInt('non_existent_key'),
@@ -230,7 +235,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.setInt('test_key', 123),
       ).thenAnswer((_) async => true);
-      await serviceImpl.setInt('test_key', 123);
+      await serviceImpl.setInt(key: 'test_key', value: 123);
       verify(
         mockSharedPreferencesWithCache.setInt('test_key', 123),
       ).called(1);
@@ -243,7 +248,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getDouble('test_key'),
       ).thenReturn(1.23);
-      final result = serviceImpl.getDouble('test_key');
+      final result = serviceImpl.getDouble(key: 'test_key');
       expect(result, 1.23);
       verify(mockSharedPreferencesWithCache.getDouble('test_key')).called(1);
     });
@@ -252,7 +257,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getDouble('non_existent_key'),
       ).thenReturn(null);
-      final result = serviceImpl.getDouble('non_existent_key');
+      final result = serviceImpl.getDouble(key: 'non_existent_key');
       expect(result, isNull);
       verify(
         mockSharedPreferencesWithCache.getDouble('non_existent_key'),
@@ -267,7 +272,7 @@ void main() {
           mockSharedPreferencesWithCache.getDouble('non_existent_key'),
         ).thenReturn(null);
         final result = serviceImpl.getDouble(
-          'non_existent_key',
+          key: 'non_existent_key',
           defaultValue: 0,
         );
         expect(result, 0.0);
@@ -284,7 +289,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.setDouble('test_key', 1.23),
       ).thenAnswer((_) async => true);
-      await serviceImpl.setDouble('test_key', 1.23);
+      await serviceImpl.setDouble(key: 'test_key', value: 1.23);
       verify(
         mockSharedPreferencesWithCache.setDouble('test_key', 1.23),
       ).called(1);
@@ -297,7 +302,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getStringList('test_key'),
       ).thenReturn(['a', 'b', 'c']);
-      final result = serviceImpl.getStringList('test_key');
+      final result = serviceImpl.getStringList(key: 'test_key');
       expect(result, ['a', 'b', 'c']);
       verify(
         mockSharedPreferencesWithCache.getStringList('test_key'),
@@ -308,7 +313,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.getStringList('non_existent_key'),
       ).thenReturn(null);
-      final result = serviceImpl.getStringList('non_existent_key');
+      final result = serviceImpl.getStringList(key: 'non_existent_key');
       expect(result, isNull);
       verify(
         mockSharedPreferencesWithCache.getStringList('non_existent_key'),
@@ -323,7 +328,7 @@ void main() {
           mockSharedPreferencesWithCache.getStringList('non_existent_key'),
         ).thenReturn(null);
         final result = serviceImpl.getStringList(
-          'non_existent_key',
+          key: 'non_existent_key',
           defaultValue: ['d', 'e'],
         );
         expect(result, ['d', 'e']);
@@ -344,7 +349,7 @@ void main() {
           'c',
         ]),
       ).thenAnswer((_) async => true);
-      await serviceImpl.setStringList('test_key', ['a', 'b', 'c']);
+      await serviceImpl.setStringList(key: 'test_key', value: ['a', 'b', 'c']);
       verify(
         mockSharedPreferencesWithCache.setStringList('test_key', [
           'a',
@@ -361,7 +366,7 @@ void main() {
       when(
         mockSharedPreferencesWithCache.remove('test_key'),
       ).thenAnswer((_) async => true);
-      await serviceImpl.remove('test_key');
+      await serviceImpl.remove(key: 'test_key');
       verify(mockSharedPreferencesWithCache.remove('test_key')).called(1);
     });
   });

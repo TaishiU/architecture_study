@@ -35,93 +35,110 @@ class MockSharedPreferencesService extends _i1.Mock
   }
 
   @override
-  String? getString(String? key, {String? defaultValue}) =>
+  String? getString({required String? key, String? defaultValue}) =>
       (super.noSuchMethod(
-            Invocation.method(#getString, [key], {#defaultValue: defaultValue}),
+            Invocation.method(#getString, [], {
+              #key: key,
+              #defaultValue: defaultValue,
+            }),
           )
           as String?);
 
   @override
-  _i3.Future<void> setString(String? key, String? value) =>
+  _i3.Future<void> setString({required String? key, required String? value}) =>
       (super.noSuchMethod(
-            Invocation.method(#setString, [key, value]),
+            Invocation.method(#setString, [], {#key: key, #value: value}),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
 
   @override
-  bool? getBool(String? key, {bool? defaultValue}) =>
+  bool? getBool({required String? key, bool? defaultValue}) =>
       (super.noSuchMethod(
-            Invocation.method(#getBool, [key], {#defaultValue: defaultValue}),
+            Invocation.method(#getBool, [], {
+              #key: key,
+              #defaultValue: defaultValue,
+            }),
           )
           as bool?);
 
   @override
-  _i3.Future<void> setBool(String? key, {required bool? value}) =>
+  _i3.Future<void> setBool({required String? key, required bool? value}) =>
       (super.noSuchMethod(
-            Invocation.method(#setBool, [key], {#value: value}),
+            Invocation.method(#setBool, [], {#key: key, #value: value}),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
 
   @override
-  int? getInt(String? key, {int? defaultValue}) =>
+  int? getInt({required String? key, int? defaultValue}) =>
       (super.noSuchMethod(
-            Invocation.method(#getInt, [key], {#defaultValue: defaultValue}),
+            Invocation.method(#getInt, [], {
+              #key: key,
+              #defaultValue: defaultValue,
+            }),
           )
           as int?);
 
   @override
-  _i3.Future<void> setInt(String? key, int? value) =>
+  _i3.Future<void> setInt({required String? key, required int? value}) =>
       (super.noSuchMethod(
-            Invocation.method(#setInt, [key, value]),
+            Invocation.method(#setInt, [], {#key: key, #value: value}),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
 
   @override
-  double? getDouble(String? key, {double? defaultValue}) =>
+  double? getDouble({required String? key, double? defaultValue}) =>
       (super.noSuchMethod(
-            Invocation.method(#getDouble, [key], {#defaultValue: defaultValue}),
+            Invocation.method(#getDouble, [], {
+              #key: key,
+              #defaultValue: defaultValue,
+            }),
           )
           as double?);
 
   @override
-  _i3.Future<void> setDouble(String? key, double? value) =>
+  _i3.Future<void> setDouble({required String? key, required double? value}) =>
       (super.noSuchMethod(
-            Invocation.method(#setDouble, [key, value]),
+            Invocation.method(#setDouble, [], {#key: key, #value: value}),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
 
   @override
-  List<String>? getStringList(String? key, {List<String>? defaultValue}) =>
+  List<String>? getStringList({
+    required String? key,
+    List<String>? defaultValue,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #getStringList,
-              [key],
-              {#defaultValue: defaultValue},
-            ),
+            Invocation.method(#getStringList, [], {
+              #key: key,
+              #defaultValue: defaultValue,
+            }),
           )
           as List<String>?);
 
   @override
-  _i3.Future<void> setStringList(String? key, List<String>? value) =>
+  _i3.Future<void> setStringList({
+    required String? key,
+    required List<String>? value,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#setStringList, [key, value]),
+            Invocation.method(#setStringList, [], {#key: key, #value: value}),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
 
   @override
-  _i3.Future<void> remove(String? key) =>
+  _i3.Future<void> remove({required String? key}) =>
       (super.noSuchMethod(
-            Invocation.method(#remove, [key]),
+            Invocation.method(#remove, [], {#key: key}),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )

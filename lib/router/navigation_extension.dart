@@ -14,7 +14,8 @@ extension NavigationExtension on BuildContext {
   void toTodoListScreen() => go(TodoListScreen.path);
 
   /// Todo詳細画面へ遷移する。
-  void toTodoDetailScreen(int todoId) => push('${TodoListScreen.path}/$todoId');
+  void toTodoDetailScreen({required int todoId}) =>
+      push('${TodoListScreen.path}/$todoId');
 
   /// タスク画面へ遷移する。
   void toTaskScreen() => go(TaskScreen.path);

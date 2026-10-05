@@ -24,28 +24,28 @@ class AuthPreferencesServiceImpl implements AuthPreferencesService {
 
   @override
   String getAccessToken() {
-    return generalPreferences.getString(_accessTokenKey) ?? '';
+    return generalPreferences.getString(key: _accessTokenKey) ?? '';
   }
 
   @override
-  Future<void> setAccessToken(String token) async {
-    await generalPreferences.setString(_accessTokenKey, token);
+  Future<void> setAccessToken({required String token}) async {
+    await generalPreferences.setString(key: _accessTokenKey, value: token);
   }
 
   @override
   String getRefreshToken() {
-    return generalPreferences.getString(_refreshTokenKey) ?? '';
+    return generalPreferences.getString(key: _refreshTokenKey) ?? '';
   }
 
   @override
-  Future<void> setRefreshToken(String token) async {
-    await generalPreferences.setString(_refreshTokenKey, token);
+  Future<void> setRefreshToken({required String token}) async {
+    await generalPreferences.setString(key: _refreshTokenKey, value: token);
   }
 
   @override
   Future<bool> clearAuthData() async {
-    await generalPreferences.remove(_accessTokenKey);
-    await generalPreferences.remove(_refreshTokenKey);
+    await generalPreferences.remove(key: _accessTokenKey);
+    await generalPreferences.remove(key: _refreshTokenKey);
     return true;
   }
 }

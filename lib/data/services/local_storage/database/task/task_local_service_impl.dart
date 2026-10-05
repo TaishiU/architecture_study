@@ -5,13 +5,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// [TaskLocalService] のプロバイダ。
 final taskLocalServiceImplProvider = Provider<TaskLocalServiceImpl>(
-  (ref) => TaskLocalServiceImpl(ref.read(appDatabaseProvider)),
+  (ref) => TaskLocalServiceImpl(db: ref.read(appDatabaseProvider)),
 );
 
 /// [TaskLocalService] の実装。Driftを使用してSQLiteへアクセスする。
 class TaskLocalServiceImpl implements TaskLocalService {
   /// コンストラクタ。
-  TaskLocalServiceImpl(this._db);
+  TaskLocalServiceImpl({required AppDatabase db}) : _db = db;
 
   final AppDatabase _db;
 

@@ -49,7 +49,7 @@ void main() {
       const key = 'test_key';
       const expectedValue = 'test_value';
       when(mockStorage.read(key: key)).thenAnswer((_) async => expectedValue);
-      final result = await service.read(key);
+      final result = await service.read(key: key);
       expect(result, expectedValue);
       verify(mockStorage.read(key: key)).called(1);
     });
@@ -57,7 +57,7 @@ void main() {
     test('キーが存在しない場合にnullを返すこと', () async {
       const key = 'non_existent_key';
       when(mockStorage.read(key: key)).thenAnswer((_) async => null);
-      final result = await service.read(key);
+      final result = await service.read(key: key);
       expect(result, isNull);
       verify(mockStorage.read(key: key)).called(1);
     });
@@ -70,7 +70,7 @@ void main() {
       when(
         mockStorage.write(key: key, value: value),
       ).thenAnswer((_) async => {});
-      await service.write(key, value);
+      await service.write(key: key, value: value);
       verify(mockStorage.write(key: key, value: value)).called(1);
     });
   });
@@ -79,7 +79,7 @@ void main() {
     test('指定したキーの削除が行われること', () async {
       const key = 'test_key';
       when(mockStorage.delete(key: key)).thenAnswer((_) async => {});
-      await service.delete(key);
+      await service.delete(key: key);
       verify(mockStorage.delete(key: key)).called(1);
     });
   });

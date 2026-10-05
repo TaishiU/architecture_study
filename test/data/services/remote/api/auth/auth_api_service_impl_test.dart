@@ -106,7 +106,10 @@ void main() {
     });
 
     test('ApiClientExceptionが発生した場合、FailureResultを返すこと', () async {
-      final apiException = ApiClientException('Unauthorized', statusCode: 401);
+      final apiException = ApiClientException(
+        message: 'Unauthorized',
+        statusCode: 401,
+      );
       when(
         mockApiClient.post(
           endpoint: 'auth/login',

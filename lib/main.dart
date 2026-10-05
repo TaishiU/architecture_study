@@ -22,7 +22,7 @@ Future<void> main() async {
 
   // SharedPreferencesServiceImpl のインスタンス作成
   final sharedPreferencesServiceImpl = SharedPreferencesServiceImpl(
-    sharedPreferencesWithCache,
+    sharedPreferences: sharedPreferencesWithCache,
   );
 
   runApp(

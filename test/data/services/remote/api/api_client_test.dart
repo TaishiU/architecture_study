@@ -41,7 +41,7 @@ void main() {
     );
 
     apiClient = ApiClientImpl(
-      mockHttpClient,
+      client: mockHttpClient,
       baseUrl: testBaseUrl,
       authSecureStorageService: mockAuthService,
       retryDelay: Duration.zero, // テストを高速化するために遅延をゼロにする
@@ -267,8 +267,12 @@ void main() {
         final result = await apiClient.get(endpoint: 'data');
 
         expect(result, {'id': 1});
-        verify(mockAuthService.setAccessToken('new_access_token')).called(1);
-        verify(mockAuthService.setRefreshToken('new_refresh_token')).called(1);
+        verify(
+          mockAuthService.setAccessToken(token: 'new_access_token'),
+        ).called(1);
+        verify(
+          mockAuthService.setRefreshToken(token: 'new_refresh_token'),
+        ).called(1);
         verify(
           mockHttpClient.get(
             Uri.parse('$testBaseUrl/data'),

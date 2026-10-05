@@ -37,7 +37,7 @@ class TodoListScreenNotifier extends AsyncNotifier<TodoListScreenState> {
   }
 
   /// 検索クエリを更新する
-  void updateSearchQuery(String query) {
+  void updateSearchQuery({required String query}) {
     final current = state.value;
     if (current != null) {
       state = AsyncData(current.copyWith(searchQuery: query));
@@ -45,7 +45,7 @@ class TodoListScreenNotifier extends AsyncNotifier<TodoListScreenState> {
   }
 
   /// Todoの完了状態を切り替える
-  Future<void> toggleTodo(int id) async {
+  Future<void> toggleTodo({required int id}) async {
     await ref.read(todoRepositoryProvider).toggleTodoCompletion(id: id);
   }
 

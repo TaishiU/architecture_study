@@ -28,60 +28,63 @@ class SettingsPreferencesServiceImpl implements SettingsPreferencesService {
 
   @override
   String getAppTheme() {
-    return generalPreferences.getString(_appThemeKey) ?? '';
+    return generalPreferences.getString(key: _appThemeKey) ?? '';
   }
 
   @override
-  Future<void> setAppTheme(String theme) async {
-    await generalPreferences.setString(_appThemeKey, theme);
+  Future<void> setAppTheme({required String theme}) async {
+    await generalPreferences.setString(key: _appThemeKey, value: theme);
   }
 
   @override
   String getLanguageCode() {
-    return generalPreferences.getString(_languageCodeKey) ?? '';
+    return generalPreferences.getString(key: _languageCodeKey) ?? '';
   }
 
   @override
-  Future<void> setLanguageCode(String code) async {
-    await generalPreferences.setString(_languageCodeKey, code);
+  Future<void> setLanguageCode({required String code}) async {
+    await generalPreferences.setString(key: _languageCodeKey, value: code);
   }
 
   @override
   bool getAgreedToTerms() {
-    return generalPreferences.getBool(_agreedToTermsKey) ?? false;
+    return generalPreferences.getBool(key: _agreedToTermsKey) ?? false;
   }
 
   @override
   Future<void> setAgreedToTerms({required bool agreed}) async {
-    await generalPreferences.setBool(_agreedToTermsKey, value: agreed);
+    await generalPreferences.setBool(key: _agreedToTermsKey, value: agreed);
   }
 
   @override
   bool getNotificationEnabled() {
-    return generalPreferences.getBool(_notificationEnabledKey) ?? false;
+    return generalPreferences.getBool(key: _notificationEnabledKey) ?? false;
   }
 
   @override
   Future<void> setNotificationEnabled({required bool enabled}) async {
-    await generalPreferences.setBool(_notificationEnabledKey, value: enabled);
+    await generalPreferences.setBool(
+      key: _notificationEnabledKey,
+      value: enabled,
+    );
   }
 
   @override
   String getLastLoginDate() {
-    return generalPreferences.getString(_lastLoginDateKey) ?? '';
+    return generalPreferences.getString(key: _lastLoginDateKey) ?? '';
   }
 
   @override
-  Future<void> setLastLoginDate(String date) async {
-    await generalPreferences.setString(_lastLoginDateKey, date);
+  Future<void> setLastLoginDate({required String date}) async {
+    await generalPreferences.setString(key: _lastLoginDateKey, value: date);
   }
 
   @override
   Future<bool> clearSettingsData() async {
-    await generalPreferences.remove(_appThemeKey);
-    await generalPreferences.remove(_agreedToTermsKey);
-    await generalPreferences.remove(_notificationEnabledKey);
-    await generalPreferences.remove(_lastLoginDateKey);
+    await generalPreferences.remove(key: _appThemeKey);
+    await generalPreferences.remove(key: _agreedToTermsKey);
+    await generalPreferences.remove(key: _notificationEnabledKey);
+    await generalPreferences.remove(key: _lastLoginDateKey);
     return true;
   }
 }

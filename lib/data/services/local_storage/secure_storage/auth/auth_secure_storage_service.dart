@@ -7,13 +7,13 @@ abstract class AuthSecureStorageService {
   String getAccessToken();
 
   /// アクセストークンを保存します。
-  Future<void> setAccessToken(String token);
+  Future<void> setAccessToken({required String token});
 
   /// リフレッシュトークンを取得します。
   String getRefreshToken();
 
   /// リフレッシュトークンを保存します。
-  Future<void> setRefreshToken(String token);
+  Future<void> setRefreshToken({required String token});
 
   /// 認証情報をクリアします。
   Future<bool> clearAuthData();
