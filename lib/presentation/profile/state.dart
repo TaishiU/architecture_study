@@ -8,9 +8,6 @@ part 'state.freezed.dart';
 abstract class ProfileScreenState with _$ProfileScreenState {
   /// コンストラクタ
   const factory ProfileScreenState({
-    /// 表示するTodoアイテムのリスト
-    required bool hasProfile,
-
     /// ユーザー
     required User user,
   }) = _ProfileScreenState;

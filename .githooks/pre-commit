@@ -39,6 +39,14 @@ if [ -f "$CHECK_SCRIPT" ]; then
   [ $? -ne 0 ] && exit 1
 fi
 
+# 4.5. 名前付き引数チェック
+CHECK_NAMED_ARGS="$REPO_ROOT/scripts/check_named_args.dart"
+if [ -f "$CHECK_NAMED_ARGS" ]; then
+  echo "🔍 名前付き引数チェック実行中..."
+  git diff --cached --name-only -- '*.dart' | dart "$CHECK_NAMED_ARGS"
+  [ $? -ne 0 ] && exit 1
+fi
+
 # 5. 静的解析を実行
 echo "🔍 dart analyze 実行中..."
 ANALYZE_OUTPUT=$(dart analyze 2>&1)

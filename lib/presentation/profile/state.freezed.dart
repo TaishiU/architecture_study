@@ -14,8 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProfileScreenState {
 
-/// 表示するTodoアイテムのリスト
- bool get hasProfile;/// ユーザー
+/// ユーザー
  User get user;
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
@@ -27,16 +26,16 @@ $ProfileScreenStateCopyWith<ProfileScreenState> get copyWith => _$ProfileScreenS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileScreenState&&(identical(other.hasProfile, hasProfile) || other.hasProfile == hasProfile)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileScreenState&&(identical(other.user, user) || other.user == user));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,hasProfile,user);
+int get hashCode => Object.hash(runtimeType,user);
 
 @override
 String toString() {
-  return 'ProfileScreenState(hasProfile: $hasProfile, user: $user)';
+  return 'ProfileScreenState(user: $user)';
 }
 
 
@@ -47,7 +46,7 @@ abstract mixin class $ProfileScreenStateCopyWith<$Res>  {
   factory $ProfileScreenStateCopyWith(ProfileScreenState value, $Res Function(ProfileScreenState) _then) = _$ProfileScreenStateCopyWithImpl;
 @useResult
 $Res call({
- bool hasProfile, User user
+ User user
 });
 
 
@@ -64,10 +63,9 @@ class _$ProfileScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? hasProfile = null,Object? user = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? user = null,}) {
   return _then(_self.copyWith(
-hasProfile: null == hasProfile ? _self.hasProfile : hasProfile // ignore: cast_nullable_to_non_nullable
-as bool,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as User,
   ));
 }
@@ -162,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool hasProfile,  User user)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( User user)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileScreenState() when $default != null:
-return $default(_that.hasProfile,_that.user);case _:
+return $default(_that.user);case _:
   return orElse();
 
 }
@@ -183,10 +181,10 @@ return $default(_that.hasProfile,_that.user);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool hasProfile,  User user)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( User user)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileScreenState():
-return $default(_that.hasProfile,_that.user);case _:
+return $default(_that.user);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +201,10 @@ return $default(_that.hasProfile,_that.user);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool hasProfile,  User user)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( User user)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileScreenState() when $default != null:
-return $default(_that.hasProfile,_that.user);case _:
+return $default(_that.user);case _:
   return null;
 
 }
@@ -218,11 +216,9 @@ return $default(_that.hasProfile,_that.user);case _:
 
 
 class _ProfileScreenState implements ProfileScreenState {
-  const _ProfileScreenState({required this.hasProfile, required this.user});
+  const _ProfileScreenState({required this.user});
   
 
-/// 表示するTodoアイテムのリスト
-@override final  bool hasProfile;
 /// ユーザー
 @override final  User user;
 
@@ -236,16 +232,16 @@ _$ProfileScreenStateCopyWith<_ProfileScreenState> get copyWith => __$ProfileScre
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileScreenState&&(identical(other.hasProfile, hasProfile) || other.hasProfile == hasProfile)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileScreenState&&(identical(other.user, user) || other.user == user));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,hasProfile,user);
+int get hashCode => Object.hash(runtimeType,user);
 
 @override
 String toString() {
-  return 'ProfileScreenState(hasProfile: $hasProfile, user: $user)';
+  return 'ProfileScreenState(user: $user)';
 }
 
 
@@ -256,7 +252,7 @@ abstract mixin class _$ProfileScreenStateCopyWith<$Res> implements $ProfileScree
   factory _$ProfileScreenStateCopyWith(_ProfileScreenState value, $Res Function(_ProfileScreenState) _then) = __$ProfileScreenStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool hasProfile, User user
+ User user
 });
 
 
@@ -273,10 +269,9 @@ class __$ProfileScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileScreenState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? hasProfile = null,Object? user = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? user = null,}) {
   return _then(_ProfileScreenState(
-hasProfile: null == hasProfile ? _self.hasProfile : hasProfile // ignore: cast_nullable_to_non_nullable
-as bool,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as User,
   ));
 }
