@@ -37,7 +37,4 @@ class ProfileScreenUseCase {
       }(),
     };
   }
-
-  /// テスト用
-  void test() {}
 }
