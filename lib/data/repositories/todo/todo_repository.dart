@@ -58,7 +58,7 @@ class TodoRepository {
       switch (result) {
         case SuccessResult<TodosDto>():
           final todoList = result.value.todos!
-              .map(_toEntity)
+              .map((dto) => _toEntity(dto: dto))
               .whereType<Todo>()
               .toList();
 
@@ -100,7 +100,7 @@ class TodoRepository {
   }
 
   /// [TodoDto] を [Todo] エンティティに変換します。
-  Todo? _toEntity(TodoDto dto) {
+  Todo? _toEntity({required TodoDto dto}) {
     // 必須フィールドが欠損している場合はnullを返す
     if (dto.userId == null || dto.id == null) {
       return null;

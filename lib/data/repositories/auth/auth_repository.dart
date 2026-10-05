@@ -78,8 +78,8 @@ class AuthRepository extends ChangeNotifier {
           final accessToken = loginDto.accessToken ?? '';
           final refreshToken = loginDto.refreshToken ?? '';
 
-          await authSecureStorageService.setAccessToken(accessToken);
-          await authSecureStorageService.setRefreshToken(refreshToken);
+          await authSecureStorageService.setAccessToken(token: accessToken);
+          await authSecureStorageService.setRefreshToken(token: refreshToken);
 
           _isLoggedIn = accessToken.isNotEmpty;
           _isLoaded = true;

@@ -73,7 +73,7 @@ void main() {
           mockFlutterSecureStorage.read(key: 'test_key'),
         ).thenAnswer((_) async => 'test_value');
 
-        final value = await impl.secureStorage.read('test_key');
+        final value = await impl.secureStorage.read(key: 'test_key');
         expect(value, 'test_value');
         verify(
           mockFlutterSecureStorage.read(key: 'test_key'),
@@ -85,18 +85,18 @@ void main() {
   group('AuthSecureStorageServiceImpl', () {
     test('initはストレージからデータをロードすること', () async {
       when(
-        mockSecureStorage.read(accessTokenKey),
+        mockSecureStorage.read(key: accessTokenKey),
       ).thenAnswer((_) async => 'saved_access_token');
       when(
-        mockSecureStorage.read(refreshTokenKey),
+        mockSecureStorage.read(key: refreshTokenKey),
       ).thenAnswer((_) async => 'saved_refresh_token');
 
       await authSecureStorageService.init();
 
       expect(authSecureStorageService.getAccessToken(), 'saved_access_token');
       expect(authSecureStorageService.getRefreshToken(), 'saved_refresh_token');
-      verify(mockSecureStorage.read(accessTokenKey)).called(1);
-      verify(mockSecureStorage.read(refreshTokenKey)).called(1);
+      verify(mockSecureStorage.read(key: accessTokenKey)).called(1);
+      verify(mockSecureStorage.read(key: refreshTokenKey)).called(1);
     });
 
     test('getAccessTokenは初期化されていない場合、空文字を返すこと', () {
@@ -105,13 +105,15 @@ void main() {
 
     test('setAccessTokenはメモリとストレージの両方を更新すること', () async {
       when(
-        mockSecureStorage.write(accessTokenKey, 'new_token'),
+        mockSecureStorage.write(key: accessTokenKey, value: 'new_token'),
       ).thenAnswer((_) async {});
 
-      await authSecureStorageService.setAccessToken('new_token');
+      await authSecureStorageService.setAccessToken(token: 'new_token');
 
       expect(authSecureStorageService.getAccessToken(), 'new_token');
-      verify(mockSecureStorage.write(accessTokenKey, 'new_token')).called(1);
+      verify(
+        mockSecureStorage.write(key: accessTokenKey, value: 'new_token'),
+      ).called(1);
     });
 
     test('getRefreshTokenは初期化されていない場合、空文字を返すこと', () {
@@ -120,31 +122,39 @@ void main() {
 
     test('setRefreshTokenはメモリとストレージの両方を更新すること', () async {
       when(
-        mockSecureStorage.write(refreshTokenKey, 'new_token'),
+        mockSecureStorage.write(key: refreshTokenKey, value: 'new_token'),
       ).thenAnswer((_) async {});
 
-      await authSecureStorageService.setRefreshToken('new_token');
+      await authSecureStorageService.setRefreshToken(token: 'new_token');
 
       expect(authSecureStorageService.getRefreshToken(), 'new_token');
-      verify(mockSecureStorage.write(refreshTokenKey, 'new_token')).called(1);
+      verify(
+        mockSecureStorage.write(key: refreshTokenKey, value: 'new_token'),
+      ).called(1);
     });
 
     test('clearAuthDataはメモリとストレージの両方をクリアすること', () async {
       // 事前にデータをセット
-      when(mockSecureStorage.write(any, any)).thenAnswer((_) async {});
-      await authSecureStorageService.setAccessToken('token');
-      await authSecureStorageService.setRefreshToken('token');
+      when(
+        mockSecureStorage.write(key: any, value: any),
+      ).thenAnswer((_) async {});
+      await authSecureStorageService.setAccessToken(token: 'token');
+      await authSecureStorageService.setRefreshToken(token: 'token');
 
-      when(mockSecureStorage.delete(accessTokenKey)).thenAnswer((_) async {});
-      when(mockSecureStorage.delete(refreshTokenKey)).thenAnswer((_) async {});
+      when(
+        mockSecureStorage.delete(key: accessTokenKey),
+      ).thenAnswer((_) async {});
+      when(
+        mockSecureStorage.delete(key: refreshTokenKey),
+      ).thenAnswer((_) async {});
 
       final result = await authSecureStorageService.clearAuthData();
 
       expect(result, isTrue);
       expect(authSecureStorageService.getAccessToken(), '');
       expect(authSecureStorageService.getRefreshToken(), '');
-      verify(mockSecureStorage.delete(accessTokenKey)).called(1);
-      verify(mockSecureStorage.delete(refreshTokenKey)).called(1);
+      verify(mockSecureStorage.delete(key: accessTokenKey)).called(1);
+      verify(mockSecureStorage.delete(key: refreshTokenKey)).called(1);
     });
   });
 }

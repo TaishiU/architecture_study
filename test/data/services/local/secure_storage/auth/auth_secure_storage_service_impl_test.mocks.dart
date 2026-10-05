@@ -68,26 +68,26 @@ class MockSecureStorageService extends _i1.Mock
   }
 
   @override
-  _i4.Future<String?> read(String? key) =>
+  _i4.Future<String?> read({required String? key}) =>
       (super.noSuchMethod(
-            Invocation.method(#read, [key]),
+            Invocation.method(#read, [], {#key: key}),
             returnValue: _i4.Future<String?>.value(),
           )
           as _i4.Future<String?>);
 
   @override
-  _i4.Future<void> write(String? key, String? value) =>
+  _i4.Future<void> write({required String? key, required String? value}) =>
       (super.noSuchMethod(
-            Invocation.method(#write, [key, value]),
+            Invocation.method(#write, [], {#key: key, #value: value}),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> delete(String? key) =>
+  _i4.Future<void> delete({required String? key}) =>
       (super.noSuchMethod(
-            Invocation.method(#delete, [key]),
+            Invocation.method(#delete, [], {#key: key}),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

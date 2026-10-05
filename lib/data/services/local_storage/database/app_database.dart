@@ -31,7 +31,7 @@ class TaskItems extends Table {
 @DriftDatabase(tables: [TaskItems])
 class AppDatabase extends _$AppDatabase {
   /// コンストラクタ。[executor] を省略するとデフォルト接続を使用する。
-  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
+  AppDatabase({QueryExecutor? executor}) : super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 2;

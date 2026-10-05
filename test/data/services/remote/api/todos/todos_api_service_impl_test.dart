@@ -78,7 +78,10 @@ void main() {
     });
 
     test('ApiClientExceptionが発生した場合、FailureResultを返すこと', () async {
-      final apiException = ApiClientException('Not Found', statusCode: 404);
+      final apiException = ApiClientException(
+        message: 'Not Found',
+        statusCode: 404,
+      );
       when(
         mockApiClient.get(endpoint: 'todos'),
       ).thenThrow(apiException);

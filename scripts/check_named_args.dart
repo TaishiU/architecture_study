@@ -8,16 +8,17 @@
 // ─────────────────────────────────────────────────────────────────────
 // 実行方法
 // ─────────────────────────────────────────────────────────────────────
-// # 特定ファイルを引数で渡す
+// # スコープ指定（デフォルト: changed）
+// dart scripts/check_named_args.dart                           # デフォルト = --scope=changed
+// dart scripts/check_named_args.dart --scope=changed           # staged + unstaged（git add 不要）
+// dart scripts/check_named_args.dart --scope=staged            # staged ファイルのみ（pre-commit 用）
+// dart scripts/check_named_args.dart --scope=branch            # ブランチ差分（base: main）
+// dart scripts/check_named_args.dart --scope=branch --base=develop  # base ブランチ変更
+// dart scripts/check_named_args.dart --scope=all               # lib/ 全件
+//
+// # ファイル直接指定（後方互換）
 // dart scripts/check_named_args.dart lib/foo/bar.dart
-//
-// # 複数ファイル
-// dart scripts/check_named_args.dart lib/foo/bar.dart lib/baz/qux.dart
-//
-// # lib/ 配下の全 .dart（生成ファイル除く）
 // find lib -name "*.dart" ! -name "*.freezed.dart" ! -name "*.g.dart" | xargs dart scripts/check_named_args.dart
-//
-// # stdin から渡す（pre-commit hook と同じ形式）
 // echo "lib/foo/bar.dart" | dart scripts/check_named_args.dart
 //
 // ─────────────────────────────────────────────────────────────────────
@@ -85,14 +86,28 @@ const _statementKeywords = {
 const _alwaysExcludedNames = {'main', 'toString', 'hashCode', 'noSuchMethod'};
 
 void main(List<String> args) {
-  final files = <String>[];
-  if (args.isNotEmpty) {
-    files.addAll(args.where((f) => f.isNotEmpty));
-  } else {
-    String? line;
-    while ((line = stdin.readLineSync()) != null) {
-      if (line!.isNotEmpty) files.add(line);
+  String? scope;
+  var base = 'main';
+  final fileArgs = <String>[];
+
+  for (final arg in args) {
+    if (arg.startsWith('--scope=')) {
+      scope = arg.substring('--scope='.length);
+    } else if (arg.startsWith('--base=')) {
+      base = arg.substring('--base='.length);
+    } else {
+      fileArgs.add(arg);
     }
+  }
+
+  final files = <String>[];
+  if (scope != null) {
+    files.addAll(_getFilesForScope(scope: scope, base: base));
+  } else if (fileArgs.isNotEmpty) {
+    files.addAll(fileArgs.where((f) => f.isNotEmpty));
+  } else {
+    // デフォルト: staged + unstaged（git add 不要）
+    files.addAll(_getFilesForScope(scope: 'changed', base: base));
   }
 
   final allViolations = <_Violation>[];
@@ -120,14 +135,90 @@ void main(List<String> args) {
       ..writeln('  Line ${v.line}: ${v.signature}')
       ..writeln();
   }
+  final affectedFileCount = allViolations.map((v) => v.path).toSet().length;
   stderr
     ..writeln(
       '\x1B[33m位置引数を名前付き引数（{ ... }）に変更してください。\x1B[0m\n',
     )
     ..writeln(
-      '\x1B[31m ❌ 名前付き引数違反 ${allViolations.length}件を検出\x1B[0m\n',
+      '\x1B[31m ❌ 名前付き引数違反 ${allViolations.length}件を検出'
+      ' （$affectedFileCountファイル）\x1B[0m\n',
     );
   exit(1);
+}
+
+List<String> _getFilesForScope({required String scope, required String base}) {
+  switch (scope) {
+    case 'changed':
+      return _getChangedFiles();
+    case 'staged':
+      return _getStagedFiles();
+    case 'branch':
+      return _getBranchDiffFiles(base);
+    case 'all':
+      return _getAllLibFiles();
+    default:
+      stderr.writeln(
+        '不明なスコープ: $scope。changed / staged / branch / all を指定してください。',
+      );
+      exit(1);
+  }
+}
+
+List<String> _getChangedFiles() {
+  final result = Process.runSync('git', ['diff', 'HEAD', '--name-only']);
+  if (result.exitCode != 0) {
+    stderr.writeln('git diff HEAD に失敗しました');
+    exit(1);
+  }
+  return _filterLibDartFiles(result.stdout as String);
+}
+
+List<String> _getStagedFiles() {
+  final result = Process.runSync('git', ['diff', '--cached', '--name-only']);
+  if (result.exitCode != 0) {
+    stderr.writeln('git diff --cached に失敗しました');
+    exit(1);
+  }
+  return _filterLibDartFiles(result.stdout as String);
+}
+
+List<String> _getBranchDiffFiles(String base) {
+  final result = Process.runSync('git', ['diff', base, '--name-only']);
+  if (result.exitCode != 0) {
+    stderr.writeln('git diff $base に失敗しました。--base=<branch> で基点ブランチを変更できます');
+    exit(1);
+  }
+  return _filterLibDartFiles(result.stdout as String);
+}
+
+List<String> _getAllLibFiles() {
+  final result = Process.runSync('find', [
+    'lib',
+    '-name',
+    '*.dart',
+    '-not',
+    '-name',
+    '*.freezed.dart',
+    '-not',
+    '-name',
+    '*.g.dart',
+  ]);
+  if (result.exitCode != 0) {
+    stderr.writeln('find lib に失敗しました');
+    exit(1);
+  }
+  return (result.stdout as String)
+      .split('\n')
+      .where((f) => f.isNotEmpty)
+      .toList();
+}
+
+List<String> _filterLibDartFiles(String output) {
+  return output
+      .split('\n')
+      .where((f) => f.isNotEmpty && f.startsWith('lib/') && f.endsWith('.dart'))
+      .toList();
 }
 
 bool _isGenerated({required String path}) =>

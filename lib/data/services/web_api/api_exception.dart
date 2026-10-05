@@ -4,7 +4,7 @@ class ApiClientException implements Exception {
   ///
   /// [message] : 例外に関する説明メッセージ。
   /// [statusCode] : 例外に関連するHTTPステータスコード。
-  ApiClientException(this.message, {this.statusCode});
+  ApiClientException({required this.message, this.statusCode});
 
   /// エラーメッセージ。
   final String message;
@@ -28,8 +28,8 @@ class BadRequestException extends ApiClientException {
   ///
   /// [message] : 例外に関する説明メッセージ。
   /// [statusCode] : 例外に関連するHTTPステータスコード。
-  BadRequestException(String message, {int? statusCode})
-    : super('Bad Request: $message', statusCode: statusCode ?? 400);
+  BadRequestException({required String message, int? statusCode})
+    : super(message: 'Bad Request: $message', statusCode: statusCode ?? 400);
 }
 
 /// 未認証（HTTP 401）を示す例外。
@@ -38,8 +38,8 @@ class UnauthorizedException extends ApiClientException {
   ///
   /// [message] : 例外に関する説明メッセージ。
   /// [statusCode] : 例外に関連するHTTPステータスコード。
-  UnauthorizedException(String message, {int? statusCode})
-    : super('Unauthorized: $message', statusCode: statusCode ?? 401);
+  UnauthorizedException({required String message, int? statusCode})
+    : super(message: 'Unauthorized: $message', statusCode: statusCode ?? 401);
 }
 
 /// アクセス拒否（HTTP 403）を示す例外。
@@ -48,8 +48,8 @@ class ForbiddenException extends ApiClientException {
   ///
   /// [message] : 例外に関する説明メッセージ。
   /// [statusCode] : 例外に関連するHTTPステータスコード。
-  ForbiddenException(String message, {int? statusCode})
-    : super('Forbidden: $message', statusCode: statusCode ?? 403);
+  ForbiddenException({required String message, int? statusCode})
+    : super(message: 'Forbidden: $message', statusCode: statusCode ?? 403);
 }
 
 /// リソースが見つからない（HTTP 404）を示す例外。
@@ -58,8 +58,8 @@ class NotFoundException extends ApiClientException {
   ///
   /// [message] : 例外に関する説明メッセージ。
   /// [statusCode] : 例外に関連するHTTPステータスコード。
-  NotFoundException(String message, {int? statusCode})
-    : super('Not Found: $message', statusCode: statusCode ?? 404);
+  NotFoundException({required String message, int? statusCode})
+    : super(message: 'Not Found: $message', statusCode: statusCode ?? 404);
 }
 
 /// 許可されていないメソッド（HTTP 405）を示す例外。
@@ -68,8 +68,11 @@ class MethodNotAllowedException extends ApiClientException {
   ///
   /// [message] : 例外に関する説明メッセージ。
   /// [statusCode] : 例外に関連するHTTPステータスコード。
-  MethodNotAllowedException(String message, {int? statusCode})
-    : super('Method Not Allowed: $message', statusCode: statusCode ?? 405);
+  MethodNotAllowedException({required String message, int? statusCode})
+    : super(
+        message: 'Method Not Allowed: $message',
+        statusCode: statusCode ?? 405,
+      );
 }
 
 /// サーバー内部エラー（HTTP 500）を示す例外。
@@ -78,8 +81,11 @@ class InternalServerErrorException extends ApiClientException {
   ///
   /// [message] : 例外に関する説明メッセージ。
   /// [statusCode] : 例外に関連するHTTPステータスコード。
-  InternalServerErrorException(String message, {int? statusCode})
-    : super('Internal Server Error: $message', statusCode: statusCode ?? 500);
+  InternalServerErrorException({required String message, int? statusCode})
+    : super(
+        message: 'Internal Server Error: $message',
+        statusCode: statusCode ?? 500,
+      );
 }
 
 /// インターネット接続がない場合に発生する例外。
@@ -87,8 +93,8 @@ class NoInternetConnectionException extends ApiClientException {
   /// [NoInternetConnectionException] のコンストラクタ。
   ///
   /// [message] : 例外に関する説明メッセージ。
-  NoInternetConnectionException(String message)
-    : super('No Internet Connection: $message');
+  NoInternetConnectionException({required String message})
+    : super(message: 'No Internet Connection: $message');
 }
 
 /// その他の不明なエラーを示す例外。
@@ -97,6 +103,6 @@ class UnknownErrorException extends ApiClientException {
   ///
   /// [message] : 例外に関する説明メッセージ。
   /// [statusCode] : 例外に関連するHTTPステータスコード。
-  UnknownErrorException(String message, {super.statusCode})
-    : super('Unknown Error: $message');
+  UnknownErrorException({required String message, super.statusCode})
+    : super(message: 'Unknown Error: $message');
 }

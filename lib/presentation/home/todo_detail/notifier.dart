@@ -15,13 +15,13 @@ final AsyncNotifierProviderFamily<
 >
 todoDetailScreenProvider = AsyncNotifierProvider.autoDispose
     .family<TodoDetailScreenNotifier, TodoDetailScreenState, int>(
-      TodoDetailScreenNotifier.new,
+      (arg) => TodoDetailScreenNotifier(todoId: arg),
     );
 
 /// Todo詳細画面のNotifier
 class TodoDetailScreenNotifier extends AsyncNotifier<TodoDetailScreenState> {
-  /// コンストラクタ (Riverpod 3.0 では、名前付き引数ではなく位置引数として受け取る)
-  TodoDetailScreenNotifier(this.todoId);
+  /// コンストラクタ
+  TodoDetailScreenNotifier({required this.todoId});
 
   /// プロバイダの .family 引数となる todoId
   final int todoId;

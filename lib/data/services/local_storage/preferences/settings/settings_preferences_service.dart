@@ -5,13 +5,13 @@ abstract class SettingsPreferencesService {
   String getAppTheme();
 
   /// アプリケーションのテーマ設定を保存します。
-  Future<void> setAppTheme(String theme);
+  Future<void> setAppTheme({required String theme});
 
   /// 選択された言語コードを取得します。
   String getLanguageCode();
 
   /// 選択された言語コードを保存します。
-  Future<void> setLanguageCode(String code);
+  Future<void> setLanguageCode({required String code});
 
   /// 利用規約への同意状況を取得します。
   bool getAgreedToTerms();
@@ -29,7 +29,7 @@ abstract class SettingsPreferencesService {
   String getLastLoginDate();
 
   /// 最終ログイン日時を保存します。
-  Future<void> setLastLoginDate(String date);
+  Future<void> setLastLoginDate({required String date});
 
   /// 設定情報をクリアします。
   Future<bool> clearSettingsData();

@@ -150,9 +150,9 @@ class MockAuthSecureStorageService extends _i1.Mock
           as String);
 
   @override
-  _i5.Future<void> setAccessToken(String? token) =>
+  _i5.Future<void> setAccessToken({required String? token}) =>
       (super.noSuchMethod(
-            Invocation.method(#setAccessToken, [token]),
+            Invocation.method(#setAccessToken, [], {#token: token}),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -170,9 +170,9 @@ class MockAuthSecureStorageService extends _i1.Mock
           as String);
 
   @override
-  _i5.Future<void> setRefreshToken(String? token) =>
+  _i5.Future<void> setRefreshToken({required String? token}) =>
       (super.noSuchMethod(
-            Invocation.method(#setRefreshToken, [token]),
+            Invocation.method(#setRefreshToken, [], {#token: token}),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -228,9 +228,9 @@ class MockAuthSecureStorageServiceImpl extends _i1.Mock
           as String);
 
   @override
-  _i5.Future<void> setAccessToken(String? token) =>
+  _i5.Future<void> setAccessToken({required String? token}) =>
       (super.noSuchMethod(
-            Invocation.method(#setAccessToken, [token]),
+            Invocation.method(#setAccessToken, [], {#token: token}),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -248,9 +248,9 @@ class MockAuthSecureStorageServiceImpl extends _i1.Mock
           as String);
 
   @override
-  _i5.Future<void> setRefreshToken(String? token) =>
+  _i5.Future<void> setRefreshToken({required String? token}) =>
       (super.noSuchMethod(
-            Invocation.method(#setRefreshToken, [token]),
+            Invocation.method(#setRefreshToken, [], {#token: token}),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )

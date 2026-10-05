@@ -28,34 +28,34 @@ class AuthSecureStorageServiceImpl implements AuthSecureStorageService {
   /// 初期化（ストレージからメモリへロード）
   @override
   Future<void> init() async {
-    _accessToken = await secureStorage.read(_accessTokenKey) ?? '';
-    _refreshToken = await secureStorage.read(_refreshTokenKey) ?? '';
+    _accessToken = await secureStorage.read(key: _accessTokenKey) ?? '';
+    _refreshToken = await secureStorage.read(key: _refreshTokenKey) ?? '';
   }
 
   @override
   String getAccessToken() => _accessToken;
 
   @override
-  Future<void> setAccessToken(String token) async {
+  Future<void> setAccessToken({required String token}) async {
     _accessToken = token;
-    await secureStorage.write(_accessTokenKey, token);
+    await secureStorage.write(key: _accessTokenKey, value: token);
   }
 
   @override
   String getRefreshToken() => _refreshToken;
 
   @override
-  Future<void> setRefreshToken(String token) async {
+  Future<void> setRefreshToken({required String token}) async {
     _refreshToken = token;
-    await secureStorage.write(_refreshTokenKey, token);
+    await secureStorage.write(key: _refreshTokenKey, value: token);
   }
 
   @override
   Future<bool> clearAuthData() async {
     _accessToken = '';
     _refreshToken = '';
-    await secureStorage.delete(_accessTokenKey);
-    await secureStorage.delete(_refreshTokenKey);
+    await secureStorage.delete(key: _accessTokenKey);
+    await secureStorage.delete(key: _refreshTokenKey);
     return true;
   }
 }

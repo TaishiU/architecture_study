@@ -18,63 +18,71 @@ final sharedPreferencesServiceImplProvider =
 class SharedPreferencesServiceImpl implements SharedPreferencesService {
   /// コンストラクタ。
   /// 外部から`SharedPreferencesWithCache`のインスタンスを受け取ります。
-  SharedPreferencesServiceImpl(this._sharedPreferences);
+  SharedPreferencesServiceImpl({
+    required SharedPreferencesWithCache sharedPreferences,
+  }) : _sharedPreferences = sharedPreferences;
 
   /// `SharedPreferencesWithCache`のインスタンスを保持します。
   final SharedPreferencesWithCache _sharedPreferences;
 
   @override
-  String? getString(String key, {String? defaultValue}) {
+  String? getString({required String key, String? defaultValue}) {
     return _sharedPreferences.getString(key) ?? defaultValue;
   }
 
   @override
-  Future<void> setString(String key, String value) {
+  Future<void> setString({required String key, required String value}) {
     return _sharedPreferences.setString(key, value);
   }
 
   @override
-  bool? getBool(String key, {bool? defaultValue}) {
+  bool? getBool({required String key, bool? defaultValue}) {
     return _sharedPreferences.getBool(key) ?? defaultValue;
   }
 
   @override
-  Future<void> setBool(String key, {required bool value}) {
+  Future<void> setBool({required String key, required bool value}) {
     return _sharedPreferences.setBool(key, value);
   }
 
   @override
-  int? getInt(String key, {int? defaultValue}) {
+  int? getInt({required String key, int? defaultValue}) {
     return _sharedPreferences.getInt(key) ?? defaultValue;
   }
 
   @override
-  Future<void> setInt(String key, int value) {
+  Future<void> setInt({required String key, required int value}) {
     return _sharedPreferences.setInt(key, value);
   }
 
   @override
-  double? getDouble(String key, {double? defaultValue}) {
+  double? getDouble({required String key, double? defaultValue}) {
     return _sharedPreferences.getDouble(key) ?? defaultValue;
   }
 
   @override
-  Future<void> setDouble(String key, double value) {
+  Future<void> setDouble({required String key, required double value}) {
     return _sharedPreferences.setDouble(key, value);
   }
 
   @override
-  List<String>? getStringList(String key, {List<String>? defaultValue}) {
+  List<String>? getStringList({
+    required String key,
+    List<String>? defaultValue,
+  }) {
     return _sharedPreferences.getStringList(key) ?? defaultValue;
   }
 
   @override
-  Future<void> setStringList(String key, List<String> value) {
+  Future<void> setStringList({
+    required String key,
+    required List<String> value,
+  }) {
     return _sharedPreferences.setStringList(key, value);
   }
 
   @override
-  Future<void> remove(String key) {
+  Future<void> remove({required String key}) {
     return _sharedPreferences.remove(key);
   }
 

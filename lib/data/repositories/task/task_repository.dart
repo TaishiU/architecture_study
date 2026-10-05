@@ -26,7 +26,7 @@ class TaskRepository {
 
   /// タスク一覧のストリーム。
   Stream<List<Task>> get tasksStream => taskLocalService.watchAll().map(
-    (items) => items.map(_toEntity).toList(),
+    (items) => items.map((item) => _toEntity(item: item)).toList(),
   );
 
   /// タスクを追加する。
@@ -37,7 +37,7 @@ class TaskRepository {
   Future<void> updateCompletion({required int id, required bool completed}) =>
       taskLocalService.updateCompletion(id: id, completed: completed);
 
-  Task _toEntity(TaskItem item) => Task(
+  Task _toEntity({required TaskItem item}) => Task(
     id: item.id,
     userId: item.userId,
     title: item.todo,

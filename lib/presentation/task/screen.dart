@@ -21,7 +21,7 @@ class TaskScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: const CoreAppBar(title: 'TaskScreen'),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddTaskDialog(context, ref),
+        onPressed: () => _showAddTaskDialog(context: context, ref: ref),
         child: const Icon(Icons.add),
       ),
       body: switch (viewModel) {
@@ -35,14 +35,16 @@ class TaskScreen extends HookConsumerWidget {
     );
   }
 
-  Future<void> _showAddTaskDialog(BuildContext context, WidgetRef ref) =>
-      showDialog<void>(
-        context: context,
-        builder: (_) => _AddTaskDialog(
-          onAdd: (title) =>
-              ref.read(taskScreenProvider.notifier).addTask(title),
-        ),
-      );
+  Future<void> _showAddTaskDialog({
+    required BuildContext context,
+    required WidgetRef ref,
+  }) => showDialog<void>(
+    context: context,
+    builder: (_) => _AddTaskDialog(
+      onAdd: (title) =>
+          ref.read(taskScreenProvider.notifier).addTask(title: title),
+    ),
+  );
 }
 
 class _AddTaskDialog extends StatefulWidget {
@@ -133,7 +135,7 @@ class _TaskItem extends ConsumerWidget {
         if (completed == null) return;
         await ref
             .read(taskScreenProvider.notifier)
-            .updateCompletion(task.id, completed: completed);
+            .updateCompletion(id: task.id, completed: completed);
       },
     );
   }

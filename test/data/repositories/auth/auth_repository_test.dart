@@ -139,10 +139,10 @@ void main() {
         ),
       );
       when(
-        mockAuthSecureStorageService.setAccessToken(accessToken),
+        mockAuthSecureStorageService.setAccessToken(token: accessToken),
       ).thenAnswer((_) async => {});
       when(
-        mockAuthSecureStorageService.setRefreshToken(refreshToken),
+        mockAuthSecureStorageService.setRefreshToken(token: refreshToken),
       ).thenAnswer((_) async => {});
 
       final result = await authRepository.login(
@@ -155,10 +155,10 @@ void main() {
       expect(notifyCount, 1);
 
       verify(
-        mockAuthSecureStorageService.setAccessToken(accessToken),
+        mockAuthSecureStorageService.setAccessToken(token: accessToken),
       ).called(1);
       verify(
-        mockAuthSecureStorageService.setRefreshToken(refreshToken),
+        mockAuthSecureStorageService.setRefreshToken(token: refreshToken),
       ).called(1);
     });
 
@@ -175,7 +175,7 @@ void main() {
 
       expect(result, isA<FailureResult<void>>());
       expect((result as FailureResult<void>).error, isA<AppError>());
-      verifyNever(mockAuthSecureStorageService.setAccessToken(any));
+      verifyNever(mockAuthSecureStorageService.setAccessToken(token: any));
     });
 
     test('例外発生時にFailureResultを返すこと', () async {

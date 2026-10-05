@@ -19,18 +19,18 @@ final baseUrlProvider = Provider<String>((ref) => 'https://dummyjson.com');
 /// 各要素はHTTPメソッドの文字列値を持ちます。
 enum Method {
   /// HTTP GETメソッド。
-  get('GET'),
+  get(value: 'GET'),
 
   /// HTTP POSTメソッド。
-  post('POST'),
+  post(value: 'POST'),
 
   /// HTTP PUTメソッド。
-  put('PUT'),
+  put(value: 'PUT'),
 
   /// HTTP DELETEメソッド。
-  delete('DELETE');
+  delete(value: 'DELETE');
 
-  const Method(this.value);
+  const Method({required this.value});
 
   /// メソッド名
   final String value;
@@ -42,7 +42,7 @@ final apiClientProvider = Provider<ApiClient>(
     final client = http.Client();
     final baseUrl = ref.watch(baseUrlProvider);
     return ApiClientImpl(
-      client,
+      client: client,
       baseUrl: baseUrl,
       authSecureStorageService: ref.read(authSecureStorageServiceImplProvider),
     );
@@ -109,13 +109,13 @@ class ApiClientImpl implements ApiClient {
   /// [authSecureStorageService] : 認証情報のセキュアな永続化サービス。
   /// [retryDelay] : リクエストが失敗した場合の再試行の間隔。デフォルトは1秒。
   /// [maxRetries] : リクエストが失敗した場合の最大再試行回数。デフォルトは3回。
-  ApiClientImpl(
-    this._client, {
+  ApiClientImpl({
+    required http.Client client,
     required this.baseUrl,
     required this.authSecureStorageService,
     this.retryDelay = const Duration(seconds: 1),
     this.maxRetries = 3,
-  });
+  }) : _client = client;
 
   /// HTTPリクエストの送信に使用されるHTTPクライアント。
   final http.Client _client;
@@ -188,7 +188,10 @@ class ApiClientImpl implements ApiClient {
     );
   }
 
-  Uri _buildUri(String endpoint, {Map<String, dynamic>? queryParameters}) {
+  Uri _buildUri({
+    required String endpoint,
+    Map<String, dynamic>? queryParameters,
+  }) {
     final baseUri = Uri.parse(baseUrl);
     final uri = baseUri.resolve(endpoint);
     if (queryParameters == null || queryParameters.isEmpty) {
@@ -208,7 +211,7 @@ class ApiClientImpl implements ApiClient {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? requestBody,
   }) async {
-    final uri = _buildUri(endpoint, queryParameters: queryParameters);
+    final uri = _buildUri(endpoint: endpoint, queryParameters: queryParameters);
 
     // アクセストークンの自動付与
     final accessToken = authSecureStorageService.getAccessToken();
@@ -272,7 +275,7 @@ class ApiClientImpl implements ApiClient {
 
           if (!refreshSuccess) {
             // トークン更新失敗。
-            throw UnauthorizedException('Session expired');
+            throw UnauthorizedException(message: 'Session expired');
           }
           // トークン更新成功。新しいトークンでリトライ。
           return await _safeApiCall(
@@ -290,17 +293,21 @@ class ApiClientImpl implements ApiClient {
         );
       } on SocketException catch (error) {
         logger.w('ネットワークエラー: ${error.message}');
-        lastException = NoInternetConnectionException(error.message);
+        lastException = NoInternetConnectionException(message: error.message);
         if (i < maxRetries) {
           logger.w('リトライします... (${retryDelay.inSeconds}秒後)'); // コンストラクタから取得
           await Future<void>.delayed(retryDelay); // コンストラクタから取得
         }
       } on http.ClientException catch (error) {
         logger.e('HTTPクライアントエラー: ${error.message}');
-        throw ApiClientException('HTTP Client Error: ${error.message}');
+        throw ApiClientException(
+          message: 'HTTP Client Error: ${error.message}',
+        );
       } on FormatException catch (error) {
         logger.e('レスポンス形式エラー: ${error.message}');
-        throw ApiClientException('Bad response format: ${error.message}');
+        throw ApiClientException(
+          message: 'Bad response format: ${error.message}',
+        );
       } catch (error) {
         logger.e('予期せぬエラー: $error');
         rethrow;
@@ -326,38 +333,38 @@ class ApiClientImpl implements ApiClient {
         return decodedBody;
       case 400:
         throw BadRequestException(
-          decodedBody.toString(),
+          message: decodedBody.toString(),
           statusCode: statusCode,
         );
       case 401:
         // _safeApiCallでリフレッシュを試みた後、ここに来る場合は最終的なUnauthorized
         throw UnauthorizedException(
-          decodedBody.toString(),
+          message: decodedBody.toString(),
           statusCode: statusCode,
         );
       case 403:
         throw ForbiddenException(
-          decodedBody.toString(),
+          message: decodedBody.toString(),
           statusCode: statusCode,
         );
       case 404:
         throw NotFoundException(
-          decodedBody.toString(),
+          message: decodedBody.toString(),
           statusCode: statusCode,
         );
       case 405:
         throw MethodNotAllowedException(
-          decodedBody.toString(),
+          message: decodedBody.toString(),
           statusCode: statusCode,
         );
       case 500:
         throw InternalServerErrorException(
-          decodedBody.toString(),
+          message: decodedBody.toString(),
           statusCode: statusCode,
         );
       default:
         throw UnknownErrorException(
-          'Http status $statusCode',
+          message: 'Http status $statusCode',
           statusCode: statusCode,
         );
     }
@@ -383,7 +390,7 @@ class ApiClientImpl implements ApiClient {
         return false;
       }
 
-      final refreshUri = _buildUri('auth/refresh');
+      final refreshUri = _buildUri(endpoint: 'auth/refresh');
       final response = await _client.post(
         refreshUri,
         headers: {'Content-Type': 'application/json'},
@@ -398,8 +405,8 @@ class ApiClientImpl implements ApiClient {
         final newAccessToken = data['accessToken'] as String;
         final newRefreshToken = data['refreshToken'] as String;
 
-        await authSecureStorageService.setAccessToken(newAccessToken);
-        await authSecureStorageService.setRefreshToken(newRefreshToken);
+        await authSecureStorageService.setAccessToken(token: newAccessToken);
+        await authSecureStorageService.setRefreshToken(token: newRefreshToken);
 
         logger.i('トークンの更新に成功しました。');
         return true;

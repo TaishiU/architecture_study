@@ -65,7 +65,7 @@ class _Body extends HookConsumerWidget {
         itemBuilder: (context, index) {
           final todo = todos[index];
           return InkWell(
-            onTap: () => context.toTodoDetailScreen(todo.id),
+            onTap: () => context.toTodoDetailScreen(todoId: todo.id),
             child: Container(
               height: 80,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -89,7 +89,7 @@ class _Body extends HookConsumerWidget {
                       if (value != null) {
                         await ref
                             .read(todoListScreenProvider.notifier)
-                            .toggleTodo(todo.id);
+                            .toggleTodo(id: todo.id);
                       }
                     },
                   ),

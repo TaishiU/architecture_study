@@ -31,7 +31,7 @@ class UserRepository {
 
       switch (result) {
         case SuccessResult<UserDto>():
-          final user = _toEntity(result.value);
+          final user = _toEntity(dto: result.value);
           if (user == null) {
             return const FailureResult(UnknownError());
           }
@@ -46,7 +46,7 @@ class UserRepository {
   }
 
   /// [UserDto] を [User] エンティティに変換します。
-  User? _toEntity(UserDto dto) {
+  User? _toEntity({required UserDto dto}) {
     // 必須フィールドが欠損している場合はnullを返す
     if (dto.id == null) {
       return null;
@@ -69,48 +69,50 @@ class UserRepository {
       height: dto.height ?? 0.0,
       weight: dto.weight ?? 0.0,
       eyeColor: dto.eyeColor ?? '',
-      hair: _toHairEntity(dto.hair),
+      hair: _toHairEntity(hairDto: dto.hair),
       ip: dto.ip ?? '',
-      address: _toAddressEntity(dto.address),
+      address: _toAddressEntity(addressDto: dto.address),
       macAddress: dto.macAddress ?? '',
       university: dto.university ?? '',
-      bank: _toBankEntity(dto.bank),
-      company: _toCompanyEntity(dto.company),
+      bank: _toBankEntity(bankDto: dto.bank),
+      company: _toCompanyEntity(companyDto: dto.company),
       ein: dto.ein ?? '',
       ssn: dto.ssn ?? '',
       userAgent: dto.userAgent ?? '',
-      crypto: _toCryptoEntity(dto.crypto),
+      crypto: _toCryptoEntity(cryptoDto: dto.crypto),
       role: dto.role ?? '',
     );
   }
 
-  Hair _toHairEntity(dto.Hair? hairDto) {
+  Hair _toHairEntity({required dto.Hair? hairDto}) {
     return Hair(
       color: hairDto?.color ?? '',
       type: hairDto?.type ?? '',
     );
   }
 
-  Address _toAddressEntity(dto.Address? addressDto) {
+  Address _toAddressEntity({required dto.Address? addressDto}) {
     return Address(
       address: addressDto?.address ?? '',
       city: addressDto?.city ?? '',
       state: addressDto?.state ?? '',
       stateCode: addressDto?.stateCode ?? '',
       postalCode: addressDto?.postalCode ?? '',
-      coordinates: _toCoordinatesEntity(addressDto?.coordinates),
+      coordinates: _toCoordinatesEntity(
+        coordinatesDto: addressDto?.coordinates,
+      ),
       country: addressDto?.country ?? '',
     );
   }
 
-  Coordinates _toCoordinatesEntity(dto.Coordinates? coordinatesDto) {
+  Coordinates _toCoordinatesEntity({required dto.Coordinates? coordinatesDto}) {
     return Coordinates(
       lat: coordinatesDto?.lat ?? 0.0,
       lng: coordinatesDto?.lng ?? 0.0,
     );
   }
 
-  Bank _toBankEntity(dto.Bank? bankDto) {
+  Bank _toBankEntity({required dto.Bank? bankDto}) {
     return Bank(
       cardExpire: bankDto?.cardExpire ?? '',
       cardNumber: bankDto?.cardNumber ?? '',
@@ -120,16 +122,16 @@ class UserRepository {
     );
   }
 
-  Company _toCompanyEntity(dto.Company? companyDto) {
+  Company _toCompanyEntity({required dto.Company? companyDto}) {
     return Company(
       department: companyDto?.department ?? '',
       name: companyDto?.name ?? '',
       title: companyDto?.title ?? '',
-      address: _toAddressEntity(companyDto?.address),
+      address: _toAddressEntity(addressDto: companyDto?.address),
     );
   }
 
-  Crypto _toCryptoEntity(dto.Crypto? cryptoDto) {
+  Crypto _toCryptoEntity({required dto.Crypto? cryptoDto}) {
     return Crypto(
       coin: cryptoDto?.coin ?? '',
       wallet: cryptoDto?.wallet ?? '',
