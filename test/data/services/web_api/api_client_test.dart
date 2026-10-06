@@ -99,13 +99,12 @@ void main() {
       test('201 Createdの場合、デコードされたMapを返すこと', () async {
         final requestBody = {'name': 'new item'};
         final responseBody = {'id': 101, 'name': 'new item'};
-        when(
-          mockHttpClient.post(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
+        when(mockHttpClient.send(any)).thenAnswer(
+          (_) async => http.StreamedResponse(
+            Stream.value(utf8.encode(jsonEncode(responseBody))),
+            201,
           ),
-        ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 201));
+        );
 
         final result = await apiClient.post(
           endpoint: 'items',
@@ -113,13 +112,12 @@ void main() {
         );
 
         expect(result, responseBody);
-        verify(
-          mockHttpClient.post(
-            Uri.parse('$testBaseUrl/items'),
-            headers: anyNamed('headers'),
-            body: jsonEncode(requestBody),
-          ),
-        ).called(1);
+        final captured =
+            verify(mockHttpClient.send(captureAny)).captured.single
+                as http.Request;
+        expect(captured.url, Uri.parse('$testBaseUrl/items'));
+        expect(captured.method, 'POST');
+        expect(captured.body, jsonEncode(requestBody));
       });
     });
 
@@ -164,13 +162,12 @@ void main() {
       test('200 OKの場合、デコードされたMapを返すこと', () async {
         final requestBody = {'name': 'updated item'};
         final responseBody = {'id': 1, 'name': 'updated item'};
-        when(
-          mockHttpClient.put(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
+        when(mockHttpClient.send(any)).thenAnswer(
+          (_) async => http.StreamedResponse(
+            Stream.value(utf8.encode(jsonEncode(responseBody))),
+            200,
           ),
-        ).thenAnswer((_) async => http.Response(jsonEncode(responseBody), 200));
+        );
 
         final result = await apiClient.put(
           endpoint: 'items/1',
@@ -178,13 +175,38 @@ void main() {
         );
 
         expect(result, responseBody);
-        verify(
-          mockHttpClient.put(
-            Uri.parse('$testBaseUrl/items/1'),
-            headers: anyNamed('headers'),
-            body: jsonEncode(requestBody),
+        final captured =
+            verify(mockHttpClient.send(captureAny)).captured.single
+                as http.Request;
+        expect(captured.url, Uri.parse('$testBaseUrl/items/1'));
+        expect(captured.method, 'PUT');
+        expect(captured.body, jsonEncode(requestBody));
+      });
+    });
+
+    group('PATCH', () {
+      test('200 OKの場合、デコードされたMapを返すこと', () async {
+        final requestBody = {'name': 'patched item'};
+        final responseBody = {'id': 1, 'name': 'patched item'};
+        when(mockHttpClient.send(any)).thenAnswer(
+          (_) async => http.StreamedResponse(
+            Stream.value(utf8.encode(jsonEncode(responseBody))),
+            200,
           ),
-        ).called(1);
+        );
+
+        final result = await apiClient.patch(
+          endpoint: 'items/1',
+          body: requestBody,
+        );
+
+        expect(result, responseBody);
+        final captured =
+            verify(mockHttpClient.send(captureAny)).captured.single
+                as http.Request;
+        expect(captured.url, Uri.parse('$testBaseUrl/items/1'));
+        expect(captured.method, 'PATCH');
+        expect(captured.body, jsonEncode(requestBody));
       });
     });
 
@@ -397,14 +419,11 @@ void main() {
       });
 
       test('loginエンドポイントで401が発生した場合、リフレッシュを試みずに例外を投げること', () async {
-        when(
-          mockHttpClient.post(
-            Uri.parse('$testBaseUrl/auth/login'),
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
+        when(mockHttpClient.send(any)).thenAnswer(
+          (_) async => http.StreamedResponse(
+            Stream.value(utf8.encode('{"message": "unauthorized"}')),
+            401,
           ),
-        ).thenAnswer(
-          (_) async => http.Response('{"message": "unauthorized"}', 401),
         );
 
         await expectLater(

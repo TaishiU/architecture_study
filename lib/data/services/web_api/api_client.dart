@@ -27,6 +27,9 @@ enum Method {
   /// HTTP PUTメソッド。
   put(value: 'PUT'),
 
+  /// HTTP PATCHメソッド。
+  patch(value: 'PATCH'),
+
   /// HTTP DELETEメソッド。
   delete(value: 'DELETE');
 
@@ -84,6 +87,18 @@ abstract class ApiClient {
   /// [headers] : リクエストに含めるヘッダー。
   /// 戻り値: レスポンスボディを表すマップ。
   Future<Map<String, dynamic>> put({
+    required String endpoint,
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
+  });
+
+  /// 指定されたエンドポイントのリソースを部分更新します。
+  ///
+  /// [endpoint] : リソースのパス。
+  /// [body] : リクエストボディ。
+  /// [headers] : リクエストに含めるヘッダー。
+  /// 戻り値: レスポンスボディを表すマップ。
+  Future<Map<String, dynamic>> patch({
     required String endpoint,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
@@ -181,6 +196,20 @@ class ApiClientImpl implements ApiClient {
   }
 
   @override
+  Future<Map<String, dynamic>> patch({
+    required String endpoint,
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
+  }) {
+    return _safeApiCall(
+      method: Method.patch,
+      endpoint: endpoint,
+      headers: headers,
+      requestBody: body,
+    );
+  }
+
+  @override
   Future<Map<String, dynamic>> delete({required String endpoint}) {
     return _safeApiCall(
       method: Method.delete,
@@ -239,23 +268,17 @@ class ApiClientImpl implements ApiClient {
         switch (method) {
           case Method.get:
             response = await _client.get(uri, headers: authHeaders);
-          case Method.post:
-            response = await _client.post(
-              uri,
-              headers: {
+          case Method.post || Method.put || Method.patch:
+            final request = http.Request(method.value, uri)
+              ..headers.addAll({
                 ...authHeaders,
                 'Content-Type': 'application/json',
-              },
-              body: requestBody != null ? jsonEncode(requestBody) : null,
-            );
-          case Method.put:
-            response = await _client.put(
-              uri,
-              headers: {
-                ...authHeaders,
-                'Content-Type': 'application/json',
-              },
-              body: requestBody != null ? jsonEncode(requestBody) : null,
+              });
+            if (requestBody != null) {
+              request.body = jsonEncode(requestBody);
+            }
+            response = await http.Response.fromStream(
+              await _client.send(request),
             );
           case Method.delete:
             response = await _client.delete(uri, headers: authHeaders);
