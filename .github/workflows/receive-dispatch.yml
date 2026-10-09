@@ -1,18 +1,59 @@
-name: Receive repository dispatch
+name: Update OpenAPI from travel_api
 
 on:
   repository_dispatch:
     types: [repository_travel_api_updated]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  receive:
+  update-openapi:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Show received payload
+      - name: Checkout architecture_study
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Checkout travel_api
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ github.event.client_payload.repository }}
+          ref: ${{ github.event.client_payload.sha }}
+          token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+          path: travel_api
+
+      - name: Copy Markdown as temporary OpenAPI file
         run: |
-          echo "repository_dispatchを受信しました"
-          echo "送信元リポジトリ: ${{ github.event.client_payload.repository }}"
-          echo "ブランチ: ${{ github.event.client_payload.branch }}"
-          echo "コミットSHA: ${{ github.event.client_payload.sha }}"
-          echo "コミットメッセージ: ${{ github.event.client_payload.message }}"
+          mkdir -p docs/api
+          cp travel_api/docs/test-dispatch.md docs/api/openapi.yaml
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+          branch: chore/update-openapi-${{ github.run_id }}
+          base: main
+          delete-branch: true
+          title: "chore: update openapi.yaml"
+          body: |
+            ## 概要
+
+            travel_apiリポジトリの更新を検知し、OpenAPIファイルを更新しました。
+
+            ## 送信元
+
+            - Repository: ${{ github.event.client_payload.repository }}
+            - Branch: ${{ github.event.client_payload.branch }}
+            - Commit: ${{ github.event.client_payload.sha }}
+            - Message: ${{ github.event.client_payload.message }}
+
+            ## 確認事項
+
+            - [ ] OpenAPIの差分を確認した
+            - [ ] 破壊的変更がないことを確認した
+            - [ ] 必要なService層の修正を確認した
+          commit-message: "chore: update openapi.yaml"
