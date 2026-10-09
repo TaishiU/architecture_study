@@ -1,0 +1,18 @@
+name: Receive repository dispatch
+
+on:
+  repository_dispatch:
+    types: [repository_travel_api_updated]
+
+jobs:
+  receive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Show received payload
+        run: |
+          echo "repository_dispatchを受信しました"
+          echo "送信元リポジトリ: ${{ github.event.client_payload.repository }}"
+          echo "ブランチ: ${{ github.event.client_payload.branch }}"
+          echo "コミットSHA: ${{ github.event.client_payload.sha }}"
+          echo "コミットメッセージ: ${{ github.event.client_payload.message }}"
