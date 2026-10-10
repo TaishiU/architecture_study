@@ -30,11 +30,13 @@ jobs:
         run: |
           mkdir -p docs/api
           cp travel_api/docs/test-dispatch.md docs/api/openapi.yaml
+          rm -rf travel_api
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+          add-paths: docs/api/openapi.yaml
           branch: chore/update-openapi-${{ github.run_id }}
           base: main
           delete-branch: true
