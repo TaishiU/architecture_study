@@ -11,6 +11,8 @@ permissions:
 jobs:
   update-openapi:
     runs-on: ubuntu-latest
+    outputs:
+      pr-url: ${{ steps.create-pr.outputs.pull-request-url }}
 
     steps:
       - name: Checkout architecture_study
@@ -43,6 +45,7 @@ jobs:
             >> docs/api/sync_history.md
 
       - name: Create pull request
+        id: create-pr
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
@@ -72,3 +75,16 @@ jobs:
             - [ ] 破壊的変更がないことを確認した
             - [ ] 必要なService層の修正を確認した
           commit-message: "chore: update openapi.yaml"
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [ update-openapi ]
+    if: always()
+    steps:
+      - name: Slack通知
+        uses: slackapi/slack-github-action@v3.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "【openapi.yaml変更検知】\n- 自動PRを作成済み。確認してください\n- ${{ needs.update-openapi.outputs.pr-url }}"
