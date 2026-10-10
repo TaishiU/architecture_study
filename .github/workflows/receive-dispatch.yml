@@ -87,4 +87,4 @@ jobs:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: "【要確認！】openapi.yaml変更検知\n自動PRを作成済み\n- ${{ needs.update-openapi.outputs.pr-url }}"
+            text: "【要確認！】openapi.yaml変更検知\n自動PRを作成済み\n${{ needs.update-openapi.outputs.pr-url }}"
