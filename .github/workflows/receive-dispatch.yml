@@ -55,7 +55,7 @@ jobs:
           branch: update_openapi_${{ steps.jst.outputs.branch }}
           base: main
           delete-branch: true
-          title: "update: openapi.yaml"
+          title: "【更新】openapi.yaml"
           labels: openapi.yaml_sync
           body: |
             ## 概要
