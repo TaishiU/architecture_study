@@ -88,7 +88,7 @@ class AuthRepository extends ChangeNotifier {
           notifyListeners();
           return const SuccessResult(null);
         case FailureResult<LoginDto>():
-          logger.e('[AuthRepository] ${result.error}');
+          logger.e(message: '[AuthRepository] ${result.error}');
           return FailureResult(AppError.from(result.error));
       }
     } on Exception catch (error) {

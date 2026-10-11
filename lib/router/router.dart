@@ -1,10 +1,12 @@
 import 'package:architecture_study/data/repositories/auth/auth_repository.dart';
 import 'package:architecture_study/domain/use_cases/auth/auth_use_case.dart';
+import 'package:architecture_study/presentation/debug/screen.dart';
 import 'package:architecture_study/presentation/home/todo_detail/screen.dart';
 import 'package:architecture_study/presentation/home/todo_list/screen.dart';
 import 'package:architecture_study/presentation/login/screen.dart';
 import 'package:architecture_study/presentation/profile/screen.dart';
 import 'package:architecture_study/presentation/task/screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -86,6 +88,13 @@ final routerProvider = Provider<GoRouter>(
           path: LoginScreen.path,
           builder: (context, state) => const LoginScreen(),
         ),
+
+        // デバッグメニュー（kDebugMode 限定）
+        if (kDebugMode)
+          GoRoute(
+            path: DebugMenuScreen.path,
+            builder: (context, state) => const DebugMenuScreen(),
+          ),
 
         // Bottom Navigation Bar を持つShellRoute
         ShellRoute(

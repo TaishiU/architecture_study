@@ -29,10 +29,10 @@ class TodosApiServiceImpl implements TodosApiService {
       final todosDto = TodosDto.fromJson(response);
       return SuccessResult(todosDto);
     } on ApiClientException catch (error) {
-      logger.e('[TodoServiceAPI] ApiClientException: $error');
+      logger.e(message: '[TodoServiceAPI] ApiClientException: $error');
       return FailureResult(error);
     } on Exception catch (error) {
-      logger.e('[TodoServiceAPI] Unexpected Error: $error');
+      logger.e(message: '[TodoServiceAPI] Unexpected Error: $error');
       return FailureResult(error);
     }
   }

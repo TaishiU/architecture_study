@@ -57,7 +57,7 @@ class TodoDetailScreenNotifier extends AsyncNotifier<TodoDetailScreenState> {
         return TodoDetailScreenState(todo: latestTodo);
       }(),
       FailureResult(:final error) => () {
-        logger.e('[TodoDetailScreenNotifier] Error caught: $error');
+        logger.e(message: '[TodoDetailScreenNotifier] Error caught: $error');
         throw error;
       }(),
     };

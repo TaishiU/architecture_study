@@ -3,6 +3,7 @@ import 'package:architecture_study/design_system/components/core_error.dart';
 import 'package:architecture_study/presentation/home/todo_list/notifier.dart';
 import 'package:architecture_study/presentation/home/todo_list/state.dart';
 import 'package:architecture_study/router/navigation_extension.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -22,6 +23,11 @@ class TodoListScreen extends HookConsumerWidget {
       appBar: CoreAppBar(
         title: 'TodoListScreen',
         actions: [
+          if (kDebugMode)
+            IconButton(
+              onPressed: () => context.toDebugMenuScreen(),
+              icon: const Icon(Icons.bug_report_outlined),
+            ),
           IconButton(
             onPressed: () async {
               await ref.read(todoListScreenProvider.notifier).logout();

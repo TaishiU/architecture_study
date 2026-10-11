@@ -70,7 +70,7 @@ class TodoRepository {
 
           return const SuccessResult(null);
         case FailureResult<TodosDto>():
-          logger.e('[TodoRepository] ${result.error}');
+          logger.e(message: '[TodoRepository] ${result.error}');
           return FailureResult(AppError.from(result.error));
       }
     } on Exception catch (error) {
@@ -152,7 +152,7 @@ class TodoRepository {
 //           final todos = Todos(todos: todoList);
 //           return SuccessResult(todos);
 //         case FailureResult<TodosDto>():
-//           logger.e('[TodoRepository] ${result.error}');
+//           logger.e(message: '[TodoRepository] ${result.error}');
 //           return FailureResult(result.error);
 //       }
 //     } on Exception catch (error) {
@@ -176,11 +176,11 @@ class TodoRepository {
 //           }
 //           return SuccessResult(todo);
 //         case FailureResult<TodoDto>():
-//           logger.e('[TodoRepository] ${result.error}');
+//           logger.e(message: '[TodoRepository] ${result.error}');
 //           return FailureResult(result.error);
 //       }
 //     } on Exception catch (error) {
-//       logger.e('[TodoRepository] $error');
+//       logger.e(message: '[TodoRepository] $error');
 //       return Result.failure(error);
 //     }
 //   }

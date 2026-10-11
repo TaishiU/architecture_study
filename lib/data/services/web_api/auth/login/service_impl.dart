@@ -39,10 +39,10 @@ class AuthApiServiceImpl implements AuthApiService {
       final loginDto = LoginDto.fromJson(response);
       return SuccessResult(loginDto);
     } on ApiClientException catch (error) {
-      logger.e('[AuthApiServiceImpl] ApiClientException: $error');
+      logger.e(message: '[AuthApiServiceImpl] ApiClientException: $error');
       return FailureResult(error);
     } on Exception catch (error) {
-      logger.e('[AuthApiServiceImpl] Unexpected Error: $error');
+      logger.e(message: '[AuthApiServiceImpl] Unexpected Error: $error');
       return FailureResult(error);
     }
   }

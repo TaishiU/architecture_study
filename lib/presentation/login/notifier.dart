@@ -38,7 +38,9 @@ class LoginScreenNotifier extends AsyncNotifier<LoginScreenState> {
         // 必要に応じて UI のフィードバック処理を行う。
         return;
       case FailureResult<void>():
-        logger.e('[LoginScreenNotifier] login failed: ${result.error}');
+        logger.e(
+          message: '[LoginScreenNotifier] login failed: ${result.error}',
+        );
         throw Exception();
     }
   }

@@ -30,7 +30,7 @@ class TodoListScreenNotifier extends AsyncNotifier<TodoListScreenState> {
         return TodoListScreenState(todos: todos, searchQuery: searchQuery);
       }(),
       FailureResult(:final error) => () {
-        logger.e('[TodoListScreenNotifier] Error caught: $error');
+        logger.e(message: '[TodoListScreenNotifier] Error caught: $error');
         throw error;
       }(),
     };

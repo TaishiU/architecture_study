@@ -250,19 +250,19 @@ class ApiClientImpl implements ApiClient {
     };
 
     // ロギング
-    logger.d('APIリクエスト: ${method.value} $uri');
+    logger.d(message: 'APIリクエスト: ${method.value} $uri');
     if (authHeaders.isNotEmpty) {
-      logger.d('リクエストヘッダー: $authHeaders');
+      logger.d(message: 'リクエストヘッダー: $authHeaders');
     }
     if (requestBody != null) {
-      logger.d('リクエストボディ: $requestBody');
+      logger.d(message: 'リクエストボディ: $requestBody');
     }
 
     Exception? lastException;
 
     for (var i = 0; i <= maxRetries; i++) {
       try {
-        logger.d('APIリクエスト試行 ${i + 1}/${maxRetries + 1}');
+        logger.d(message: 'APIリクエスト試行 ${i + 1}/${maxRetries + 1}');
 
         late final http.Response response;
         switch (method) {
@@ -285,15 +285,15 @@ class ApiClientImpl implements ApiClient {
         }
 
         logger
-          ..i('APIレスポンス受信: ステータスコード ${response.statusCode}')
-          ..i('レスポンスボディ: ${response.body}');
+          ..i(message: 'APIレスポンス受信: ステータスコード ${response.statusCode}')
+          ..i(message: 'レスポンスボディ: ${response.body}');
 
         // 401エラー（トークン期限切れ）のハンドリング
         // ログインAPI自体が401を返した場合はリフレッシュしない
         if (response.statusCode == 401 &&
             endpoint != 'auth/refresh' &&
             endpoint != 'auth/login') {
-          logger.w('401 Unauthorizedを検知。トークンの更新を試みます。');
+          logger.w(message: '401 Unauthorizedを検知。トークンの更新を試みます。');
           final refreshSuccess = await _handleTokenRefresh();
 
           if (!refreshSuccess) {
@@ -315,24 +315,26 @@ class ApiClientImpl implements ApiClient {
           responseBody: response.body,
         );
       } on SocketException catch (error) {
-        logger.w('ネットワークエラー: ${error.message}');
+        logger.w(message: 'ネットワークエラー: ${error.message}');
         lastException = NoInternetConnectionException(message: error.message);
         if (i < maxRetries) {
-          logger.w('リトライします... (${retryDelay.inSeconds}秒後)'); // コンストラクタから取得
+          logger.w(
+            message: 'リトライします... (${retryDelay.inSeconds}秒後)',
+          ); // コンストラクタから取得
           await Future<void>.delayed(retryDelay); // コンストラクタから取得
         }
       } on http.ClientException catch (error) {
-        logger.e('HTTPクライアントエラー: ${error.message}');
+        logger.e(message: 'HTTPクライアントエラー: ${error.message}');
         throw ApiClientException(
           message: 'HTTP Client Error: ${error.message}',
         );
       } on FormatException catch (error) {
-        logger.e('レスポンス形式エラー: ${error.message}');
+        logger.e(message: 'レスポンス形式エラー: ${error.message}');
         throw ApiClientException(
           message: 'Bad response format: ${error.message}',
         );
       } catch (error) {
-        logger.e('予期せぬエラー: $error');
+        logger.e(message: '予期せぬエラー: $error');
         rethrow;
       }
     }
@@ -431,16 +433,16 @@ class ApiClientImpl implements ApiClient {
         await authSecureStorageService.setAccessToken(token: newAccessToken);
         await authSecureStorageService.setRefreshToken(token: newRefreshToken);
 
-        logger.i('トークンの更新に成功しました。');
+        logger.i(message: 'トークンの更新に成功しました。');
         return true;
       } else {
-        logger.e('トークンの更新に失敗しました。ステータスコード: ${response.statusCode}');
+        logger.e(message: 'トークンの更新に失敗しました。ステータスコード: ${response.statusCode}');
         // セッション切れとしてデータをクリア
         await authSecureStorageService.clearAuthData();
         return false;
       }
     } on Exception catch (e) {
-      logger.e('トークンの更新中にエラーが発生しました: $e');
+      logger.e(message: 'トークンの更新中にエラーが発生しました: $e');
       return false;
     } finally {
       _isRefreshing = false;

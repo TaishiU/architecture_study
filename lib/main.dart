@@ -1,18 +1,17 @@
 import 'package:architecture_study/data/services/local_storage/preferences/shared_preferences_service_impl.dart';
 import 'package:architecture_study/router/router.dart';
+import 'package:architecture_study/utils/talker.dart';
 import 'package:architecture_study/utils/unauthorized_error_observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:talker_riverpod_logger/talker_riverpod_logger.dart';
 
-// import 'package:shared_preferences/shared_preferences.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // SharedPreferencesWithCache の初期化
   final sharedPreferencesWithCache = await SharedPreferencesWithCache.create(
     cacheOptions: const SharedPreferencesWithCacheOptions(
-      // アプリケーションで利用するキーをallowListに指定
       allowList: <String>{
         'access_token',
         'refresh_token',
@@ -20,14 +19,22 @@ Future<void> main() async {
     ),
   );
 
-  // SharedPreferencesServiceImpl のインスタンス作成
   final sharedPreferencesServiceImpl = SharedPreferencesServiceImpl(
     sharedPreferences: sharedPreferencesWithCache,
   );
 
   runApp(
     ProviderScope(
-      observers: [UnauthorizedErrorObserver()],
+      observers: [
+        UnauthorizedErrorObserver(),
+        TalkerRiverpodObserver(
+          talker: talker,
+          settings: const TalkerRiverpodLoggerSettings(
+            printProviderAdded: false,
+            printProviderUpdated: false,
+          ),
+        ),
+      ],
       overrides: [
         sharedPreferencesServiceImplProvider.overrideWithValue(
           sharedPreferencesServiceImpl,
@@ -52,7 +59,6 @@ class MyApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       routerConfig: router,
     );
   }

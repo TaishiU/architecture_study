@@ -1,3 +1,4 @@
+import 'package:architecture_study/presentation/debug/screen.dart';
 import 'package:architecture_study/presentation/home/todo_list/screen.dart';
 import 'package:architecture_study/presentation/login/screen.dart';
 import 'package:architecture_study/presentation/profile/screen.dart';
@@ -7,6 +8,9 @@ import 'package:go_router/go_router.dart';
 
 /// 画面遷移ヘルパー。
 extension NavigationExtension on BuildContext {
+  /// デバッグメニュー画面へ遷移する。
+  void toDebugMenuScreen() => go(DebugMenuScreen.path);
+
   /// ログイン画面へ遷移する。
   void toLoginScreen() => go(LoginScreen.path);
 

@@ -32,7 +32,7 @@ class ProfileScreenUseCase {
     return switch (result) {
       SuccessResult(:final value) => value,
       FailureResult(:final error) => () {
-        logger.e('[ProfileScreenUseCase] fetchUser error: $error');
+        logger.e(message: '[ProfileScreenUseCase] fetchUser error: $error');
         throw error;
       }(),
     };

@@ -30,10 +30,10 @@ class UsersApiServiceImpl implements UsersApiService {
       final userDto = UserDto.fromJson(response);
       return SuccessResult(userDto);
     } on ApiClientException catch (error) {
-      logger.e('[UsersApiServiceImpl] ApiClientException: $error');
+      logger.e(message: '[UsersApiServiceImpl] ApiClientException: $error');
       return FailureResult(error);
     } on Exception catch (error) {
-      logger.e('[UsersApiServiceImpl] Unexpected Error: $error');
+      logger.e(message: '[UsersApiServiceImpl] Unexpected Error: $error');
       return FailureResult(error);
     }
   }

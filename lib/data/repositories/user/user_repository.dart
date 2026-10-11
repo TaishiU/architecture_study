@@ -37,7 +37,7 @@ class UserRepository {
           }
           return SuccessResult(user);
         case FailureResult<UserDto>():
-          logger.e('[UserRepository] ${result.error}');
+          logger.e(message: '[UserRepository] ${result.error}');
           return FailureResult(AppError.from(result.error));
       }
     } on Exception catch (error) {

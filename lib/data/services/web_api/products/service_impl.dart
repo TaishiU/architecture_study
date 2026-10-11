@@ -51,10 +51,10 @@ class ProductsApiServiceImpl implements ProductsApiService {
       final dto = ProductsDto.fromJson(response);
       return SuccessResult(dto);
     } on ApiClientException catch (error) {
-      logger.e('[ProductsApiServiceImpl] ApiClientException: $error');
+      logger.e(message: '[ProductsApiServiceImpl] ApiClientException: $error');
       return FailureResult(error);
     } on Exception catch (error) {
-      logger.e('[ProductsApiServiceImpl] Unexpected Error: $error');
+      logger.e(message: '[ProductsApiServiceImpl] Unexpected Error: $error');
       return FailureResult(error);
     }
   }
@@ -66,10 +66,10 @@ class ProductsApiServiceImpl implements ProductsApiService {
       final dto = ProductDetailDto.fromJson(response);
       return SuccessResult(dto);
     } on ApiClientException catch (error) {
-      logger.e('[ProductsApiServiceImpl] ApiClientException: $error');
+      logger.e(message: '[ProductsApiServiceImpl] ApiClientException: $error');
       return FailureResult(error);
     } on Exception catch (error) {
-      logger.e('[ProductsApiServiceImpl] Unexpected Error: $error');
+      logger.e(message: '[ProductsApiServiceImpl] Unexpected Error: $error');
       return FailureResult(error);
     }
   }
@@ -101,10 +101,10 @@ class ProductsApiServiceImpl implements ProductsApiService {
       final dto = ProductDetailDto.fromJson(response);
       return SuccessResult(dto);
     } on ApiClientException catch (error) {
-      logger.e('[ProductsApiServiceImpl] ApiClientException: $error');
+      logger.e(message: '[ProductsApiServiceImpl] ApiClientException: $error');
       return FailureResult(error);
     } on Exception catch (error) {
-      logger.e('[ProductsApiServiceImpl] Unexpected Error: $error');
+      logger.e(message: '[ProductsApiServiceImpl] Unexpected Error: $error');
       return FailureResult(error);
     }
   }
@@ -137,10 +137,10 @@ class ProductsApiServiceImpl implements ProductsApiService {
       final dto = ProductDetailDto.fromJson(response);
       return SuccessResult(dto);
     } on ApiClientException catch (error) {
-      logger.e('[ProductsApiServiceImpl] ApiClientException: $error');
+      logger.e(message: '[ProductsApiServiceImpl] ApiClientException: $error');
       return FailureResult(error);
     } on Exception catch (error) {
-      logger.e('[ProductsApiServiceImpl] Unexpected Error: $error');
+      logger.e(message: '[ProductsApiServiceImpl] Unexpected Error: $error');
       return FailureResult(error);
     }
   }
@@ -151,10 +151,10 @@ class ProductsApiServiceImpl implements ProductsApiService {
       await apiClient.delete(endpoint: '$endpoint/$id');
       return const SuccessResult(null);
     } on ApiClientException catch (error) {
-      logger.e('[ProductsApiServiceImpl] ApiClientException: $error');
+      logger.e(message: '[ProductsApiServiceImpl] ApiClientException: $error');
       return FailureResult(error);
     } on Exception catch (error) {
-      logger.e('[ProductsApiServiceImpl] Unexpected Error: $error');
+      logger.e(message: '[ProductsApiServiceImpl] Unexpected Error: $error');
       return FailureResult(error);
     }
   }
