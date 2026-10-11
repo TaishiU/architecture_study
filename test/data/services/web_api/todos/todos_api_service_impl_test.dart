@@ -1,6 +1,9 @@
 import 'package:architecture_study/data/services/web_api/api_client.dart';
 import 'package:architecture_study/data/services/web_api/api_exception.dart';
+import 'package:architecture_study/data/services/web_api/mock_api_enabled_provider.dart';
 import 'package:architecture_study/data/services/web_api/todos/dto.dart';
+import 'package:architecture_study/data/services/web_api/todos/fake_service_impl.dart';
+import 'package:architecture_study/data/services/web_api/todos/service.dart';
 import 'package:architecture_study/data/services/web_api/todos/service_impl.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -55,6 +58,93 @@ void main() {
       verify(
         mockApiClient.get(endpoint: 'todos'),
       ).called(1);
+    });
+  });
+
+  group('todosApiServiceProvider', () {
+    late ProviderContainer container;
+
+    setUp(() {
+      container = ProviderContainer(
+        overrides: [
+          apiClientProvider.overrideWithValue(MockApiClient()),
+        ],
+      );
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+
+    test('isMock=false のとき TodosApiServiceImpl を返すこと', () {
+      final service = container.read(todosApiServiceProvider);
+      expect(service, isA<TodosApiServiceImpl>());
+    });
+
+    test('isMock=true のとき FakeTodoApiServiceImpl を返すこと', () {
+      container.read(isMockApiEnabledProvider.notifier).enabled = true;
+      final service = container.read(todosApiServiceProvider);
+      expect(service, isA<FakeTodoApiServiceImpl>());
+    });
+
+    test('isMock=false → true → false と切り替えると型が変わること', () {
+      expect(
+        container.read(todosApiServiceProvider),
+        isA<TodosApiServiceImpl>(),
+      );
+      container.read(isMockApiEnabledProvider.notifier).enabled = true;
+      expect(
+        container.read(todosApiServiceProvider),
+        isA<FakeTodoApiServiceImpl>(),
+      );
+      container.read(isMockApiEnabledProvider.notifier).enabled = false;
+      expect(
+        container.read(todosApiServiceProvider),
+        isA<TodosApiServiceImpl>(),
+      );
+    });
+  });
+
+  group('FakeTodoApiServiceImpl', () {
+    late FakeTodoApiServiceImpl fakeService;
+
+    setUp(() {
+      fakeService = FakeTodoApiServiceImpl();
+    });
+
+    test('fakeTodoApiServiceImplProvider は FakeTodoApiServiceImpl を返すこと', () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      expect(
+        container.read(fakeTodoApiServiceImplProvider),
+        isA<FakeTodoApiServiceImpl>(),
+      );
+    });
+
+    test('fetch は SuccessResult<TodosDto> を返すこと', () async {
+      final result = await fakeService.fetch();
+      expect(result, isA<SuccessResult<TodosDto>>());
+    });
+
+    test('fetch は TodosApiService を実装していること', () {
+      expect(fakeService, isA<TodosApiService>());
+    });
+
+    test('返却される todos は空でないこと', () async {
+      final result = await fakeService.fetch();
+      final todos = (result as SuccessResult<TodosDto>).value.todos;
+      expect(todos, isNotNull);
+      expect(todos, isNotEmpty);
+    });
+
+    test('返却される各 TodoDto は id / userId / todo を持つこと', () async {
+      final result = await fakeService.fetch();
+      final todos = (result as SuccessResult<TodosDto>).value.todos!;
+      for (final todo in todos) {
+        expect(todo.id, isNotNull);
+        expect(todo.userId, isNotNull);
+        expect(todo.todo, isNotNull);
+      }
     });
   });
 

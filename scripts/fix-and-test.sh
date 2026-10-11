@@ -51,6 +51,7 @@ rm -f "$TEST_LOG"
 # カバレッジをhtml化する
 lcov --extract coverage/lcov.info 'lib/data/**/*_repository.dart' \
   --extract coverage/lcov.info 'lib/data/**/*_service_impl.dart' \
+  --extract coverage/lcov.info 'lib/data/**/service_impl.dart' \
   --extract coverage/lcov.info 'lib/data/**/api_client.dart' \
   --extract coverage/lcov.info 'lib/presentation/**/*_view_model.dart' \
   -o coverage/lcov_extract.info

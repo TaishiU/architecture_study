@@ -16,9 +16,11 @@ final usersApiServiceImplProvider = Provider<UsersApiServiceImpl>(
 
 /// mock切り替え対応の統合Provider
 final usersApiServiceProvider = Provider<UsersApiService>((ref) {
+  // coverage:ignore-start
   if (!kDebugMode) {
     return UsersApiServiceImpl(apiClient: ref.read(apiClientProvider));
   }
+  // coverage:ignore-end
   final isMock = ref.watch<bool>(isMockApiEnabledProvider);
   return isMock
       ? FakeUsersApiServiceImpl()

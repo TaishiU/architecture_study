@@ -16,9 +16,11 @@ final todosApiServiceImplProvider = Provider<TodosApiServiceImpl>(
 
 /// mock切り替え対応の統合Provider
 final todosApiServiceProvider = Provider<TodosApiService>((ref) {
+  // coverage:ignore-start
   if (!kDebugMode) {
     return TodosApiServiceImpl(apiClient: ref.read(apiClientProvider));
   }
+  // coverage:ignore-end
   final isMock = ref.watch<bool>(isMockApiEnabledProvider);
   return isMock
       ? FakeTodoApiServiceImpl()

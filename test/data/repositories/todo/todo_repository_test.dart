@@ -44,7 +44,7 @@ void main() {
       mockTodosApiServiceImpl = MockTodosApiServiceImpl();
       container = ProviderContainer(
         overrides: [
-          todosApiServiceImplProvider.overrideWith(
+          todosApiServiceProvider.overrideWith(
             (ref) => mockTodosApiServiceImpl,
           ),
         ],
