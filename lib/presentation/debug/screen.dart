@@ -1,9 +1,12 @@
+import 'package:architecture_study/data/services/web_api/mock_api_enabled_provider.dart';
 import 'package:architecture_study/utils/talker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 /// デバッグメニュー画面（kDebugMode 限定）
-class DebugMenuScreen extends StatelessWidget {
+class DebugMenuScreen extends ConsumerWidget {
   /// コンストラクタ
   const DebugMenuScreen({super.key});
 
@@ -11,7 +14,8 @@ class DebugMenuScreen extends StatelessWidget {
   static const path = '/debug';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isMock = ref.watch<bool>(isMockApiEnabledProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('デバッグメニュー')),
       body: ListView(
@@ -25,6 +29,17 @@ class DebugMenuScreen extends StatelessWidget {
                 builder: (_) => TalkerScreen(talker: talker),
               ),
             ),
+          ),
+          SwitchListTile(
+            secondary: const Icon(Icons.cloud_off_outlined),
+            title: const Text('APIモック'),
+            subtitle: Text(isMock ? 'Fake（スタブ）' : '実API'),
+            value: isMock,
+            onChanged: kDebugMode
+                ? (value) =>
+                      ref.read(isMockApiEnabledProvider.notifier).enabled =
+                          value
+                : null,
           ),
         ],
       ),

@@ -2,7 +2,8 @@ import 'package:architecture_study/data/services/web_api/users/dto.dart' as dto;
 import 'package:architecture_study/data/services/web_api/users/dto.dart'
     show UserDto;
 import 'package:architecture_study/data/services/web_api/users/service.dart';
-import 'package:architecture_study/data/services/web_api/users/service_impl.dart';
+import 'package:architecture_study/data/services/web_api/users/service_impl.dart'
+    show usersApiServiceProvider;
 import 'package:architecture_study/domain/entities/user/user.dart';
 import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/logger.dart';
@@ -12,7 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 /// プロバイダ
 final userRepositoryProvider = Provider<UserRepository>(
   (ref) => UserRepository(
-    usersApiService: ref.read(usersApiServiceImplProvider),
+    usersApiService: ref.watch(usersApiServiceProvider),
   ),
 );
 

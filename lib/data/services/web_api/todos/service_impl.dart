@@ -1,15 +1,29 @@
 import 'package:architecture_study/data/services/web_api/api_client.dart';
 import 'package:architecture_study/data/services/web_api/api_exception.dart';
+import 'package:architecture_study/data/services/web_api/mock_api_enabled_provider.dart';
 import 'package:architecture_study/data/services/web_api/todos/dto.dart';
+import 'package:architecture_study/data/services/web_api/todos/fake_service_impl.dart';
 import 'package:architecture_study/data/services/web_api/todos/service.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final todosApiServiceImplProvider = Provider<TodosApiServiceImpl>(
   (ref) => TodosApiServiceImpl(apiClient: ref.read(apiClientProvider)),
 );
+
+/// mock切り替え対応の統合Provider
+final todosApiServiceProvider = Provider<TodosApiService>((ref) {
+  if (!kDebugMode) {
+    return TodosApiServiceImpl(apiClient: ref.read(apiClientProvider));
+  }
+  final isMock = ref.watch<bool>(isMockApiEnabledProvider);
+  return isMock
+      ? FakeTodoApiServiceImpl()
+      : TodosApiServiceImpl(apiClient: ref.read(apiClientProvider));
+});
 
 /// APIサービス実装クラス
 class TodosApiServiceImpl implements TodosApiService {

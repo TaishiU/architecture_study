@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 /// 画面遷移ヘルパー。
 extension NavigationExtension on BuildContext {
   /// デバッグメニュー画面へ遷移する。
-  void toDebugMenuScreen() => go(DebugMenuScreen.path);
+  void toDebugMenuScreen() => push(DebugMenuScreen.path);
 
   /// ログイン画面へ遷移する。
   void toLoginScreen() => go(LoginScreen.path);

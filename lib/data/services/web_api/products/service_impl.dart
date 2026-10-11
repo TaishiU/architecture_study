@@ -1,15 +1,29 @@
 import 'package:architecture_study/data/services/web_api/api_client.dart';
 import 'package:architecture_study/data/services/web_api/api_exception.dart';
+import 'package:architecture_study/data/services/web_api/mock_api_enabled_provider.dart';
 import 'package:architecture_study/data/services/web_api/products/dto.dart';
+import 'package:architecture_study/data/services/web_api/products/fake_service_impl.dart';
 import 'package:architecture_study/data/services/web_api/products/service.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
 final productsApiServiceImplProvider = Provider<ProductsApiServiceImpl>(
   (ref) => ProductsApiServiceImpl(apiClient: ref.read(apiClientProvider)),
 );
+
+/// mock切り替え対応の統合Provider
+final productsApiServiceProvider = Provider<ProductsApiService>((ref) {
+  if (!kDebugMode) {
+    return ProductsApiServiceImpl(apiClient: ref.read(apiClientProvider));
+  }
+  final isMock = ref.watch<bool>(isMockApiEnabledProvider);
+  return isMock
+      ? FakeProductsApiServiceImpl()
+      : ProductsApiServiceImpl(apiClient: ref.read(apiClientProvider));
+});
 
 /// 商品APIサービス実装クラス
 class ProductsApiServiceImpl implements ProductsApiService {

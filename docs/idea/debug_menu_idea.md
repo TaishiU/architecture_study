@@ -387,19 +387,9 @@ File > Open で architecture_study/ を選択。
 
 ---
 
-### フェーズ2（未実装）：API通信モック切り替え
+#### Talkerログの活用・整理メモ
 
-`fake_*_impl.dart` は既に各 Service に実装済み。
-未実装なのは Provider レベルの動的切り替え機構。
-
-参考記事の `selectRepositoryByBuildMode` ヘルパーに相当する仕組みを検討中。
-デバッグメニューにトグル項目を追加し、`isDebugModeProvider` のフラグで Service / Repository を切り替える方針。
-
----
-
-## Talkerログの活用・整理メモ
-
-### Claude Codeへのバグ調査依頼への活用
+##### Claude Codeへのバグ調査依頼への活用
 
 ログをそのまま貼り付けることで、Claude Codeが「問題がどの層で起きたか」を即座に特定できる。
 
@@ -414,7 +404,7 @@ File > Open で architecture_study/ を選択。
 | データがUIに届かない | `riverpod-update` の PREVIOUS→NEW 遷移 |
 | 認証エラー | `[debug] リクエストヘッダー` のトークン確認 |
 
-### 各ログの評価
+##### 各ログの評価
 
 | ログ種別 | 評価 | 理由 |
 |---|---|---|
@@ -425,7 +415,7 @@ File > Open で architecture_study/ を選択。
 | `PREVIOUS/NEW state` のデータ全量 | **冗長（正常時）** | 30件リスト等が毎回展開されノイズになる |
 | `Instance of 'XXX'` の初期化state | **冗長** | ほぼ定型で情報量が低い |
 
-### `riverpod-update` フルstate出力の問題点
+##### `riverpod-update` フルstate出力の問題点
 
 現状のログで最も冗長。1エントリに30件のTodoリストが2回（PREVIOUS / NEW）展開される。
 
@@ -455,3 +445,104 @@ ProviderScope(
   ...
 )
 ```
+
+---
+
+### フェーズ2：API通信モック切り替え
+
+#### 参考記事との差分
+
+参考記事は **Repository 層**で切り替え（`DebugUserRepository extends UserRepository`）。
+このプロジェクトは Service 層に既に Interface（`TodosApiService` 等）が存在するため、**Service 層**で切り替える方が自然かつ影響範囲が小さい。
+
+#### 設計
+
+```
+isMockApiEnabledProvider（NotifierProvider<bool>）
+        ↓ watch
+todosApiServiceProvider（Provider<TodosApiService>）← fake or real を返す統合Provider
+        ↓ watch
+todoRepositoryProvider  ← Repository 側の変更なし（引数の型は元から Interface のまま）
+```
+
+**フラグが変わったときの連鎖**:
+1. `isMockApiEnabledProvider` 更新
+2. 統合 Provider（`todosApiServiceProvider` 等）が再評価
+3. Repository Provider が再生成 → SSOT キャッシュ（`_isFetched` / `_todos`）もリセット
+4. `todosStreamProvider` が再構築 → UI 自動更新
+
+#### 実装ファイル一覧
+
+| ファイル | 内容 |
+|---|---|
+| `lib/data/services/web_api/mock_api_enabled_provider.dart` | 新規：`isMockApiEnabledProvider`（`NotifierProvider<bool>`） |
+| `lib/data/services/web_api/todos/service_impl.dart` | `todosApiServiceProvider`（統合 Provider）追加 |
+| `lib/data/services/web_api/users/service_impl.dart` | `usersApiServiceProvider` 追加 |
+| `lib/data/services/web_api/products/service_impl.dart` | `productsApiServiceProvider` 追加 |
+| `lib/data/repositories/todo/todo_repository.dart` | `ref.read` → `ref.watch(todosApiServiceProvider)` に変更 |
+| `lib/data/repositories/user/user_repository.dart` | `ref.read` → `ref.watch(usersApiServiceProvider)` に変更 |
+| `lib/presentation/debug/screen.dart` | `SwitchListTile` 追加（`StatelessWidget` → `ConsumerWidget` に変更） |
+
+#### 主要実装コード
+
+**`mock_api_enabled_provider.dart`**
+
+```dart
+final NotifierProvider<MockApiEnabledNotifier, bool> isMockApiEnabledProvider =
+    NotifierProvider<MockApiEnabledNotifier, bool>(MockApiEnabledNotifier.new);
+
+class MockApiEnabledNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  bool get enabled => state;
+  set enabled(bool value) => state = value;
+}
+```
+
+**統合 Provider（各 `service_impl.dart` に追加）**
+
+```dart
+// todos の例。users / products も同様
+final todosApiServiceProvider = Provider<TodosApiService>((ref) {
+  // リリースビルドでは常に実 API
+  if (!kDebugMode) {
+    return TodosApiServiceImpl(apiClient: ref.read(apiClientProvider));
+  }
+  final isMock = ref.watch<bool>(isMockApiEnabledProvider);
+  return isMock
+      ? FakeTodoApiServiceImpl()
+      : TodosApiServiceImpl(apiClient: ref.read(apiClientProvider));
+});
+```
+
+**Repository Provider の変更**
+
+```dart
+// ref.read → ref.watch に変更し、統合 Provider を参照する
+final todoRepositoryProvider = Provider<TodoRepository>(
+  (ref) => TodoRepository(
+    todoApiService: ref.watch(todosApiServiceProvider),
+  ),
+);
+```
+
+**デバッグメニューへのトグル追加**
+
+```dart
+SwitchListTile(
+  secondary: const Icon(Icons.cloud_off_outlined),
+  title: const Text('APIモック'),
+  subtitle: Text(isMock ? 'Fake（スタブ）' : '実API'),
+  value: isMock,
+  onChanged: kDebugMode
+      ? (value) => ref.read(isMockApiEnabledProvider.notifier).enabled = value
+      : null,
+),
+```
+
+#### 備考
+
+- `auth/login/` は `fake_service_impl.dart` が未実装のため対象外
+- `products` の Repository は未作成のため Repository 側の変更はなし（統合 Provider のみ追加済み）
+- `StateProvider` は Riverpod 3.x で廃止済み → `NotifierProvider` を使用

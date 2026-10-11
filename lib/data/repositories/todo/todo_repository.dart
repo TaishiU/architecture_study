@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:architecture_study/data/services/web_api/todos/dto.dart';
 import 'package:architecture_study/data/services/web_api/todos/service.dart';
-import 'package:architecture_study/data/services/web_api/todos/service_impl.dart';
+import 'package:architecture_study/data/services/web_api/todos/service_impl.dart'
+    show todosApiServiceProvider;
 import 'package:architecture_study/domain/entities/todos/todos.dart';
 import 'package:architecture_study/domain/errors/app_error.dart';
 import 'package:architecture_study/utils/logger.dart';
@@ -12,7 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 /// RepositoryのProvider
 final todoRepositoryProvider = Provider<TodoRepository>(
   (ref) => TodoRepository(
-    todoApiService: ref.read(todosApiServiceImplProvider),
+    todoApiService: ref.watch(todosApiServiceProvider),
   ),
 );
 

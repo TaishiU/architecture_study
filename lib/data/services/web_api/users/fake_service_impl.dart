@@ -27,7 +27,7 @@ class FakeUsersApiServiceImpl implements UsersApiService {
       username: 'emilys',
       password: 'emilyspass',
       birthDate: '1996-5-30',
-      image: '...',
+      image: 'https://placehold.jp/400x400.png',
       bloodGroup: 'O-',
       height: 193.24,
       weight: 63.16,
