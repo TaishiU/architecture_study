@@ -1,9 +1,9 @@
 import 'package:architecture_study/data/services/web_api/api_client.dart';
 import 'package:architecture_study/data/services/web_api/api_exception.dart';
-import 'package:architecture_study/data/services/web_api/mock_api_enabled_provider.dart';
+import 'package:architecture_study/data/services/web_api/stub_api_enabled_provider.dart';
 import 'package:architecture_study/data/services/web_api/todos/dto.dart';
-import 'package:architecture_study/data/services/web_api/todos/fake_service_impl.dart';
 import 'package:architecture_study/data/services/web_api/todos/service.dart';
+import 'package:architecture_study/data/services/web_api/todos/stub_service_impl.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/foundation.dart';
@@ -14,16 +14,16 @@ final todosApiServiceImplProvider = Provider<TodosApiServiceImpl>(
   (ref) => TodosApiServiceImpl(apiClient: ref.read(apiClientProvider)),
 );
 
-/// mock切り替え対応の統合Provider
+/// スタブ切り替え対応の統合Provider
 final todosApiServiceProvider = Provider<TodosApiService>((ref) {
   // coverage:ignore-start
   if (!kDebugMode) {
     return TodosApiServiceImpl(apiClient: ref.read(apiClientProvider));
   }
   // coverage:ignore-end
-  final isMock = ref.watch<bool>(isMockApiEnabledProvider);
-  return isMock
-      ? FakeTodoApiServiceImpl()
+  final isStub = ref.watch<bool>(isStubApiEnabledProvider);
+  return isStub
+      ? StubTodoApiServiceImpl()
       : TodosApiServiceImpl(apiClient: ref.read(apiClientProvider));
 });
 

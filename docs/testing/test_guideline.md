@@ -27,11 +27,11 @@
 |---|---|
 | テストなし | 変更が怖い → 変更しない → コードが硬直化 |
 | フラジャイル（壊れやすい）なテスト（mockito乱用） | リファクタリングでテストが壊れる → 変更が面倒 → やはり変更しない |
-| **信頼性の高いテスト（Fake注入）** | 変更しても30秒で安全確認 → 気軽に変更できる → コードが常にクリーン |
+| ****信頼性の高いテスト（スタブ注入）**** | 変更しても30秒で安全確認 → 気軽に変更できる → コードが常にクリーン |
 
 「コードが変化し続けられる状態を維持する」 = ソフトウェアが「ソフト（変更容易）」であり続けること。
 
-*フラジャイルなテスト（mockito乱用）の詳細は「**テストダブル：mockito vs Fake**」セクションを参照。
+*フラジャイルなテスト（mockito乱用）の詳細は「**テストダブル：mockito vs スタブ**」セクションを参照。
 
 ---
 
@@ -76,7 +76,7 @@ AIにテストコードを高精度で実装させるための核心。**3条件
 
 ---
 
-## テストダブル：mockito vs Fake
+## テストダブル：mockito vs スタブ
 
 ### mockitoとは
 
@@ -97,7 +97,7 @@ mockitoの問題は道具そのものではなく「内部の呼び出し構造�
 - → リファクタリングが面倒になる = 変化を阻む
 
 テストが検証すべきは「契約（何が起きるか・結果）」であって「実装（どう実現するか・過程）」ではない。
-Fake注入は「FakeServiceというI/O境界だけを差し替え、実際のRepository・UseCase・Notifierの本物を動かす」ので、内部実装を変えてもテストは壊れない。
+スタブ注入は「スタブServiceというI/O境界だけを差し替え、実際のRepository・UseCase・Notifierの本物を動かす」ので、内部実装を変えてもテストは壊れない。
 
 ### 本物のロジックが動かない問題
 
@@ -111,7 +111,7 @@ Notifier.toggleTodo(1)
 MockUseCaseは「呼ばれたら成功を返せ」と命令されているだけなので、UseCaseの中のビジネスロジック・RepositoryのDTO変換・エラーハンドリングは一度も実行されない。
 
 - mockito乱用：「Notifierが正しくメソッドを呼んだか」は確認できるが「実際にstateが正しく変わるか」は確認できない
-- Fake注入：Serviceより上のレイヤーがすべて本物で動くので、本来テストしたいロジックが実際に検証される
+- スタブ注入：Serviceより上のレイヤーがすべて本物で動くので、本来テストしたいロジックが実際に検証される
 
 ### verifyが適切な場面
 
@@ -137,29 +137,29 @@ verify(mockAnalyticsService.logEvent('todo_completed')).called(1);
 
 ### テストダブル戦略
 
-本プロジェクトは既に `FakeServiceImpl` を持つ → **Fake注入でSmallに保てる**
+本プロジェクトは既に `StubServiceImpl` を持つ → **スタブ注入でSmallに保てる**
 
 ```
-View → Notifier → UseCase → Interface ← [Repository] → [FakeService]
+View → Notifier → UseCase → Interface ← [Repository] → [StubService]
                                                 ↑
-                                         ここでFake注入 → 1プロセスで完結（Small）
+                                         ここでスタブ注入 → 1プロセスで完結（Small）
 ```
 
 ### 各レイヤーのテスト方針
 
-| レイヤー | テストサイズ | テスト種別 | 何をテストするか | Fake境界 |
+| レイヤー | テストサイズ | テスト種別 | 何をテストするか | スタブ境界 |
 |---|---|---|---|---|
 | **Entity** | Small | Unit | ビジネスロジック（変換・バリデーション） | なし（純粋関数） |
-| **Service（Fake）** | - | テスト対象外 | テストダブル自体 | - |
-| **Repository** | Small | Unit | DTO→Entity変換・SSOT・エラー変換 | FakeService注入 |
-| **UseCase（Domain）** | Small | Unit | 業務ロジック・複数Repository協調 | FakeRepository注入 |
-| **UseCase（Screen）** | Small | Unit | 画面固有ロジック・バリデーション | FakeRepository注入 |
-| **Notifier** | Small | Integration | state遷移・UseCase呼び出し結果の反映 | FakeService注入 ※1 |
-| **Widget** | Small | Widget | 状態→UI描画・ユーザーアクション→Notifier委譲 | Fake Notifier（Provider override） |
+| **Service（スタブ）** | - | テスト対象外 | テストダブル自体 | - |
+| **Repository** | Small | Unit | DTO→Entity変換・SSOT・エラー変換 | StubService注入 |
+| **UseCase（Domain）** | Small | Unit | 業務ロジック・複数Repository協調 | StubRepository注入 |
+| **UseCase（Screen）** | Small | Unit | 画面固有ロジック・バリデーション | StubRepository注入 |
+| **Notifier** | Small | Integration | state遷移・UseCase呼び出し結果の反映 | StubService注入 ※1 |
+| **Widget** | Small | Widget | 状態→UI描画・ユーザーアクション→Notifier委譲 | スタブNotifier（Provider override） |
 | **Happy path** | Large | E2E | クリティカルな一連の操作フロー | なし（実環境） |
 
 **※1 Notifier統合テストの重要点**
-Notifier + UseCase + Repository を**まとめてテスト**し、FakeServiceのみ注入する。これが「**Integration × Small で最もコスパが良い**」領域。
+Notifier + UseCase + Repository を**まとめてテスト**し、スタブServiceのみ注入する。これが「**Integration × Small で最もコスパが良い**」領域。
 
 ---
 
@@ -231,13 +231,13 @@ group('クラス名 or メソッド名', () {
 
 ### 1. Notifier統合テスト（最優先）
 
-`ProviderContainer` でFakeServiceのみ上書きし、Notifier〜Serviceまで一気通貫でテスト。
+`ProviderContainer` でStubServiceのみ上書きし、Notifier〜Serviceまで一気通貫でテスト。
 
 ```dart
 // テスト構成のイメージ
 final container = ProviderContainer(
   overrides: [
-    todosServiceProvider.overrideWithValue(FakeTodosServiceImpl()),
+    todosServiceProvider.overrideWithValue(StubTodosServiceImpl()),
     // Repository・UseCase・Notifierは本物を使う
   ],
 );
@@ -254,7 +254,7 @@ final container = ProviderContainer(
 
 | 検証内容 | テスト種別 |
 |---|---|
-| ボタン押下 → Notifierメソッドが呼ばれる | **Widget test**（Fake Notifier注入で検証可能） |
+| ボタン押下 → Notifierメソッドが呼ばれる | **Widget test**（スタブNotifier注入で検証可能） |
 | ボタン押下 → 画面Bに遷移する（画面Bが表示される） | **Integration test**（実デバイスが必要） |
 
 「**何が起きたか（状態変化・ハンドラー呼び出し）**」はWidget test、「**どこへ行ったか（画面遷移の結果）**」はIntegration testの領域。
@@ -268,7 +268,7 @@ Screenの責務は `AsyncValue` の状態切り替えとHandlerの定義。デ�
 **テストする契約**:
 
 ```
-事前条件: FakeNotifier が返す AsyncValue の状態
+事前条件: StubNotifier が返す AsyncValue の状態
   AsyncLoading / AsyncData(viewModel) / AsyncError
 
 事後条件:
@@ -282,7 +282,7 @@ testWidgets('AsyncLoading: ローディング表示', (tester) async {
   // Given
   final container = ProviderContainer(
     overrides: [
-      xxxScreenProvider.overrideWith(() => FakeXxxNotifier(const AsyncLoading())),
+      xxxScreenProvider.overrideWith(() => StubXxxNotifier(const AsyncLoading())),
     ],
   );
   // When
@@ -301,13 +301,13 @@ testWidgets('AsyncLoading: ローディング表示', (tester) async {
 
 ```dart
 testWidgets('ボタンタップ: submit が呼ばれる', (tester) async {
-  // Given: FakeNotifier + AsyncData 状態
-  final fakeNotifier = FakeXxxNotifier(AsyncData(initialState));
+  // Given: StubNotifier + AsyncData 状態
+  final stubNotifier = StubXxxNotifier(AsyncData(initialState));
   // When
   await tester.tap(find.byKey(const Key('submit_button')));
   await tester.pump();
   // Then
-  expect(fakeNotifier.submitCallCount, equals(1));
+  expect(stubNotifier.submitCallCount, equals(1));
 });
 ```
 
@@ -406,8 +406,8 @@ testWidgets('完了状態: 完了アイコンが表示される', (tester) async
 
 | アンチパターン | 本プロジェクトでの発生箇所 | 対処 |
 |---|---|---|
-| モックだらけで実装依存 | Notifierテストでmockitoを乱用 | Fake注入 + 本物を使う |
-| 自作自演 | RepositoryテストでFakeがプロダクトコードと同じ変換ロジックを持つ | FakeはI/O最小化のみ、変換ロジックなし |
+| モックだらけで実装依存 | Notifierテストでmockitoを乱用 | スタブ注入 + 本物を使う |
+| 自作自演 | Repositoryテストでスタブがプロダクトコードと同じ変換ロジックを持つ | スタブはI/O最小化のみ、変換ロジックなし |
 | フレーキー | `integration_test` を毎コミットで実行 | Large はcron専用 |
 
 ---
@@ -469,7 +469,7 @@ AIが正確にテストを書けるかどうかは**設計の質に依存する*
 | 設計原則 | 効果 | 本プロジェクトでの実現 |
 |---|---|---|
 | **純粋関数** | 入出力が明確 → 事後条件を固定値で書ける | UseCase / Entity のビジネスロジック |
-| **副作用の隔離** | テスト境界が明確 → FakeのI/O最小化 | ServiceレイヤーにI/Oを集約 |
+| **副作用の隔離** | テスト境界が明確 → スタブのI/O最小化 | ServiceレイヤーにI/Oを集約 |
 | **不変オブジェクト** | 不変条件がコードで保証される | Freezed + コンストラクタガード |
 | **カプセル化** | 目的と手段が1クラスに一貫 → テスト対象が自己完結 | 値オブジェクト（Quantity等） |
 
@@ -482,7 +482,7 @@ AIが正確にテストを書けるかどうかは**設計の質に依存する*
 
 | フェーズ | 作業 | 優先度 |
 |---|---|---|
-| 1 | Notifier統合テストを既存featureに追加（FakeService注入） | 高 |
+| 1 | Notifier統合テストを既存featureに追加（StubService注入） | 高 |
 | 2 | クリティカル画面のWidgetテスト追加（AsyncData/Error/Loading） | 高 |
 | 3 | E2EをintegrationTestパッケージ化（Happy path 1〜2本のみ） | 中 |
 | 4 | CI設定: Smallをコミット時、Largeを夜間cronへ分離 | 中 |

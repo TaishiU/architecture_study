@@ -63,7 +63,7 @@ Service層（`lib/data/services/web_api/` 配下）の実装を自動化する C
       ↓
 7. service.dart 生成（Abstract interface）
       ↓
-8. fake_service_impl.dart 生成（リソース型のみ）
+8. stub_service_impl.dart 生成（リソース型のみ）
       ↓
 9. service_impl.dart 生成
 ```
@@ -231,11 +231,11 @@ class TodosApiServiceImpl implements TodosApiService {
 }
 ```
 
-### fake_service_impl.dart（リソース型のみ）
+### stub_service_impl.dart（リソース型のみ）
 
 - アクション型（auth/login 等）には生成しない
 - `implements XxxApiService`
-- `Provider<FakeXxxApiServiceImpl>` を定義
+- `Provider<StubXxxApiServiceImpl>` を定義
 - レスポンスはハードコードのダミーデータ（openapi.yaml の example があれば使用、なければ型に合わせて生成）
 
 ---

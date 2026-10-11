@@ -8,7 +8,7 @@ argument-hint: "<feature-path> [--file=<yaml-path>]"
 
 `gen-service-web-api` で生成したファイルを openapi.yaml と照合し、規約違反・実装漏れ・誤りを報告するスキル。
 
-対象ファイル: `dto.dart` / `service.dart` / `fake_service_impl.dart`（リソース型のみ）/ `service_impl.dart`
+対象ファイル: `dto.dart` / `service.dart` / `stub_service_impl.dart`（リソース型のみ）/ `service_impl.dart`
 
 ---
 
@@ -35,7 +35,7 @@ argument-hint: "<feature-path> [--file=<yaml-path>]"
 2. `lib/data/services/web_api/{feature-path}/dto.dart`
 3. `lib/data/services/web_api/{feature-path}/service.dart`
 4. `lib/data/services/web_api/{feature-path}/service_impl.dart`
-5. `lib/data/services/web_api/{feature-path}/fake_service_impl.dart`（存在する場合のみ）
+5. `lib/data/services/web_api/{feature-path}/stub_service_impl.dart`（存在する場合のみ）
 
 ---
 
@@ -400,18 +400,18 @@ XxxApiServiceImpl(this.apiClient);
 
 ---
 
-### fake_service_impl.dart チェックリスト
+### stub_service_impl.dart チェックリスト
 
-#### [P1] アクション型に fake_service_impl.dart が存在しないこと
+#### [P1] アクション型に stub_service_impl.dart が存在しないこと
 
-アクション型（パスパラメータなし）のディレクトリに `fake_service_impl.dart` があれば指摘。
+アクション型（パスパラメータなし）のディレクトリに `stub_service_impl.dart` があれば指摘。
 
 #### [P1] Interface のメソッドを全て @override
 
 service.dart に定義された全メソッドが `@override` 付きで実装されていること。
 漏れているメソッドがあれば指摘。
 
-#### [P1] Fake も async メソッド
+#### [P1] スタブも async メソッド
 
 ```dart
 // ✅ Good
@@ -437,13 +437,13 @@ url: 'https://example.com/image.jpg',
 
 ```dart
 // ✅ Good
-final fakeXxxApiServiceImplProvider = Provider<FakeXxxApiServiceImpl>(
-  (ref) => FakeXxxApiServiceImpl(),
+final stubXxxApiServiceImplProvider = Provider<StubXxxApiServiceImpl>(
+  (ref) => StubXxxApiServiceImpl(),
 );
 
 // ❌ Bad（apiClient を渡している）
-final fakeXxxApiServiceImplProvider = Provider<FakeXxxApiServiceImpl>(
-  (ref) => FakeXxxApiServiceImpl(apiClient: ref.read(apiClientProvider)),
+final stubXxxApiServiceImplProvider = Provider<StubXxxApiServiceImpl>(
+  (ref) => StubXxxApiServiceImpl(apiClient: ref.read(apiClientProvider)),
 );
 ```
 
@@ -477,7 +477,7 @@ Future<Result<ProductDetailDto>> fetchById({required int id}) async {
 }
 ```
 
-#### [P3] import 順序（fake_service_impl.dart）
+#### [P3] import 順序（stub_service_impl.dart）
 
 ```dart
 // 外部パッケージ

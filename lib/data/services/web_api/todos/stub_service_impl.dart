@@ -4,14 +4,14 @@ import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
-final fakeTodoApiServiceImplProvider = Provider<FakeTodoApiServiceImpl>(
-  (ref) => FakeTodoApiServiceImpl(),
+final stubTodoApiServiceImplProvider = Provider<StubTodoApiServiceImpl>(
+  (ref) => StubTodoApiServiceImpl(),
 );
 
-/// 開発用サービス実装クラス
-class FakeTodoApiServiceImpl implements TodosApiService {
+/// スタブ実装クラス
+class StubTodoApiServiceImpl implements TodosApiService {
   /// コンストラクタ
-  FakeTodoApiServiceImpl();
+  StubTodoApiServiceImpl();
 
   @override
   Future<Result<TodosDto>> fetch() async {

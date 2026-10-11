@@ -458,15 +458,15 @@ ProviderScope(
 #### 設計
 
 ```
-isMockApiEnabledProvider（NotifierProvider<bool>）
+isStubApiEnabledProvider（NotifierProvider<bool>）
         ↓ watch
-todosApiServiceProvider（Provider<TodosApiService>）← fake or real を返す統合Provider
+todosApiServiceProvider（Provider<TodosApiService>）← スタブ or 実API を返す統合Provider
         ↓ watch
 todoRepositoryProvider  ← Repository 側の変更なし（引数の型は元から Interface のまま）
 ```
 
 **フラグが変わったときの連鎖**:
-1. `isMockApiEnabledProvider` 更新
+1. `isStubApiEnabledProvider` 更新
 2. 統合 Provider（`todosApiServiceProvider` 等）が再評価
 3. Repository Provider が再生成 → SSOT キャッシュ（`_isFetched` / `_todos`）もリセット
 4. `todosStreamProvider` が再構築 → UI 自動更新
@@ -475,7 +475,7 @@ todoRepositoryProvider  ← Repository 側の変更なし（引数の型は元�
 
 | ファイル | 内容 |
 |---|---|
-| `lib/data/services/web_api/mock_api_enabled_provider.dart` | 新規：`isMockApiEnabledProvider`（`NotifierProvider<bool>`） |
+| `lib/data/services/web_api/stub_api_enabled_provider.dart` | 新規：`isStubApiEnabledProvider`（`NotifierProvider<bool>`） |
 | `lib/data/services/web_api/todos/service_impl.dart` | `todosApiServiceProvider`（統合 Provider）追加 |
 | `lib/data/services/web_api/users/service_impl.dart` | `usersApiServiceProvider` 追加 |
 | `lib/data/services/web_api/products/service_impl.dart` | `productsApiServiceProvider` 追加 |
@@ -485,13 +485,13 @@ todoRepositoryProvider  ← Repository 側の変更なし（引数の型は元�
 
 #### 主要実装コード
 
-**`mock_api_enabled_provider.dart`**
+**`stub_api_enabled_provider.dart`**
 
 ```dart
-final NotifierProvider<MockApiEnabledNotifier, bool> isMockApiEnabledProvider =
-    NotifierProvider<MockApiEnabledNotifier, bool>(MockApiEnabledNotifier.new);
+final NotifierProvider<StubApiEnabledNotifier, bool> isStubApiEnabledProvider =
+    NotifierProvider<StubApiEnabledNotifier, bool>(StubApiEnabledNotifier.new);
 
-class MockApiEnabledNotifier extends Notifier<bool> {
+class StubApiEnabledNotifier extends Notifier<bool> {
   @override
   bool build() => false;
 
@@ -509,9 +509,9 @@ final todosApiServiceProvider = Provider<TodosApiService>((ref) {
   if (!kDebugMode) {
     return TodosApiServiceImpl(apiClient: ref.read(apiClientProvider));
   }
-  final isMock = ref.watch<bool>(isMockApiEnabledProvider);
-  return isMock
-      ? FakeTodoApiServiceImpl()
+  final isStub = ref.watch<bool>(isStubApiEnabledProvider);
+  return isStub
+      ? StubTodoApiServiceImpl()
       : TodosApiServiceImpl(apiClient: ref.read(apiClientProvider));
 });
 ```
@@ -533,17 +533,17 @@ final todoRepositoryProvider = Provider<TodoRepository>(
 SwitchListTile(
   secondary: const Icon(Icons.cloud_off_outlined),
   title: const Text('APIモック'),
-  subtitle: Text(isMock ? 'Fake（スタブ）' : '実API'),
-  value: isMock,
+  subtitle: Text(isStub ? 'スタブ' : '実API'),
+  value: isStub,
   onChanged: kDebugMode
-      ? (value) => ref.read(isMockApiEnabledProvider.notifier).enabled = value
+      ? (value) => ref.read(isStubApiEnabledProvider.notifier).enabled = value
       : null,
 ),
 ```
 
 #### 備考
 
-- `auth/login/` は `fake_service_impl.dart` が未実装のため対象外
+- `auth/login/` は `stub_service_impl.dart` が未実装のため対象外
 - `products` の Repository は未作成のため Repository 側の変更はなし（統合 Provider のみ追加済み）
 - `StateProvider` は Riverpod 3.x で廃止済み → `NotifierProvider` を使用
 
@@ -556,9 +556,9 @@ SwitchListTile(
 | テスト対象 | テストファイル配置 |
 |---|---|
 | `*ApiServiceImpl`（実装クラス）| `test/data/services/web_api/{endpoint}/` |
-| `Fake*ApiServiceImpl`（Fake クラス）| 同上（既存テストファイルに追記） |
+| `Stub*ApiServiceImpl`（Fake クラス）| 同上（既存テストファイルに追記） |
 | `*ApiServiceProvider`（統合 Provider）| 同上（既存テストファイルに追記） |
-| `MockApiEnabledNotifier` | `test/data/services/web_api/mock_api_enabled_provider_test.dart`（共通・追加不要） |
+| `StubApiEnabledNotifier` | `test/data/services/web_api/mock_api_enabled_provider_test.dart`（共通・追加不要） |
 
 ---
 
@@ -576,24 +576,24 @@ group('fetch', () {
 
 ---
 
-##### 2. `Fake*ApiServiceImpl` のテスト
+##### 2. `Stub*ApiServiceImpl` のテスト
 
 Fake クラスが Interface を正しく実装しており、スタブデータを返すことを検証する。
 「Fake 自体が正しく動くか」を担保することで、Repository / Notifier のテストで Fake を使う際の前提条件を保証できる。
 
 ```dart
-group('Fake*ApiServiceImpl', () {
-  late Fake*ApiServiceImpl fakeService;
+group('Stub*ApiServiceImpl', () {
+  late Stub*ApiServiceImpl fakeService;
 
   setUp(() {
-    fakeService = Fake*ApiServiceImpl();
+    fakeService = Stub*ApiServiceImpl();
   });
 
-  // Provider 宣言行（fake_service_impl.dart の先頭）もカバレッジに含めるため Provider テストを置く
-  test('fake*ApiServiceImplProvider は Fake*ApiServiceImpl を返すこと', () {
+  // Provider 宣言行（stub_service_impl.dart の先頭）もカバレッジに含めるため Provider テストを置く
+  test('stub*ApiServiceImplProvider は Stub*ApiServiceImpl を返すこと', () {
     final container = ProviderContainer();
     addTearDown(container.dispose);
-    expect(container.read(fake*ApiServiceImplProvider), isA<Fake*ApiServiceImpl>());
+    expect(container.read(stub*ApiServiceImplProvider), isA<Stub*ApiServiceImpl>());
   });
 
   test('fetch は SuccessResult を返すこと', () async { ... });
@@ -602,7 +602,7 @@ group('Fake*ApiServiceImpl', () {
 });
 ```
 
-**ポイント**: `fake_service_impl.dart` の先頭 2 行（Provider 宣言）は Provider テストを置かないとカバレッジ 0 になる。`addTearDown(container.dispose)` を使えば `tearDown` を別途書かなくて済む。
+**ポイント**: `stub_service_impl.dart` の先頭 2 行（Provider 宣言）は Provider テストを置かないとカバレッジ 0 になる。`addTearDown(container.dispose)` を使えば `tearDown` を別途書かなくて済む。
 
 ---
 
@@ -625,21 +625,21 @@ group('*ApiServiceProvider', () {
 
   tearDown(() { container.dispose(); });
 
-  test('isMock=false のとき *ApiServiceImpl を返すこと', () {
-    // isMockApiEnabledProvider のデフォルトは false なので overrides 不要
+  test('isStub=false のとき *ApiServiceImpl を返すこと', () {
+    // isStubApiEnabledProvider のデフォルトは false なので overrides 不要
     expect(container.read(*ApiServiceProvider), isA<*ApiServiceImpl>());
   });
 
-  test('isMock=true のとき Fake*ApiServiceImpl を返すこと', () {
-    container.read(isMockApiEnabledProvider.notifier).enabled = true;
-    expect(container.read(*ApiServiceProvider), isA<Fake*ApiServiceImpl>());
+  test('isStub=true のとき Stub*ApiServiceImpl を返すこと', () {
+    container.read(isStubApiEnabledProvider.notifier).enabled = true;
+    expect(container.read(*ApiServiceProvider), isA<Stub*ApiServiceImpl>());
   });
 
-  test('isMock=false → true → false と切り替えると型が変わること', () {
+  test('isStub=false → true → false と切り替えると型が変わること', () {
     expect(container.read(*ApiServiceProvider), isA<*ApiServiceImpl>());
-    container.read(isMockApiEnabledProvider.notifier).enabled = true;
-    expect(container.read(*ApiServiceProvider), isA<Fake*ApiServiceImpl>());
-    container.read(isMockApiEnabledProvider.notifier).enabled = false;
+    container.read(isStubApiEnabledProvider.notifier).enabled = true;
+    expect(container.read(*ApiServiceProvider), isA<Stub*ApiServiceImpl>());
+    container.read(isStubApiEnabledProvider.notifier).enabled = false;
     expect(container.read(*ApiServiceProvider), isA<*ApiServiceImpl>());
   });
 });
@@ -650,8 +650,8 @@ group('*ApiServiceProvider', () {
 | ポイント | 理由 |
 |---|---|
 | `apiClientProvider` をオーバーライドする | 統合 Provider 内部で `*ApiServiceImpl` を生成する際に `apiClientProvider` を読む。オーバーライドしないと未提供エラーになる |
-| `isMockApiEnabledProvider` はオーバーライド不要 | デフォルト `false` のため、切り替えテストは `notifier.enabled = true/false` で行う |
-| `ProviderContainer` を各テストで使い回す | `isMock` のトグルが同一コンテナ内で伝播することを確認するため |
+| `isStubApiEnabledProvider` はオーバーライド不要 | デフォルト `false` のため、切り替えテストは `notifier.enabled = true/false` で行う |
+| `ProviderContainer` を各テストで使い回す | `isStub` のトグルが同一コンテナ内で伝播することを確認するため |
 | `if (!kDebugMode)` ブランチは coverage:ignore | `flutter test` は常に `kDebugMode = true` なので到達不能。`// coverage:ignore-start` / `// coverage:ignore-end` で除外する |
 
 ---

@@ -424,8 +424,8 @@ Container(color: Colors.blue)
 ### テスト
 
 - 修正時には必ずユニットテストを追加
-- Fake 実装（Service の Fake）を使用してモック化
-- テスト用 Fake は `data/services/web_api/{endpoint_path}/fake_service_impl.dart` に配置
+- スタブ実装（Service のスタブ）を使用して差し替え
+- スタブは `data/services/web_api/{endpoint_path}/stub_service_impl.dart` に配置
 
 #### テストのグルーピング
 

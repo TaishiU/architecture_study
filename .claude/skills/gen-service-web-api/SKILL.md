@@ -1,6 +1,6 @@
 ---
 name: gen-service-web-api
-description: openapi.yaml から lib/data/services/web_api/ 配下のファイル（dto.dart / service.dart / fake_service_impl.dart / service_impl.dart）を自動生成する
+description: openapi.yaml から lib/data/services/web_api/ 配下のファイル（dto.dart / service.dart / stub_service_impl.dart / service_impl.dart）を自動生成する
 argument-hint: "<feature-path> [--file=<yaml-path>]"
 ---
 
@@ -8,7 +8,8 @@ argument-hint: "<feature-path> [--file=<yaml-path>]"
 
 `docs/api/openapi.yaml` を読み込み、指定した feature の Service 層ファイルを生成するスキル。
 
-生成対象: `dto.dart` → build_runner → `service.dart` → `fake_service_impl.dart`（リソース型のみ）→ `service_impl.dart`
+生成対象: `dto.dart` → build_runner → `service.dart` → `stub_service_impl.dart`（リソース型のみ）→ `service_impl.dart`
+
 
 ---
 
@@ -294,7 +295,7 @@ abstract class XxxApiService {
 
 ---
 
-## Step 7: fake_service_impl.dart 生成（リソース型のみ）
+## Step 7: stub_service_impl.dart 生成（リソース型のみ）
 
 **アクション型には生成しない。**
 
@@ -324,14 +325,14 @@ import 'package:architecture_study/utils/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// プロバイダ
-final fakeXxxApiServiceImplProvider = Provider<FakeXxxApiServiceImpl>(
-  (ref) => FakeXxxApiServiceImpl(),
+final stubXxxApiServiceImplProvider = Provider<StubXxxApiServiceImpl>(
+  (ref) => StubXxxApiServiceImpl(),
 );
 
-/// 開発用サービス実装クラス
-class FakeXxxApiServiceImpl implements XxxApiService {
+/// スタブ実装クラス
+class StubXxxApiServiceImpl implements XxxApiService {
   /// コンストラクタ
-  FakeXxxApiServiceImpl();
+  StubXxxApiServiceImpl();
 
   @override
   Future<Result<XxxDto>> fetch() async {

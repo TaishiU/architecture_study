@@ -11,7 +11,7 @@ lib/data/services/
     └── {endpoint_path}/
         ├── service.dart           # Interface
         ├── service_impl.dart      # 実装
-        ├── fake_service_impl.dart # 開発用 Fake（任意）
+        ├── stub_service_impl.dart # スタブ実装（任意）
         ├── dto.dart               # DTO 定義
         ├── dto.freezed.dart       # 生成コード
         └── dto.g.dart             # 生成コード
@@ -51,7 +51,7 @@ static const endpoint = 'auth/login';  // フルパスを定義
 web_api/todos/
 ├── service.dart           # fetchList(), fetchById(id) を持つ
 ├── service_impl.dart
-├── fake_service_impl.dart
+├── stub_service_impl.dart
 └── dto.dart
 ```
 
@@ -72,7 +72,7 @@ static const endpoint = 'todos';  // リソース名を定義
 |---|---|
 | `service.dart` | Interface（abstract class） |
 | `service_impl.dart` | 実装クラス・Provider 定義 |
-| `fake_service_impl.dart` | 開発用 Fake（バックエンド未完成時） |
+| `stub_service_impl.dart` | スタブ実装（バックエンド未完成時） |
 | `dto.dart` | DTO 定義（`@freezed`） |
 
 ## リソース型ディレクトリ名は plural
@@ -122,7 +122,7 @@ lib/data/services/
     ├── fcm/
     │   ├── service.dart           # Interface
     │   ├── service_impl.dart      # FCM SDK 実装
-    │   └── fake_service_impl.dart # 開発用 Fake
+    │   └── stub_service_impl.dart # スタブ実装
     └── analytics/
         ├── service.dart           # Interface
         └── service_impl.dart      # Firebase Analytics SDK 実装
@@ -144,19 +144,19 @@ Crashlytics・Remote Config が追加されても `firebase/` 配下に追加す
 
 **4. Interface + Impl で実装を隠蔽**
 
-`firebase/fcm/service.dart`（Interface）を設けることで、テスト時は `fake_service_impl.dart` に差し替え可能。FCM SDK の詳細が上位層に漏れない。
+`firebase/fcm/service.dart`（Interface）を設けることで、テスト時はスタブ実装に差し替え可能。FCM SDK の詳細が上位層に漏れない。
 
 ### 各サービスの注意点
 
 **FCM**
 
 - トークン取得・更新・フォアグラウンド通知処理をすべて `fcm/` に集約
-- fake が重要：バックエンド未完成でも通知フローのテストが可能
+- スタブが重要：バックエンド未完成でも通知フローのテストが可能
 
 **Analytics**
 
 - fire-and-forget（レスポンスなし）のため DTO 不要
-- fake は no-op 実装で十分（テスト時にイベントが飛ばないようにする目的）
+- スタブは no-op 実装で十分（テスト時にイベントが飛ばないようにする目的）
 
 ```dart
 // firebase/analytics/service.dart

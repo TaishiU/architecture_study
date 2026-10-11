@@ -1,4 +1,4 @@
-import 'package:architecture_study/data/services/web_api/mock_api_enabled_provider.dart';
+import 'package:architecture_study/data/services/web_api/stub_api_enabled_provider.dart';
 import 'package:architecture_study/utils/talker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ class DebugMenuScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isMock = ref.watch<bool>(isMockApiEnabledProvider);
+    final isStub = ref.watch<bool>(isStubApiEnabledProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('デバッグメニュー')),
       body: ListView(
@@ -32,12 +32,12 @@ class DebugMenuScreen extends ConsumerWidget {
           ),
           SwitchListTile(
             secondary: const Icon(Icons.cloud_off_outlined),
-            title: const Text('APIモック'),
-            subtitle: Text(isMock ? 'Fake（スタブ）' : '実API'),
-            value: isMock,
+            title: const Text('スタブ切り替え'),
+            subtitle: Text(isStub ? 'スタブ' : '実API'),
+            value: isStub,
             onChanged: kDebugMode
                 ? (value) =>
-                      ref.read(isMockApiEnabledProvider.notifier).enabled =
+                      ref.read(isStubApiEnabledProvider.notifier).enabled =
                           value
                 : null,
           ),

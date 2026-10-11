@@ -1,10 +1,10 @@
 import 'package:architecture_study/data/services/web_api/api_client.dart';
 import 'package:architecture_study/data/services/web_api/api_exception.dart';
-import 'package:architecture_study/data/services/web_api/mock_api_enabled_provider.dart';
+import 'package:architecture_study/data/services/web_api/stub_api_enabled_provider.dart';
 import 'package:architecture_study/data/services/web_api/users/dto.dart';
-import 'package:architecture_study/data/services/web_api/users/fake_service_impl.dart';
 import 'package:architecture_study/data/services/web_api/users/service.dart';
 import 'package:architecture_study/data/services/web_api/users/service_impl.dart';
+import 'package:architecture_study/data/services/web_api/users/stub_service_impl.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -77,28 +77,28 @@ void main() {
       container.dispose();
     });
 
-    test('isMock=false のとき UsersApiServiceImpl を返すこと', () {
+    test('isStub=false のとき UsersApiServiceImpl を返すこと', () {
       final service = container.read(usersApiServiceProvider);
       expect(service, isA<UsersApiServiceImpl>());
     });
 
-    test('isMock=true のとき FakeUsersApiServiceImpl を返すこと', () {
-      container.read(isMockApiEnabledProvider.notifier).enabled = true;
+    test('isStub=true のとき StubUsersApiServiceImpl を返すこと', () {
+      container.read(isStubApiEnabledProvider.notifier).enabled = true;
       final service = container.read(usersApiServiceProvider);
-      expect(service, isA<FakeUsersApiServiceImpl>());
+      expect(service, isA<StubUsersApiServiceImpl>());
     });
 
-    test('isMock=false → true → false と切り替えると型が変わること', () {
+    test('isStub=false → true → false と切り替えると型が変わること', () {
       expect(
         container.read(usersApiServiceProvider),
         isA<UsersApiServiceImpl>(),
       );
-      container.read(isMockApiEnabledProvider.notifier).enabled = true;
+      container.read(isStubApiEnabledProvider.notifier).enabled = true;
       expect(
         container.read(usersApiServiceProvider),
-        isA<FakeUsersApiServiceImpl>(),
+        isA<StubUsersApiServiceImpl>(),
       );
-      container.read(isMockApiEnabledProvider.notifier).enabled = false;
+      container.read(isStubApiEnabledProvider.notifier).enabled = false;
       expect(
         container.read(usersApiServiceProvider),
         isA<UsersApiServiceImpl>(),
@@ -106,33 +106,33 @@ void main() {
     });
   });
 
-  group('FakeUsersApiServiceImpl', () {
-    late FakeUsersApiServiceImpl fakeService;
+  group('StubUsersApiServiceImpl', () {
+    late StubUsersApiServiceImpl stubService;
 
     setUp(() {
-      fakeService = FakeUsersApiServiceImpl();
+      stubService = StubUsersApiServiceImpl();
     });
 
-    test('fakeUsersApiServiceImplProvider は FakeUsersApiServiceImpl を返すこと', () {
+    test('stubUsersApiServiceImplProvider は StubUsersApiServiceImpl を返すこと', () {
       final container = ProviderContainer();
       addTearDown(container.dispose);
       expect(
-        container.read(fakeUsersApiServiceImplProvider),
-        isA<FakeUsersApiServiceImpl>(),
+        container.read(stubUsersApiServiceImplProvider),
+        isA<StubUsersApiServiceImpl>(),
       );
     });
 
     test('fetchById は SuccessResult<UserDto> を返すこと', () async {
-      final result = await fakeService.fetchById();
+      final result = await stubService.fetchById();
       expect(result, isA<SuccessResult<UserDto>>());
     });
 
     test('fetchById は UsersApiService を実装していること', () {
-      expect(fakeService, isA<UsersApiService>());
+      expect(stubService, isA<UsersApiService>());
     });
 
     test('返却される UserDto は必須フィールドを持つこと', () async {
-      final result = await fakeService.fetchById();
+      final result = await stubService.fetchById();
       final user = (result as SuccessResult<UserDto>).value;
       expect(user.id, isNotNull);
       expect(user.firstName, isNotNull);

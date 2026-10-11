@@ -1,9 +1,9 @@
 import 'package:architecture_study/data/services/web_api/api_client.dart';
 import 'package:architecture_study/data/services/web_api/api_exception.dart';
-import 'package:architecture_study/data/services/web_api/mock_api_enabled_provider.dart';
 import 'package:architecture_study/data/services/web_api/products/dto.dart';
-import 'package:architecture_study/data/services/web_api/products/fake_service_impl.dart';
 import 'package:architecture_study/data/services/web_api/products/service.dart';
+import 'package:architecture_study/data/services/web_api/products/stub_service_impl.dart';
+import 'package:architecture_study/data/services/web_api/stub_api_enabled_provider.dart';
 import 'package:architecture_study/utils/logger.dart';
 import 'package:architecture_study/utils/result.dart';
 import 'package:flutter/foundation.dart';
@@ -14,14 +14,16 @@ final productsApiServiceImplProvider = Provider<ProductsApiServiceImpl>(
   (ref) => ProductsApiServiceImpl(apiClient: ref.read(apiClientProvider)),
 );
 
-/// mock切り替え対応の統合Provider
+/// スタブ切り替え対応の統合Provider
 final productsApiServiceProvider = Provider<ProductsApiService>((ref) {
+  // coverage:ignore-start
   if (!kDebugMode) {
     return ProductsApiServiceImpl(apiClient: ref.read(apiClientProvider));
   }
-  final isMock = ref.watch<bool>(isMockApiEnabledProvider);
-  return isMock
-      ? FakeProductsApiServiceImpl()
+  // coverage:ignore-end
+  final isStub = ref.watch<bool>(isStubApiEnabledProvider);
+  return isStub
+      ? StubProductsApiServiceImpl()
       : ProductsApiServiceImpl(apiClient: ref.read(apiClientProvider));
 });
 

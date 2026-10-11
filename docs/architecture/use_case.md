@@ -301,7 +301,7 @@ private にした場合のテストは「どの子関数の何が壊れたか」
 group('initState', () {
   group('正常系', () {
     test('全データ取得成功時にProfileScreenStateを返す', () async {
-      // Given: 全 fake が正常値を返すよう設定
+      // Given: 全スタブが正常値を返すよう設定
       // When: useCase.initState()
       // Then: 返り値の State が期待通りのフィールドを持つ
     });
@@ -311,14 +311,14 @@ group('initState', () {
 group('fetchUser', () {
   group('正常系', () {
     test('Userを返す', () async {
-      // Given: FakeRepository が User を返す
+      // Given: StubRepository が User を返す
       // When: useCase.fetchUser()
       // Then: 期待した User が返る
     });
   });
   group('異常系', () {
     test('FailureResult のとき例外を throw する', () async {
-      // Given: FakeRepository が FailureResult を返す
+      // Given: StubRepository が FailureResult を返す
       // When / Then: fetchUser() が例外を throw する
     });
   });

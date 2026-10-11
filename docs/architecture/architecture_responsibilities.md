@@ -152,7 +152,7 @@ URL とドメインが一致しないケースはこの分割で吸収する。�
 - `AppError` への変換（変換は Repository が担う）
 
 **重要なポイント**:
-- Interface + Impl で依存逆転を実現（テスト時に Fake 実装と差し替え可能）
+- Interface + Impl で依存逆転を実現（テスト時にスタブ実装と差し替え可能）
 - DTO はこの層が所有（`lib/data/services/web_api/{feature}/dto.dart`）
 - DTO の全フィールドは nullable（サーバー仕様の変動に対応）
 - `ApiClient` は認証トークン付与・リトライ・401 リフレッシュを自動処理
